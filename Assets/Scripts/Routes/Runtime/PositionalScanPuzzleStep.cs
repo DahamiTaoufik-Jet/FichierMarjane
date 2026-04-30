@@ -1,0 +1,323 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+
+namespace EscapeGame.Routes.Runtime
+{
+    /// <summary>
+    /// Enigme : scanner le bloc depuis une position precise au sol.
+    /// Les positions valides sont injectees par le ProceduralRouteGenerator
+    /// depuis les <c>PlaceholderNode</c> de type ScanSpot relies via leur
+    /// <c>linkedSpotIds</c>. L'instance en pioche UNE au demarrage : c'est
+    /// celle-la qui doit etre occupee pour valider.
+    /// </summary>
+    public class PositionalScanPuzzleStep : PuzzleStep
+    {
+        [Header("Tolerance de position")]
+        [Tooltip("Tolerance horizontale (XZ) en metres entre le joueur et la position cible.")]
+        public float horizontalTolerance = 0.7f;
+
+        [Tooltip("Tolerance verticale (Y) en metres.")]
+        public float verticalTolerance = 1.5f;
+
+        [Header("Feedback emissive")]
+        [Tooltip("Renderer dont l'emissive change quand le joueur est dans la zone valide. Auto via GetComponentInChildren si null. " +
+                 "Le materiau doit avoir Emission activee pour que le changement soit visible.")]
+        public Renderer feedbackRenderer;
+
+        [Tooltip("Emissive applique tant que le joueur n'est pas dans la zone (ou ne regarde pas).")]
+        public Color idleEmissive = Color.black;
+
+        [Tooltip("Emissive applique quand le joueur est dans la zone valide ET regarde le cube.")]
+        public Color readyEmissive = new Color(0.2f, 1f, 0.4f, 1f);
+
+        [Header("Feedback events (optionnel)")]
+        public UnityEvent OnEnteredScanZone;
+        public UnityEvent OnExitedScanZone;
+
+        [Header("Validation directe (sans scanner)")]
+        [Tooltip("Si vrai, l'energie est validee des que le joueur est sur le spot et appuie sur la touche, peu importe la distance/orientation par rapport au cube.")]
+        public bool allowDirectValidation = true;
+
+        [Tooltip("Touche de validation directe quand on est sur le spot.")]
+        public Key validateKey = Key.E;
+
+        [Header("Debug")]
+        [Tooltip("Logs Console aux transitions zone/scan + au choix du spot.")]
+        public bool verboseLogs = true;
+
+        [Tooltip("Dessine un gizmo runtime sur le spot choisi + ligne vers le joueur.")]
+        public bool drawRuntimeGizmos = true;
+
+        // ====================================================================
+        // Runtime
+        // ====================================================================
+
+        private readonly List<Pose> validSpots = new List<Pose>();
+        private Pose chosenSpot;
+        private bool spotChosen = false;
+        private bool configured = false;
+        private Transform playerTransform;
+        private MaterialPropertyBlock mpb;
+        private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+        private bool isGazingThisFrame = false;
+        private bool wasInZone = false;
+        private bool wasOnSpot = false;
+
+        /// <summary>
+        /// Appele par le <c>ProceduralRouteGenerator</c> pour transmettre les
+        /// positions valides extraites des ScanSpot lies. Une seule position est
+        /// piochee au hasard comme cible reelle.
+        /// </summary>
+        public void Configure(IList<Pose> spots)
+        {
+            if (configured)
+            {
+                Debug.LogWarning($"[PositionalScanPuzzleStep:{name}] Configure deja appele - appel ignore.");
+                return;
+            }
+            configured = true;
+
+            if (spots == null || spots.Count == 0)
+            {
+                Debug.LogError($"[PositionalScanPuzzleStep:{name}] Aucun ScanSpot fourni - puzzle insolvable.");
+                return;
+            }
+
+            validSpots.Clear();
+            for (int i = 0; i < spots.Count; i++) validSpots.Add(spots[i]);
+
+            int idx = Random.Range(0, validSpots.Count);
+            chosenSpot = validSpots[idx];
+            spotChosen = true;
+
+            if (verboseLogs)
+            {
+                Debug.Log($"[PositionalScanPuzzleStep:{name}] Configure : {validSpots.Count} " +
+                          $"position(s) recue(s). Choix #{idx} -> {chosenSpot.position}.");
+            }
+        }
+
+        // ====================================================================
+        // Cycle de vie
+        // ====================================================================
+
+        private void Awake()
+        {
+            if (feedbackRenderer == null)
+                feedbackRenderer = GetComponentInChildren<Renderer>();
+            mpb = new MaterialPropertyBlock();
+            ApplyEmissive(idleEmissive);
+        }
+
+        private void Start()
+        {
+            TryAcquirePlayer();
+        }
+
+        private void TryAcquirePlayer()
+        {
+            // root() pour remonter du Main Camera (enfant de Camera look enfant de Player)
+            // jusqu'a la racine = Player (les pieds).
+            if (Camera.main != null)
+            {
+                playerTransform = Camera.main.transform.root;
+                return;
+            }
+
+            // Camera.main est null si la cam FPS est desactivee (mode TPS au demarrage).
+            // Fallback : chercher n'importe quelle Camera (y compris desactivee) taguee MainCamera.
+            var cams = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < cams.Length; i++)
+            {
+                if (cams[i] != null && cams[i].CompareTag("MainCamera"))
+                {
+                    playerTransform = cams[i].transform.root;
+                    return;
+                }
+            }
+        }
+
+        private void Update()
+        {
+            if (IsResolved || !spotChosen) return;
+
+            // Lazy retry : Camera.main peut etre null au Start si la cam FPS etait
+            // desactivee (mode TPS). Une fois le joueur switch en FPS, on l'attrape.
+            if (playerTransform == null)
+            {
+                TryAcquirePlayer();
+                if (playerTransform == null) return;
+            }
+
+            bool onSpot = IsPlayerInZone();
+            bool inZone = isGazingThisFrame && onSpot;
+
+            // Validation directe : sur le spot + touche pressee = on resout, peu importe
+            // la distance au cube ou si on le regarde. Le scanner reste fonctionnel en
+            // parallele pour les joueurs qui visent + scannent normalement.
+            if (allowDirectValidation && onSpot
+                && Keyboard.current != null
+                && Keyboard.current[validateKey].wasPressedThisFrame)
+            {
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Validation directe depuis le spot. Distance={DistanceToSpot():F2}m");
+                ResolveStep();
+                return;
+            }
+
+            // Transition position seule (independante du regard)
+            if (onSpot && !wasOnSpot)
+            {
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Position OK - sur le spot. Distance={DistanceToSpot():F2}m");
+            }
+            else if (!onSpot && wasOnSpot)
+            {
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Position perdue. Distance={DistanceToSpot():F2}m");
+            }
+
+            // Transition combinee (PRET A VALIDER = position + regard)
+            if (inZone && !wasInZone)
+            {
+                ApplyEmissive(readyEmissive);
+                OnEnteredScanZone?.Invoke();
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] PRET A VALIDER - bonne position + regard sur le cube. Distance={DistanceToSpot():F2}m");
+            }
+            else if (!inZone && wasInZone)
+            {
+                ApplyEmissive(idleEmissive);
+                OnExitedScanZone?.Invoke();
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Sortie de zone valide. Distance={DistanceToSpot():F2}m");
+            }
+
+            wasInZone = inZone;
+            wasOnSpot = onSpot;
+            isGazingThisFrame = false;
+        }
+
+        public override void OnHover()
+        {
+            base.OnHover();
+            if (IsResolved) return;
+            isGazingThisFrame = true;
+        }
+
+        public override void OnHoverExit()
+        {
+            base.OnHoverExit();
+            isGazingThisFrame = false;
+            if (wasInZone)
+            {
+                wasInZone = false;
+                ApplyEmissive(idleEmissive);
+                OnExitedScanZone?.Invoke();
+            }
+        }
+
+        public override void OnScan()
+        {
+            // Discover si Locked + re-affiche l'enonce via PuzzleStep.OnScan
+            base.OnScan();
+            if (IsResolved) return;
+
+            if (!spotChosen)
+            {
+                Debug.LogWarning($"[PositionalScanPuzzleStep:{name}] Pas de spot configure : scan impossible.");
+                return;
+            }
+
+            if (IsPlayerInZone())
+            {
+                if (verboseLogs)
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Scan VALIDE depuis distance {DistanceToSpot():F2}m.");
+                ResolveStep();
+            }
+            else
+            {
+                Debug.Log($"[PositionalScanPuzzleStep:{name}] Scan refuse - mauvaise position " +
+                          $"(distance {DistanceToSpot():F2}m, tolerance H={horizontalTolerance}m V={verticalTolerance}m). Cherchez un autre angle.");
+            }
+        }
+
+        protected override void ResolveStep()
+        {
+            base.ResolveStep();
+            ApplyEmissive(idleEmissive);
+        }
+
+        // ====================================================================
+        // Helpers
+        // ====================================================================
+
+        private bool IsPlayerInZone()
+        {
+            if (playerTransform == null) return false;
+            Vector3 p = playerTransform.position;
+            Vector3 t = chosenSpot.position;
+            float dx = p.x - t.x;
+            float dz = p.z - t.z;
+            float dy = Mathf.Abs(p.y - t.y);
+            return (dx * dx + dz * dz) <= horizontalTolerance * horizontalTolerance
+                && dy <= verticalTolerance;
+        }
+
+        private float DistanceToSpot()
+        {
+            if (playerTransform == null || !spotChosen) return -1f;
+            Vector3 p = playerTransform.position;
+            Vector3 t = chosenSpot.position;
+            float dx = p.x - t.x;
+            float dz = p.z - t.z;
+            float dy = p.y - t.y;
+            return Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+        private void ApplyEmissive(Color color)
+        {
+            if (feedbackRenderer == null || mpb == null) return;
+            feedbackRenderer.GetPropertyBlock(mpb);
+            mpb.SetColor(EmissionColorId, color);
+            feedbackRenderer.SetPropertyBlock(mpb);
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!drawRuntimeGizmos || !Application.isPlaying || !spotChosen) return;
+
+            // 3 etats :
+            //   rouge  -> joueur pas sur le spot
+            //   jaune  -> sur le spot mais ne vise pas le cube
+            //   vert   -> sur le spot ET vise le cube (pret a valider)
+            Color baseColor;
+            if (wasInZone)        baseColor = Color.green;
+            else if (wasOnSpot)   baseColor = Color.yellow;
+            else                  baseColor = Color.red;
+
+            // Sphere de rayon = horizontalTolerance pour visualiser la tolerance XZ
+            Gizmos.color = baseColor;
+            Gizmos.DrawWireSphere(chosenSpot.position, horizontalTolerance);
+
+            // Petite croix au centre + segment vertical pour la tolerance Y
+            float k = 0.15f;
+            Gizmos.DrawLine(chosenSpot.position + Vector3.left  * k, chosenSpot.position + Vector3.right   * k);
+            Gizmos.DrawLine(chosenSpot.position + Vector3.forward * k, chosenSpot.position + Vector3.back  * k);
+            Gizmos.DrawLine(chosenSpot.position + Vector3.up    * verticalTolerance, chosenSpot.position + Vector3.down * verticalTolerance);
+
+            // Ligne joueur -> spot, meme code couleur que la sphere
+            if (playerTransform != null)
+            {
+                Gizmos.color = baseColor;
+                Gizmos.DrawLine(playerTransform.position, chosenSpot.position);
+            }
+
+            // Ligne cube -> spot pour reperer la cible visuellement depuis le bloc
+            Gizmos.color = baseColor;
+            Gizmos.DrawLine(transform.position, chosenSpot.position);
+        }
+    }
+}

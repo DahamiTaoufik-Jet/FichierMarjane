@@ -16,6 +16,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 465bb62eb28e4b644aefa076f4657bea, type: 2}
   - {fileID: 11400000, guid: f231e39b576bf544ebf3403fef41fbe4, type: 2}
   - {fileID: 11400000, guid: 4aaa0be5e989e69458a1f09dcd865b30, type: 2}
+  - {fileID: 11400000, guid: 4844eb12487ae6f4b97ef3d4b21e861c, type: 2}
   passwordWords:
   - AB
   minPasswordLength: 2
@@ -26,4 +27,4 @@ MonoBehaviour:
   maxRouteLength: 5
   maxStepUsage: 3
   regionFilter: 
-  seed: 3
+  seed: 1234

@@ -40,6 +40,12 @@ namespace EscapeGame.Routes.Generation
             var plans = new List<RoutePlan>();
             if (stepPool == null || stepPool.Count == 0 || placeholders == null) return plans;
 
+            // Les ScanSpot sont des marqueurs de position pour les
+            // PositionalScanPuzzleStep, pas des emplacements d'instanciation.
+            // On les sort du pool de candidats.
+            placeholders = placeholders.FindAll(p => p != null
+                && p.nodeType != ProceduralNodeType.ScanSpot);
+
             // Filtre par region si renseigne
             if (!string.IsNullOrEmpty(regionFilter))
             {

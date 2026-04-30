@@ -32,6 +32,10 @@ namespace EscapeGame.Core.World
         [Tooltip("Lance la generation au Start.")]
         public bool generateOnStart = true;
 
+        // Cache des ScanSpots de la scene pour la duree d'une generation, pour
+        // injecter leurs poses dans les PositionalScanPuzzleStep instancies.
+        private List<PlaceholderNode> scanSpotsCache;
+
         // ====================================================================
         // Cycle de vie
         // ====================================================================
@@ -60,6 +64,14 @@ namespace EscapeGame.Core.World
             var allNodes = FindObjectsByType<PlaceholderNode>(FindObjectsSortMode.None);
             var placeholders = new List<PlaceholderNode>(allNodes);
 
+            // 1.b Cache des ScanSpots (consommes plus tard par les PositionalScanPuzzleStep)
+            scanSpotsCache = new List<PlaceholderNode>();
+            for (int i = 0; i < allNodes.Length; i++)
+            {
+                if (allNodes[i] != null && allNodes[i].nodeType == ProceduralNodeType.ScanSpot)
+                    scanSpotsCache.Add(allNodes[i]);
+            }
+
             // 2. Planification
             int? seed = config.seed > 0 ? (int?)config.seed : null;
             var planner = new RouteGenerationPlanner(
@@ -70,6 +82,7 @@ namespace EscapeGame.Core.World
             {
                 Debug.LogWarning("[ProceduralRouteGenerator] Aucune route generee. " +
                                  "Verifie le pool de steps, la presence de PlaceholderNodes et leurs contraintes.");
+                CleanupScanSpots();
                 return;
             }
 
@@ -80,7 +93,22 @@ namespace EscapeGame.Core.World
             foreach (var plan in plans)
                 InstantiateAndRegister(plan);
 
+            // 5. Nettoyage final des ScanSpots (markeurs uniquement, leurs poses
+            //    ont ete capturees par les steps positionnels concernes)
+            CleanupScanSpots();
+
             Debug.Log($"[ProceduralRouteGenerator] {plans.Count} route(s) generee(s).");
+        }
+
+        private void CleanupScanSpots()
+        {
+            if (scanSpotsCache == null) return;
+            for (int i = 0; i < scanSpotsCache.Count; i++)
+            {
+                if (scanSpotsCache[i] != null)
+                    Destroy(scanSpotsCache[i].gameObject);
+            }
+            scanSpotsCache = null;
         }
 
         // ====================================================================
@@ -176,12 +204,67 @@ namespace EscapeGame.Core.World
                 step.routeId = plan.RouteId;
                 stepInstances.Add(step);
 
+                // Injection des positions de scan pour les enigmes positionnelles.
+                // On le fait AVANT de detruire le placeholder car on a besoin de son
+                // spotId pour matcher les ScanSpots.
+                var positional = step as PositionalScanPuzzleStep;
+                if (positional != null)
+                    InjectScanSpots(positional, assignment.Placeholder);
+
                 if (cleanupUsedPlaceholders && assignment.Placeholder != null)
                     Destroy(assignment.Placeholder.gameObject);
             }
 
             if (stepInstances.Count > 0)
                 routeManager.RegisterRoute(plan.RouteId, plan.DisplayName, stepInstances, plan.EndReward);
+        }
+
+        /// <summary>
+        /// Cherche dans le cache des ScanSpots ceux qui referencent le spotId du
+        /// placeholder Puzzle utilise par cette step et passe leurs poses au step.
+        /// </summary>
+        private void InjectScanSpots(PositionalScanPuzzleStep step, PlaceholderNode placeholder)
+        {
+            if (placeholder == null)
+            {
+                Debug.LogError($"[ProceduralRouteGenerator] PositionalScanPuzzleStep " +
+                               $"'{step.name}' sans placeholder source - injection impossible.");
+                return;
+            }
+            if (string.IsNullOrEmpty(placeholder.spotId))
+            {
+                Debug.LogError($"[ProceduralRouteGenerator] Le placeholder Puzzle " +
+                               $"'{placeholder.name}' utilise par '{step.name}' n'a pas de spotId : " +
+                               $"liaison ScanSpot impossible.");
+                step.Configure(null);
+                return;
+            }
+
+            var poses = new List<Pose>();
+            if (scanSpotsCache != null)
+            {
+                for (int i = 0; i < scanSpotsCache.Count; i++)
+                {
+                    var ss = scanSpotsCache[i];
+                    if (ss == null || ss.linkedSpotIds == null) continue;
+                    for (int j = 0; j < ss.linkedSpotIds.Count; j++)
+                    {
+                        if (ss.linkedSpotIds[j] == placeholder.spotId)
+                        {
+                            poses.Add(new Pose(ss.transform.position, ss.transform.rotation));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (poses.Count == 0)
+            {
+                Debug.LogWarning($"[ProceduralRouteGenerator] Aucun ScanSpot lie au " +
+                                 $"spotId '{placeholder.spotId}' - puzzle '{step.name}' insolvable.");
+            }
+
+            step.Configure(poses);
         }
     }
 }
