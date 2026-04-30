@@ -1,4 +1,5 @@
 using UnityEngine;
+using EscapeGame.Routes.Events;
 
 namespace EscapeGame.Routes.Runtime
 {
@@ -21,6 +22,13 @@ namespace EscapeGame.Routes.Runtime
             // l'énigme : il déclenche uniquement la découverte si l'étape était
             // verrouillée. Les sous-classes décident quand appeler ResolveStep().
             base.OnScan();
+
+            // Re-affiche l'enonce de l'enigme a chaque scan tant qu'elle n'est pas resolue.
+            if (!IsResolved && stepData != null && stepData.initialClue != null
+                && !stepData.initialClue.IsEmpty)
+            {
+                RouteEvents.RaiseClueRevealed(stepData.initialClue, this);
+            }
         }
 
         public override void OnHoverExit()

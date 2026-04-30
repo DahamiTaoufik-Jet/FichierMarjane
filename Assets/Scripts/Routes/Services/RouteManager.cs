@@ -75,7 +75,13 @@ namespace EscapeGame.Routes.Services
             runtime.SetState(RouteState.Active);
             RouteEvents.RaiseRouteStarted(runtime);
 
-            stepInstances[0].Discover();
+            var entry = stepInstances[0];
+            entry.Discover();
+            if (entry.stepData != null && entry.stepData.initialClue != null
+                && !entry.stepData.initialClue.IsEmpty)
+            {
+                RouteEvents.RaiseClueRevealed(entry.stepData.initialClue, null);
+            }
 
             return runtime;
         }

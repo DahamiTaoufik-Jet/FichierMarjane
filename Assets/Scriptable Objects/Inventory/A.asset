@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bad354b43d112b640b19c18d86bc5787, type: 3}
   m_Name: A
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.Data.LetterItem
-  rewardName: 
+  rewardName: Lettre A
   description: 
   icon: {fileID: 0}
-  letter: 0
+  letter: 65

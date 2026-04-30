@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using EscapeGame.Routes.Data;
+using EscapeGame.Routes.Events;
 
 namespace EscapeGame.Routes.Runtime
 {
@@ -53,9 +54,8 @@ namespace EscapeGame.Routes.Runtime
         {
             if (stepData == null || stepData.initialClue == null) return;
             OnContentRevealed?.Invoke(stepData.initialClue);
-
-            // Log de debug — à remplacer par le hook UI réel.
-            Debug.Log($"[ClueStep:{name}] Indice révélé : \"{stepData.initialClue.text}\"");
+            if (!stepData.initialClue.IsEmpty)
+                RouteEvents.RaiseClueRevealed(stepData.initialClue, this);
         }
     }
 }

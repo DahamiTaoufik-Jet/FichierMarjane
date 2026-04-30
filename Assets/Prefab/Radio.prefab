@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7855353591085128622}
   - component: {fileID: 4119455581777416999}
   - component: {fileID: 7508699286672875060}
-  - component: {fileID: 859729404774181863}
+  - component: {fileID: 7792225664524707084}
   m_Layer: 3
   m_Name: Radio
   m_TagString: Untagged
@@ -233,7 +233,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &859729404774181863
+--- !u!114 &7792225664524707084
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -242,12 +242,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 2497826107234880697}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee144c132bd7f9245b05ee885cb812e9, type: 3}
+  m_Script: {fileID: 11500000, guid: 54917d909261104428a2cd5951895377, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Interactables.Puzzles.AudioVisualPuzzle
-  pairID: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Routes.Runtime.AudioVisualPuzzleStep
+  stepData: {fileID: 0}
+  routeId: 
+  OnDiscovered:
+    m_PersistentCalls:
+      m_Calls: []
   OnResolved:
     m_PersistentCalls:
       m_Calls: []
-  requiredLookDuration: 3
-  maxValidationDistance: 2
+  requiredLookDuration: 0
+  maxDetectionDistance: 20
+  maxValidationDistance: 4
+  waveRenderer: {fileID: 0}
+  waveSegments: 64
+  waveLength: 0.6
+  waveVerticalOffset: -0.15
+  waveForwardDistance: 1
+  waveMaxAmplitude: 0.08
+  waveMinFrequency: 1
+  waveMaxFrequency: 8
+  waveSpeed: 8
+  waveCenterDotThreshold: 0.95

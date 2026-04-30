@@ -22,10 +22,5 @@ MonoBehaviour:
     mode: 0
     regionId: 
     spotId: 
-    freeBounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
-  isEnd: 0
-  reward: {fileID: 0}
-  puzzlePrefab: {fileID: 0}
-  cluePrefab: {fileID: 0}
+  cluePrefab: {fileID: 1921991115888083677, guid: d111bc648971c244caa8e0852b3efb7a, type: 3}
+  puzzlePrefab: {fileID: 2497826107234880697, guid: ce44aa55ed1289e44921fcebc4389d24, type: 3}

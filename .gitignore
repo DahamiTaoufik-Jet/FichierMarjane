@@ -69,3 +69,7 @@ crashlytics-build.properties
 
 # Rider
 .idea/
+
+# Claude Code worktree / sandbox
+.claude/
+/[Aa]ssets/.claude/
