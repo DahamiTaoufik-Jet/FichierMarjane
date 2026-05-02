@@ -4,26 +4,31 @@ using UnityEngine.InputSystem;
 namespace EscapeGame.Core.Player
 {
     /// <summary>
-    /// Gère la rotation de la tête (Caméra) indépendamment du corps.
-    /// Le corps ne s'aligne sur la caméra QUE lorsque le joueur se déplace.
+    /// Gere la rotation de la tete (Camera) independamment du corps.
+    /// En FPS : la souris pilote la Sphere, le corps s'aligne au mouvement.
+    /// En TPS : Cinemachine gere la camera, le corps s'aligne sur le yaw
+    ///          de la Main Camera quand le joueur bouge.
     /// </summary>
     public class PlayerLook : MonoBehaviour
     {
-        [Header("Références")]
-        [Tooltip("Le corps du joueur (la Capsule entière)")]
+        [Header("References")]
+        [Tooltip("Le corps du joueur (root Player).")]
         public Transform playerBody;
-        
-        [Tooltip("La tête du joueur (votre Sphère ou Caméra)")]
+
+        [Tooltip("La tete du joueur (Sphere). Pilotee par la souris en FPS uniquement.")]
         public Transform playerHead;
 
-        [Header("Paramètres")]
+        [Tooltip("La Main Camera (pilotee par Cinemachine en TPS).")]
+        public Transform mainCameraTransform;
+
+        [Header("Parametres")]
         public float mouseSensitivity = 15f;
-        [Tooltip("Vitesse à laquelle le corps s'aligne sur la vision quand on marche")]
+        [Tooltip("Vitesse a laquelle le corps s'aligne sur la vision quand on marche.")]
         public float bodyRotationSpeed = 8f;
-        
-        // Stocke les angles absolus
-        private float pitch = 0f; // Rotation Haut/Bas (Axe X)
-        private float yaw = 0f;   // Rotation Gauche/Droite (Axe Y)
+
+        private float pitch = 0f;
+        private float yaw = 0f;
+        private bool isFPS = false;
 
         private void Start()
         {
@@ -32,53 +37,73 @@ namespace EscapeGame.Core.Player
 
             if (playerHead != null)
             {
-                // Initialise avec l'angle de départ
                 Vector3 euler = playerHead.eulerAngles;
                 pitch = euler.x;
                 yaw = euler.y;
+            }
+
+            if (mainCameraTransform == null && Camera.main != null)
+                mainCameraTransform = Camera.main.transform;
+        }
+
+        public void SetFPSMode(bool fps)
+        {
+            isFPS = fps;
+            if (fps && mainCameraTransform != null)
+            {
+                yaw = mainCameraTransform.eulerAngles.y;
+                pitch = mainCameraTransform.eulerAngles.x;
+                if (pitch > 180f) pitch -= 360f;
             }
         }
 
         private void Update()
         {
-            if (Mouse.current == null || playerHead == null || playerBody == null) return;
+            if (playerBody == null) return;
 
-            // 1. LECTURE DE LA SOURIS (Orientation de la tête/caméra indépendante)
+            if (isFPS)
+                UpdateFPS();
+            else
+                UpdateTPS();
+        }
+
+        private void UpdateFPS()
+        {
+            if (Mouse.current == null || playerHead == null) return;
+
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-            
             yaw += mouseDelta.x * mouseSensitivity * Time.deltaTime;
             pitch -= mouseDelta.y * mouseSensitivity * Time.deltaTime;
-            pitch = Mathf.Clamp(pitch, -85f, 85f); // Limite le cou
+            pitch = Mathf.Clamp(pitch, -85f, 85f);
 
-            // On assigne la rotation en monde ABSOLU à la tête. 
-            // Même si le corps tourne, la caméra ne tremblera/bougera pas toute seule.
             playerHead.rotation = Quaternion.Euler(pitch, yaw, 0f);
 
-
-            // 2. LECTURE DU CLAVIER (Alignement du corps s'il y a mouvement)
-            bool isMoving = false;
-
-            if (Keyboard.current != null)
+            if (IsMoving())
             {
-                // Vérifie si l'une des touches de déplacement est pressée (Z/Q/S/D ou W/A/S/D)
-                if (Keyboard.current.wKey.isPressed ||
-                    Keyboard.current.aKey.isPressed ||
-                    Keyboard.current.sKey.isPressed ||
-                    Keyboard.current.dKey.isPressed ||
-                    Keyboard.current.upArrowKey.isPressed)
-                {
-                    isMoving = true;
-                }
+                Quaternion target = Quaternion.Euler(0f, yaw, 0f);
+                playerBody.rotation = Quaternion.Slerp(
+                    playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
             }
+        }
 
-            if (isMoving)
-            {
-                // Le corps cible la rotation horizontale (Yaw) de la caméra
-                Quaternion targetBodyRotation = Quaternion.Euler(0f, yaw, 0f);
-                
-                // Tourne le corps en douceur vers la direction regardée par la tête
-                playerBody.rotation = Quaternion.Slerp(playerBody.rotation, targetBodyRotation, Time.deltaTime * bodyRotationSpeed);
-            }
+        private void UpdateTPS()
+        {
+            if (!IsMoving() || mainCameraTransform == null) return;
+
+            float camYaw = mainCameraTransform.eulerAngles.y;
+            Quaternion target = Quaternion.Euler(0f, camYaw, 0f);
+            playerBody.rotation = Quaternion.Slerp(
+                playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
+        }
+
+        private bool IsMoving()
+        {
+            if (Keyboard.current == null) return false;
+            return Keyboard.current.wKey.isPressed
+                || Keyboard.current.aKey.isPressed
+                || Keyboard.current.sKey.isPressed
+                || Keyboard.current.dKey.isPressed
+                || Keyboard.current.upArrowKey.isPressed;
         }
     }
 }

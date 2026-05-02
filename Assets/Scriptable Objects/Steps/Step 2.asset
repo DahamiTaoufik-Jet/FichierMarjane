@@ -22,5 +22,5 @@ MonoBehaviour:
     mode: 0
     regionId: 
     spotId: 
-  cluePrefab: {fileID: 1921991115888083677, guid: d111bc648971c244caa8e0852b3efb7a, type: 3}
+  cluePrefab: {fileID: 153127477668461108, guid: c48fbd66259272047a2ccede9bbb0ce6, type: 3}
   puzzlePrefab: {fileID: 2497826107234880697, guid: ce44aa55ed1289e44921fcebc4389d24, type: 3}

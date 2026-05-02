@@ -1,43 +1,52 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 namespace EscapeGame.Core.Player
 {
     /// <summary>
-    /// Gère la transition entre la vue Third Person (TPS) et First Person (FPS).
+    /// Gere la transition entre la vue Third Person (TPS) et First Person (FPS).
+    /// En TPS, la CinemachineCamera a la racine pilote la Main Camera.
+    /// En FPS, la CinemachineCamera est desactivee et la FPSCamera (enfant de
+    /// Camera Look) prend le relais directement.
     /// </summary>
     public class PlayerCamera : MonoBehaviour
     {
-        [Header("Caméras")]
-        [Tooltip("La caméra ou l'objet gérant la vue à la 3ème personne (ex: Cinemachine Virtual Camera)")]
-        public GameObject tpsCameraObject;
-        
-        [Tooltip("La caméra gérant la vue à la 1ère personne")]
+        [Header("Cameras")]
+        [Tooltip("CinemachineCamera TPS a la racine de la scene.")]
+        public CinemachineCamera tpsVirtualCamera;
+
+        [Tooltip("GameObject de la camera FPS (enfant de Camera Look).")]
         public GameObject fpsCameraObject;
 
         [Header("Visuels du Joueur")]
-        [Tooltip("Placez ici le MeshRenderer de votre Capsule et de votre Sphère pour les cacher en vue FPS.")]
+        [Tooltip("Renderers du corps a cacher en FPS.")]
         public Renderer[] playerRenderers;
 
-        [Header("Système de Scan")]
-        [Tooltip("Le script PlayerScanner, qui ne doit tourner qu'en vue FPS")]
+        [Header("Rotation")]
+        [Tooltip("Le script PlayerLook pour notifier le changement de mode.")]
+        public PlayerLook playerLook;
+
+        [Header("Systeme de Scan")]
+        [Tooltip("Le script PlayerScanner, actif uniquement en FPS.")]
         public PlayerScanner playerScanner;
 
-        [Header("Contrôles")]
-        [Tooltip("La touche pour intervertir les caméras")]
+        [Header("Controles")]
+        [Tooltip("Touche pour intervertir les cameras.")]
         public UnityEngine.InputSystem.Key switchKey = UnityEngine.InputSystem.Key.C;
 
+        private const int PriorityActive = 10;
+        private const int PriorityInactive = 0;
         private bool isFPSMode = false;
 
         private void Start()
         {
-            // Par défaut, le cahier des charges indique que le jeu commence en TPS
             SetFPSMode(false);
         }
 
         private void Update()
         {
-            // Transition à la demande du joueur (New Input System)
-            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current[switchKey].wasPressedThisFrame)
+            if (UnityEngine.InputSystem.Keyboard.current != null
+                && UnityEngine.InputSystem.Keyboard.current[switchKey].wasPressedThisFrame)
             {
                 isFPSMode = !isFPSMode;
                 SetFPSMode(isFPSMode);
@@ -47,27 +56,28 @@ namespace EscapeGame.Core.Player
         private void SetFPSMode(bool enableFPS)
         {
             isFPSMode = enableFPS;
-            
-            // On bascule les deux GameObjects
-            if (tpsCameraObject != null) tpsCameraObject.SetActive(!enableFPS);
-            if (fpsCameraObject != null) fpsCameraObject.SetActive(enableFPS);
 
-            // Gère automatiquement l'activation sécurisée du scan
-            if (playerScanner != null)
+            if (tpsVirtualCamera != null)
             {
-                playerScanner.enabled = enableFPS;
+                tpsVirtualCamera.Priority = enableFPS ? PriorityInactive : PriorityActive;
+                tpsVirtualCamera.gameObject.SetActive(!enableFPS);
             }
 
-            // Micro logique : On cache le corps du joueur en FPS, on le réaffiche en TPS
-            if (playerRenderers != null && playerRenderers.Length > 0)
+            if (fpsCameraObject != null)
+                fpsCameraObject.SetActive(enableFPS);
+
+            if (playerLook != null)
+                playerLook.SetFPSMode(enableFPS);
+
+            if (playerScanner != null)
+                playerScanner.enabled = enableFPS;
+
+            if (playerRenderers != null)
             {
-                foreach (Renderer rend in playerRenderers)
+                for (int i = 0; i < playerRenderers.Length; i++)
                 {
-                    if (rend != null)
-                    {
-                        // Si enableFPS est vrai, on désactive le rendu (!enableFPS = faux)
-                        rend.enabled = !enableFPS; 
-                    }
+                    if (playerRenderers[i] != null)
+                        playerRenderers[i].enabled = !enableFPS;
                 }
             }
         }

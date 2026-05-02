@@ -37,11 +37,14 @@ namespace EscapeGame.Routes.Runtime
         public UnityEvent OnExitedScanZone;
 
         [Header("Validation directe (sans scanner)")]
-        [Tooltip("Si vrai, l'energie est validee des que le joueur est sur le spot et appuie sur la touche, peu importe la distance/orientation par rapport au cube.")]
+        [Tooltip("Si vrai, l'enigme est validee quand le joueur est sur le spot, vise le cube (cone de vue) et appuie sur la touche - peu importe la distance.")]
         public bool allowDirectValidation = true;
 
-        [Tooltip("Touche de validation directe quand on est sur le spot.")]
+        [Tooltip("Touche de validation directe quand on est sur le spot et qu'on vise le cube.")]
         public Key validateKey = Key.E;
+
+        [Tooltip("Obsolete - conserve pour eviter les warnings sur les prefabs existants.")]
+        [HideInInspector] public float directValidationDotThreshold = 0.85f;
 
         [Header("Debug")]
         [Tooltip("Logs Console aux transitions zone/scan + au choix du spot.")]
@@ -59,6 +62,7 @@ namespace EscapeGame.Routes.Runtime
         private bool spotChosen = false;
         private bool configured = false;
         private Transform playerTransform;
+        private Transform cameraTransform;
         private MaterialPropertyBlock mpb;
         private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
         private bool isGazingThisFrame = false;
@@ -122,7 +126,8 @@ namespace EscapeGame.Routes.Runtime
             // jusqu'a la racine = Player (les pieds).
             if (Camera.main != null)
             {
-                playerTransform = Camera.main.transform.root;
+                cameraTransform = Camera.main.transform;
+                playerTransform = cameraTransform.root;
                 return;
             }
 
@@ -133,7 +138,8 @@ namespace EscapeGame.Routes.Runtime
             {
                 if (cams[i] != null && cams[i].CompareTag("MainCamera"))
                 {
-                    playerTransform = cams[i].transform.root;
+                    cameraTransform = cams[i].transform;
+                    playerTransform = cameraTransform.root;
                     return;
                 }
             }
@@ -154,15 +160,16 @@ namespace EscapeGame.Routes.Runtime
             bool onSpot = IsPlayerInZone();
             bool inZone = isGazingThisFrame && onSpot;
 
-            // Validation directe : sur le spot + touche pressee = on resout, peu importe
-            // la distance au cube ou si on le regarde. Le scanner reste fonctionnel en
-            // parallele pour les joueurs qui visent + scannent normalement.
-            if (allowDirectValidation && onSpot
+            // Validation directe : sur le spot + touche pressee + regard sur le cube.
+            // Le check d'angle est essentiel pour desambiguer quand plusieurs cubes
+            // partagent le meme spot : sans lui, presser E validerait toutes les
+            // instances dont le spot choisi est sous le joueur. Distance au cube libre.
+            if (allowDirectValidation && onSpot && IsPlayerAimingAtMe()
                 && Keyboard.current != null
                 && Keyboard.current[validateKey].wasPressedThisFrame)
             {
                 if (verboseLogs)
-                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Validation directe depuis le spot. Distance={DistanceToSpot():F2}m");
+                    Debug.Log($"[PositionalScanPuzzleStep:{name}] Validation directe (vise + sur le spot). Distance={DistanceToSpot():F2}m");
                 ResolveStep();
                 return;
             }
@@ -264,6 +271,14 @@ namespace EscapeGame.Routes.Runtime
             float dy = Mathf.Abs(p.y - t.y);
             return (dx * dx + dz * dz) <= horizontalTolerance * horizontalTolerance
                 && dy <= verticalTolerance;
+        }
+
+        private bool IsPlayerAimingAtMe()
+        {
+            if (cameraTransform == null) return false;
+            Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+            if (!Physics.Raycast(ray, out RaycastHit hit, 200f)) return false;
+            return hit.collider != null && hit.collider.transform.IsChildOf(transform);
         }
 
         private float DistanceToSpot()
