@@ -17,14 +17,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f231e39b576bf544ebf3403fef41fbe4, type: 2}
   - {fileID: 11400000, guid: 4aaa0be5e989e69458a1f09dcd865b30, type: 2}
   - {fileID: 11400000, guid: 4844eb12487ae6f4b97ef3d4b21e861c, type: 2}
-  passwordWords:
-  - AB
+  - {fileID: 11400000, guid: f1e07f12f9671864993aca4c76762351, type: 2}
+  - {fileID: 11400000, guid: d682c1915f4f4c547a195db9ec9b9746, type: 2}
+  passwordWords: []
   minPasswordLength: 2
   letterAlphabet: {fileID: 11400000, guid: 2939724f6b6e8154f8671806d7b0d83f, type: 2}
   bonusPool:
   - {fileID: 11400000, guid: eb3e6ac1bd30fc845b9b2968a4815bbb, type: 2}
+  - {fileID: 11400000, guid: f9b9ed3a94eba7a498ed5d9fda75aa8e, type: 2}
   minRouteLength: 3
   maxRouteLength: 5
-  maxStepUsage: 3
+  maxStepUsage: 1
   regionFilter: 
   seed: 1234

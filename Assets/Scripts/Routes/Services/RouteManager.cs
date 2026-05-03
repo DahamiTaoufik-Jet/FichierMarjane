@@ -24,6 +24,13 @@ namespace EscapeGame.Routes.Services
         [Tooltip("Si true, ce manager survit aux changements de scene.")]
         public bool persistAcrossScenes = false;
 
+        [Header("Debug Gizmos")]
+        [Tooltip("Dessine les routes en gizmos (lignes entre steps, couleurs par route).")]
+        public bool drawRouteGizmos = false;
+
+        [Tooltip("Affiche le nom/index de chaque step au-dessus de l'objet.")]
+        public bool drawStepLabels = true;
+
         private readonly List<RouteRuntime> routes = new List<RouteRuntime>();
         public IReadOnlyList<RouteRuntime> Routes => routes;
 
@@ -156,6 +163,73 @@ namespace EscapeGame.Routes.Services
                 runtime.SetState(RouteState.Completed);
                 RouteEvents.RaiseRouteCompleted(runtime);
             }
+        }
+
+        // ====================================================================
+        // Distribution de recompense
+        // ====================================================================
+
+        // ====================================================================
+        // Gizmos
+        // ====================================================================
+
+        private void OnDrawGizmos()
+        {
+            if (!drawRouteGizmos || !Application.isPlaying || routes.Count == 0) return;
+
+            for (int r = 0; r < routes.Count; r++)
+            {
+                var route = routes[r];
+                Color routeColor = ColorFromHash(route.RouteId);
+
+                for (int s = 0; s < route.Steps.Count; s++)
+                {
+                    var step = route.Steps[s];
+                    if (step == null) continue;
+
+                    Color stepColor;
+                    switch (step.CurrentState)
+                    {
+                        case Runtime.StepState.Resolved:   stepColor = Color.green;  break;
+                        case Runtime.StepState.Discovered: stepColor = Color.yellow; break;
+                        default:                           stepColor = Color.red;    break;
+                    }
+
+                    Gizmos.color = stepColor;
+                    Gizmos.DrawWireSphere(step.transform.position, 0.4f);
+
+                    if (s < route.Steps.Count - 1)
+                    {
+                        var next = route.Steps[s + 1];
+                        if (next != null)
+                        {
+                            Gizmos.color = routeColor;
+                            Gizmos.DrawLine(step.transform.position, next.transform.position);
+                        }
+                    }
+
+#if UNITY_EDITOR
+                    if (drawStepLabels)
+                    {
+                        string label = $"R{r + 1} #{s + 1}";
+                        var style = new GUIStyle();
+                        style.normal.textColor = routeColor;
+                        style.fontSize = 12;
+                        style.fontStyle = FontStyle.Bold;
+                        UnityEditor.Handles.Label(
+                            step.transform.position + Vector3.up * 0.8f, label, style);
+                    }
+#endif
+                }
+            }
+        }
+
+        private static Color ColorFromHash(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return Color.white;
+            int hash = id.GetHashCode();
+            float h = Mathf.Abs(hash % 360) / 360f;
+            return Color.HSVToRGB(h, 0.8f, 1f);
         }
 
         // ====================================================================

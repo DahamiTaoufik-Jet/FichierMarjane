@@ -60,6 +60,8 @@ namespace EscapeGame.Core.World
                 return;
             }
 
+            bonusUsage = new Dictionary<BonusItem, int>();
+
             // 1. Inventaire des placeholders
             var allNodes = FindObjectsByType<PlaceholderNode>(FindObjectsSortMode.None);
             var placeholders = new List<PlaceholderNode>(allNodes);
@@ -166,10 +168,37 @@ namespace EscapeGame.Core.World
             return eligible[Random.Range(0, eligible.Count)];
         }
 
+        private Dictionary<BonusItem, int> bonusUsage;
+
         private BonusItem PickRandomBonus()
         {
             if (config.bonusPool == null || config.bonusPool.Count == 0) return null;
-            return config.bonusPool[Random.Range(0, config.bonusPool.Count)];
+
+            if (bonusUsage == null)
+                bonusUsage = new Dictionary<BonusItem, int>();
+
+            var candidates = new List<BonusItem>();
+            for (int i = 0; i < config.bonusPool.Count; i++)
+            {
+                var entry = config.bonusPool[i];
+                if (entry == null || entry.bonus == null) continue;
+
+                int used = 0;
+                bonusUsage.TryGetValue(entry.bonus, out used);
+
+                if (used < entry.maxCount)
+                    candidates.Add(entry.bonus);
+            }
+
+            if (candidates.Count == 0) return null;
+
+            var pick = candidates[Random.Range(0, candidates.Count)];
+
+            if (!bonusUsage.ContainsKey(pick))
+                bonusUsage[pick] = 0;
+            bonusUsage[pick]++;
+
+            return pick;
         }
 
         // ====================================================================

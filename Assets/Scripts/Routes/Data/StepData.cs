@@ -29,6 +29,21 @@ namespace EscapeGame.Routes.Data
         [Tooltip("Contrainte de placement (Any / Region / Spot).")]
         public PlacementData placement;
 
+        [Header("Enigme textuelle (si type == Puzzle + TextPuzzleStep)")]
+        [TextArea(2, 4)]
+        [Tooltip("Question affichee au joueur.")]
+        public string puzzleQuestion;
+
+        [Tooltip("Reponse attendue (comparaison insensible a la casse, espaces trimes).")]
+        public string puzzleAnswer;
+
+        [Tooltip("Si vrai, la question est chiffree et necessite le bonus Dechiffreur.")]
+        public bool puzzleEncrypted;
+
+        [TextArea(2, 4)]
+        [Tooltip("Version chiffree de la question (affichee si puzzleEncrypted == true).")]
+        public string puzzleEncryptedQuestion;
+
         [Header("Prefabs")]
         [Tooltip("Prefab a instancier si type == Clue. Doit porter un ClueStep.")]
         public GameObject cluePrefab;

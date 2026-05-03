@@ -122,24 +122,22 @@ namespace EscapeGame.Routes.Runtime
 
         private void TryAcquirePlayer()
         {
-            // root() pour remonter du Main Camera (enfant de Camera look enfant de Player)
-            // jusqu'a la racine = Player (les pieds).
+            var cc = FindFirstObjectByType<CharacterController>();
+            if (cc != null)
+                playerTransform = cc.transform;
+
             if (Camera.main != null)
             {
                 cameraTransform = Camera.main.transform;
-                playerTransform = cameraTransform.root;
                 return;
             }
 
-            // Camera.main est null si la cam FPS est desactivee (mode TPS au demarrage).
-            // Fallback : chercher n'importe quelle Camera (y compris desactivee) taguee MainCamera.
             var cams = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < cams.Length; i++)
             {
                 if (cams[i] != null && cams[i].CompareTag("MainCamera"))
                 {
                     cameraTransform = cams[i].transform;
-                    playerTransform = cameraTransform.root;
                     return;
                 }
             }

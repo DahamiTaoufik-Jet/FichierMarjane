@@ -1,9 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using EscapeGame.Inventory.Data;
 
 namespace EscapeGame.Routes.Data
 {
+    [Serializable]
+    public class BonusPoolEntry
+    {
+        [Tooltip("Le bonus a distribuer.")]
+        public BonusItem bonus;
+
+        [Tooltip("Nombre maximum de fois que ce bonus peut etre distribue dans une generation.")]
+        [Min(1)] public int maxCount = 1;
+    }
+
     /// <summary>
     /// Configuration du generateur procedural de routes.
     /// Centralise tous les pools (steps, bonus, mots de passe) et les parametres
@@ -29,9 +40,8 @@ namespace EscapeGame.Routes.Data
         public LetterAlphabet letterAlphabet;
 
         [Header("Pool de bonus (recompense pour les routes sans lettre)")]
-        [Tooltip("Pool aleatoire dans lequel le generateur tire un bonus pour les " +
-                 "fins de route non couvertes par une lettre du mot de passe.")]
-        public List<BonusItem> bonusPool = new List<BonusItem>();
+        [Tooltip("Pool de bonus avec quantite max par type.")]
+        public List<BonusPoolEntry> bonusPool = new List<BonusPoolEntry>();
 
         [Header("Generation")]
         [Tooltip("Longueur minimale d'une route (entree + fin = 2 minimum).")]

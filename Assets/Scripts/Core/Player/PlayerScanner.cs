@@ -37,7 +37,7 @@ namespace EscapeGame.Core.Player
             
             if (Physics.SphereCast(ray, scanRadius, out RaycastHit hitInfo, scanEffectiveRange, scannableLayer))
             {
-                IScannable detectedScannable = hitInfo.collider.GetComponent<IScannable>();
+                IScannable detectedScannable = hitInfo.collider.GetComponentInParent<IScannable>();
 
                 if (detectedScannable != null)
                 {

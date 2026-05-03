@@ -26,6 +26,10 @@ namespace EscapeGame.Core.Player
         [Tooltip("Le script PlayerLook pour notifier le changement de mode.")]
         public PlayerLook playerLook;
 
+        [Header("UI FPS")]
+        [Tooltip("Canvas HUD du mode FPS (crosshair, indices...), actif uniquement en FPS.")]
+        public GameObject fpsCanvas;
+
         [Header("Systeme de Scan")]
         [Tooltip("Le script PlayerScanner, actif uniquement en FPS.")]
         public PlayerScanner playerScanner;
@@ -68,6 +72,9 @@ namespace EscapeGame.Core.Player
 
             if (playerLook != null)
                 playerLook.SetFPSMode(enableFPS);
+
+            if (fpsCanvas != null)
+                fpsCanvas.SetActive(enableFPS);
 
             if (playerScanner != null)
                 playerScanner.enabled = enableFPS;

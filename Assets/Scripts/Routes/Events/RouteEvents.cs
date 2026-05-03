@@ -31,11 +31,27 @@ namespace EscapeGame.Routes.Events
         /// </summary>
         public static event Action<ClueContent, StepBehaviour> ClueRevealed;
 
+        /// <summary>Le panneau d'indice doit etre masque (fin de hover).</summary>
+        public static event Action ClueHidden;
+
+        /// <summary>Une enigme textuelle affiche sa question (hover, lecture seule).</summary>
+        public static event Action<string, StepBehaviour> TextPuzzleShown;
+
+        /// <summary>Le joueur a scanne l'enigme textuelle : activer le champ de saisie.</summary>
+        public static event Action<string, StepBehaviour> TextPuzzleInteract;
+
+        /// <summary>Le panneau d'enigme textuelle doit se fermer.</summary>
+        public static event Action TextPuzzleClosed;
+
         // -------- Raise helpers (internal pour limiter la surface d'API) --------
         internal static void RaiseStepDiscovered(StepBehaviour step) => StepDiscovered?.Invoke(step);
         internal static void RaiseStepResolved(StepBehaviour step) => StepResolved?.Invoke(step);
         internal static void RaiseRouteStarted(RouteRuntime route) => RouteStarted?.Invoke(route);
         internal static void RaiseRouteCompleted(RouteRuntime route) => RouteCompleted?.Invoke(route);
         internal static void RaiseClueRevealed(ClueContent clue, StepBehaviour by) => ClueRevealed?.Invoke(clue, by);
+        internal static void RaiseClueHidden() => ClueHidden?.Invoke();
+        internal static void RaiseTextPuzzleShown(string question, StepBehaviour step) => TextPuzzleShown?.Invoke(question, step);
+        internal static void RaiseTextPuzzleInteract(string question, StepBehaviour step) => TextPuzzleInteract?.Invoke(question, step);
+        internal static void RaiseTextPuzzleClosed() => TextPuzzleClosed?.Invoke();
     }
 }

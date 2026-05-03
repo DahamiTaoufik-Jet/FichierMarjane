@@ -36,16 +36,14 @@ namespace EscapeGame.Journal.UI
         {
             if (panelRoot == null) panelRoot = gameObject;
             panelRoot.SetActive(false);
-        }
-
-        private void OnEnable()
-        {
             RouteEvents.ClueRevealed += HandleClueRevealed;
+            RouteEvents.ClueHidden += Hide;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             RouteEvents.ClueRevealed -= HandleClueRevealed;
+            RouteEvents.ClueHidden -= Hide;
         }
 
         private void Update()

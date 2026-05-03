@@ -10,17 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5dc3a60cc8c6b3041bd9f68314cfe9f4, type: 3}
-  m_Name: Step 1
+  m_Name: StepEnigme
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Routes.Data.StepData
-  stepId: Step 1
-  type: 0
+  stepId: StepEnigme
+  type: 1
   initialClue:
-    text: STEP 1
+    text: Prepare toi a une enigme
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
     mode: 0
     regionId: 
     spotId: 
-  cluePrefab: {fileID: 153127477668461108, guid: c48fbd66259272047a2ccede9bbb0ce6, type: 3}
-  puzzlePrefab: {fileID: 2497826107234880697, guid: ce44aa55ed1289e44921fcebc4389d24, type: 3}
+  puzzleQuestion: Animal qui vis parmis nous
+  puzzleAnswer: etranger
+  puzzleEncrypted: 0
+  puzzleEncryptedQuestion: 
+  cluePrefab: {fileID: 0}
+  puzzlePrefab: {fileID: 153127477668461108, guid: 11c0ea3311c077d418857204497bc25b, type: 3}
