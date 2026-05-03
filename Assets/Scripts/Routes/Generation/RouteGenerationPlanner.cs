@@ -96,6 +96,8 @@ namespace EscapeGame.Routes.Generation
                 usage[assignment.StepData] = usage[assignment.StepData] + 1;
             }
 
+            EnsureLastStepIsPuzzle(plan);
+
             return plan;
         }
 
@@ -191,6 +193,25 @@ namespace EscapeGame.Routes.Generation
                 }
             }
             return null;
+        }
+
+        private void EnsureLastStepIsPuzzle(RoutePlan plan)
+        {
+            if (plan.Assignments.Count < 2) return;
+
+            var last = plan.Assignments[plan.Assignments.Count - 1];
+            if (last.StepData.type == StepType.Puzzle) return;
+
+            for (int i = plan.Assignments.Count - 2; i >= 0; i--)
+            {
+                if (plan.Assignments[i].StepData.type == StepType.Puzzle)
+                {
+                    var temp = plan.Assignments[i];
+                    plan.Assignments[i] = last;
+                    plan.Assignments[plan.Assignments.Count - 1] = temp;
+                    return;
+                }
+            }
         }
 
         // --------------------------------------------------------------------
