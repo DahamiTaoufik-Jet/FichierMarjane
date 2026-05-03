@@ -23,8 +23,8 @@ MonoBehaviour:
   minPasswordLength: 2
   letterAlphabet: {fileID: 11400000, guid: 2939724f6b6e8154f8671806d7b0d83f, type: 2}
   bonusPool:
-  - {fileID: 11400000, guid: eb3e6ac1bd30fc845b9b2968a4815bbb, type: 2}
-  - {fileID: 11400000, guid: f9b9ed3a94eba7a498ed5d9fda75aa8e, type: 2}
+  - bonus: {fileID: 11400000, guid: 90ee05110f457354bb1567814efe797a, type: 2}
+    maxCount: 5
   minRouteLength: 3
   maxRouteLength: 5
   maxStepUsage: 1

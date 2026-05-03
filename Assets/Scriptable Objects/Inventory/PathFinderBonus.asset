@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e4ef7fbf2dfee4eb292255311f4adc, type: 3}
   m_Name: PathFinderBonus
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Bonuses.Data.PathFinderBonus
-  bonusName: 
-  description: 
-  iconSprite: {fileID: 0}
-  duration: 10
+  rewardName: PathFinder
+  description: Show next step closer to you
+  icon: {fileID: 21300000, guid: ca359e6bd79c0cf4b8e853299fff6338, type: 3}
+  consumeOnUse: 0
+  duration: 20
   lineWidth: 0.08
   lineColor: {r: 0.2, g: 0.8, b: 1, a: 0.8}
   playerHeightOffset: 1
