@@ -138,6 +138,8 @@ namespace EscapeGame.Routes.Services
 
         private void HandleStepResolved(RouteRuntime runtime, StepBehaviour step)
         {
+            ResolveAllBefore(runtime, step);
+
             RouteEvents.RaiseStepResolved(step);
 
             // Recompense uniquement si la step resolue est la derniere de la route
@@ -162,6 +164,23 @@ namespace EscapeGame.Routes.Services
             {
                 runtime.SetState(RouteState.Completed);
                 RouteEvents.RaiseRouteCompleted(runtime);
+            }
+        }
+
+        // ====================================================================
+        // Resolution en cascade
+        // ====================================================================
+
+        private void ResolveAllBefore(RouteRuntime runtime, StepBehaviour resolvedStep)
+        {
+            int idx = runtime.IndexOf(resolvedStep);
+            if (idx <= 0) return;
+
+            for (int i = 0; i < idx; i++)
+            {
+                var prev = runtime.Steps[i];
+                if (prev != null && !prev.IsResolved)
+                    prev.ForceResolve();
             }
         }
 
