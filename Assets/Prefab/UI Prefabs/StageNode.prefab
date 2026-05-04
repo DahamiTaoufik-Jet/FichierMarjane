@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 1636137149419122132}
   - component: {fileID: 1157464964057986511}
   - component: {fileID: 2699258406507701391}
+  - component: {fileID: 2873750129934359271}
   m_Layer: 5
   m_Name: StageNode
   m_TagString: Untagged
@@ -523,6 +524,29 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2873750129934359271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7049704610884386572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b734e93bee7210a45bfb6a07283fef25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.StageNodeView
+  background: {fileID: 3503399054594862867}
+  numberText: {fileID: 1225437185424532516}
+  doubleCheckIcon: {fileID: 5388288739652861030}
+  lockOpenIcon: {fileID: 1237115527120490129}
+  lockClosedIcon: {fileID: 4847965673963817257}
+  completedBgColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
+  currentBgColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedBgColor: {r: 0.87, g: 0.87, b: 0.87, a: 1}
+  completedTextColor: {r: 1, g: 1, b: 1, a: 1}
+  currentTextColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
+  lockedTextColor: {r: 0.73, g: 0.73, b: 0.73, a: 1}
 --- !u!1 &7065705944856245453
 GameObject:
   m_ObjectHideFlags: 0
