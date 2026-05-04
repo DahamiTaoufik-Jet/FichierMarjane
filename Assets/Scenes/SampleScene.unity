@@ -780,7 +780,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 369029853}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2073800348}
+        m_TargetAssemblyTypeName: EscapeGame.Journal.UI.PanZoomController, Assembly-CSharp
+        m_MethodName: ZoomOut
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &369029853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -829,6 +841,7 @@ GameObject:
   m_Component:
   - component: {fileID: 379627602}
   - component: {fileID: 379627601}
+  - component: {fileID: 379627603}
   m_Layer: 0
   m_Name: JournalManager
   m_TagString: Untagged
@@ -863,6 +876,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &379627603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379627600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ea77653ac0e66642b8473f33f6b45e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.JournalView
+  toggleKey: 3
+  panelRoot: {fileID: 1786887291}
+  journalManager: {fileID: 379627601}
+  worldContainer: {fileID: 156945355}
+  stageNodePrefab: {fileID: 7049704610884386572, guid: 46d7158198385404cbb236a198456a6b, type: 3}
+  connectorLinePrefab: {fileID: 1911740494766774359, guid: 4cd00ebe2aa764bd4ad1ae8c1fff7ffd, type: 3}
+  progressBar: {fileID: 1162735219}
+  hStep: 130
+  zigAmp: 28
+  routeGap: 140
+  startX: 80
+  activeLineColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
+  inactiveLineColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
 --- !u!4 &401515185 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 614904695034111151, guid: 03e3539fb4bb4fe47be4f1802c7e0663, type: 3}
@@ -950,7 +988,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 405557239}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2073800348}
+        m_TargetAssemblyTypeName: EscapeGame.Journal.UI.PanZoomController, Assembly-CSharp
+        m_MethodName: ResetView
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &405557239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2425,7 +2475,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 923124149}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2073800348}
+        m_TargetAssemblyTypeName: EscapeGame.Journal.UI.PanZoomController, Assembly-CSharp
+        m_MethodName: ZoomIn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &923124149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5180,7 +5242,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1870198004}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 379627603}
+        m_TargetAssemblyTypeName: EscapeGame.Journal.UI.JournalView, Assembly-CSharp
+        m_MethodName: ToggleJournal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1870198004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5799,6 +5873,7 @@ GameObject:
   - component: {fileID: 2073800347}
   - component: {fileID: 2073800346}
   - component: {fileID: 2073800345}
+  - component: {fileID: 2073800348}
   m_Layer: 5
   m_Name: Viewport
   m_TagString: Untagged
@@ -5879,6 +5954,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073800343}
   m_CullTransparentMesh: 1
+--- !u!114 &2073800348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073800343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b962322f5476b484eab725dc9d68c79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.PanZoomController
+  worldContainer: {fileID: 156945355}
+  minScale: 0.35
+  maxScale: 2.2
+  scrollZoomFactor: 0.1
+  buttonZoomIn: 1.25
+  buttonZoomOut: 0.8
 --- !u!4 &2100976674 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 614904695034111151, guid: 03e3539fb4bb4fe47be4f1802c7e0663, type: 3}
