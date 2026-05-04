@@ -26,12 +26,13 @@ public class AnimationBlendScript : MonoBehaviour
     {
         animator = GetComponent<Animator>();
 
-        // Initialisation des actions (Vérifie bien que ces noms existent dans ton Input Action Asset)
         forwardAction = actions.FindAction("Player/Forward");
         backwardAction = actions.FindAction("Player/Backward");
         strafeLeftAction = actions.FindAction("Player/SLeft");
         strafeRightAction = actions.FindAction("Player/SRight");
         sprintAction = actions.FindAction("Player/Sprint");
+
+        actions.Enable();
     }
 
     void Update()
