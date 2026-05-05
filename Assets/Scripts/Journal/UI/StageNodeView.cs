@@ -39,11 +39,13 @@ namespace EscapeGame.Journal.UI
         public Color lockedTextColor = new Color(0.73f, 0.73f, 0.73f);
 
         private StepBehaviour boundStep;
+        private StageModalView modalView;
         private Button button;
 
-        public void Init(StepBehaviour step, int stageIndex)
+        public void Init(StepBehaviour step, int stageIndex, StageModalView modal = null)
         {
             boundStep = step;
+            modalView = modal;
             button = GetComponent<Button>();
 
             // Numero affiche (1-indexed)
@@ -100,21 +102,14 @@ namespace EscapeGame.Journal.UI
 
         private void OnClicked()
         {
+            Debug.Log($"[StageNode] Clic sur step {(boundStep != null ? boundStep.stepData?.stepId : "null")}, state={boundStep?.CurrentState}, modal={modalView != null}");
+
             if (boundStep == null) return;
 
-            switch (boundStep.CurrentState)
+            if (modalView != null)
             {
-                case StepState.Discovered:
-                    Debug.Log($"[Journal] Emplacement : {boundStep.transform.position}");
-                    break;
-
-                case StepState.Resolved:
-                    if (boundStep.stepData != null && boundStep.stepData.initialClue != null
-                        && !boundStep.stepData.initialClue.IsEmpty)
-                    {
-                        Debug.Log($"[Journal] Indice : \"{boundStep.stepData.initialClue.text}\"");
-                    }
-                    break;
+                var data = StageModalData.Build(boundStep);
+                if (data != null) modalView.Show(data);
             }
         }
     }

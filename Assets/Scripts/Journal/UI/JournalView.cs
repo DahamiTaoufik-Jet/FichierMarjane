@@ -38,6 +38,9 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Slider de progression globale.")]
         public Slider progressBar;
 
+        [Tooltip("Modal affiche au clic sur un StageNode.")]
+        public StageModalView stageModal;
+
         [Header("Layout")]
         [Tooltip("Distance horizontale entre deux stages.")]
         public float hStep = 130f;
@@ -176,7 +179,7 @@ namespace EscapeGame.Journal.UI
 
                 var nodeView = nodeGo.GetComponent<StageNodeView>();
                 if (nodeView != null)
-                    nodeView.Init(step, s);
+                    nodeView.Init(step, s, stageModal);
 
                 spawnedObjects.Add(nodeGo);
             }
