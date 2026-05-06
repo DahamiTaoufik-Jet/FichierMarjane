@@ -46,6 +46,14 @@ namespace EscapeGame.Core.Player
                 mainCameraTransform = Camera.main.transform;
         }
 
+        private void LateUpdate()
+        {
+            // Reassigne la Main Camera si la reference est perdue
+            // (changement de mode TPS/FPS, camera desactivee, etc.)
+            if (mainCameraTransform == null && Camera.main != null)
+                mainCameraTransform = Camera.main.transform;
+        }
+
         public void SetFPSMode(bool fps)
         {
             isFPS = fps;

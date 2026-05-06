@@ -254,7 +254,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   requiredLookDuration: 0
-  maxDetectionDistance: 20
+  maxDetectionDistance: 14
   maxValidationDistance: 4
   waveRenderer: {fileID: 0}
   waveSegments: 64

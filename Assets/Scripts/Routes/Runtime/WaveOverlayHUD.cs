@@ -15,11 +15,27 @@ namespace EscapeGame.Routes.Runtime
 
         public LineRenderer Line { get; private set; }
 
+        [Header("Apparence")]
+        [Tooltip("Largeur de la ligne. Augmenter si invisible.")]
+        public float lineWidth = 0.05f;
+
+        [Tooltip("Couleur de la ligne.")]
+        public Color lineColor = new Color(0f, 1f, 0.94f, 1f);
+
         private void Awake()
         {
             Line = GetComponent<LineRenderer>();
-            Line.useWorldSpace = false;
+            Line.useWorldSpace = true;
             Line.enabled = false;
+
+            // Force un material URP-compatible si le material actuel est le Default-Line
+            if (Line.sharedMaterial == null || Line.sharedMaterial.shader.name.Contains("Default"))
+            {
+                Line.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            Line.startColor = lineColor;
+            Line.endColor = lineColor;
+            Line.widthMultiplier = lineWidth;
 
             if (Instance != null && Instance != this)
             {

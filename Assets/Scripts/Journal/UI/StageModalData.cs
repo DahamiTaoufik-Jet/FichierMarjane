@@ -30,9 +30,8 @@ namespace EscapeGame.Journal.UI
         public string PuzzleEncryptedQuestion;
 
         /// <summary>
-        /// Snapshot de la zone a observer (pour PositionalScanPuzzle).
-        /// Ouvert via un bouton "Voir Photo" dans un panel depliable.
-        /// Null tant que le systeme de snapshot n'est pas pret.
+        /// Conserve pour compatibilite avec StageModalView (centre).
+        /// Null pour les PositionalScan : leur snapshot va dans InitialClue.image.
         /// </summary>
         public UnityEngine.Sprite PuzzleSnapshot;
 
@@ -56,26 +55,46 @@ namespace EscapeGame.Journal.UI
             data.StepType = step.stepData != null ? step.stepData.type : StepType.Clue;
 
             // Indice initial de ce bloc (texte OU image OU les deux)
+            // On clone le ClueContent pour pouvoir injecter le snapshot sans
+            // modifier le ScriptableObject original.
             if (step.stepData != null && step.stepData.initialClue != null)
-                data.InitialClue = step.stepData.initialClue;
+            {
+                data.InitialClue = new ClueContent();
+                data.InitialClue.text = step.stepData.initialClue.text;
+                data.InitialClue.image = step.stepData.initialClue.image;
+                data.InitialClue.audio = step.stepData.initialClue.audio;
+            }
+            else
+            {
+                data.InitialClue = new ClueContent();
+            }
 
-            // Zone enigme (seulement si c'est un Puzzle)
+            // Si c'est un PositionalScan, le snapshot REMPLACE l'image de l'indice initial
+            var positional = step as PositionalScanPuzzleStep;
+            if (positional != null && positional.snapshot != null)
+            {
+                data.InitialClue.image = positional.snapshot;
+            }
+
+            // Zone enigme (seulement si c'est un Puzzle avec question textuelle)
             if (data.StepType == StepType.Puzzle && step.stepData != null)
             {
-                // TextPuzzle : question + chiffre
                 if (!string.IsNullOrEmpty(step.stepData.puzzleQuestion))
                 {
-                    data.PuzzleQuestion = step.stepData.puzzleQuestion;
-
+                    // Si chiffre : on masque la question claire et on montre
+                    // uniquement la version chiffree. Le bonus Dechiffreur
+                    // (a coder) viendra inverser ce comportement.
                     if (step.stepData.puzzleEncrypted
                         && !string.IsNullOrEmpty(step.stepData.puzzleEncryptedQuestion))
                     {
                         data.PuzzleEncryptedQuestion = step.stepData.puzzleEncryptedQuestion;
+                        // PuzzleQuestion reste null -> pas affichee
+                    }
+                    else
+                    {
+                        data.PuzzleQuestion = step.stepData.puzzleQuestion;
                     }
                 }
-
-                // Snapshot (placeholder pour plus tard)
-                data.PuzzleSnapshot = null;
             }
 
             // Indice vers le suivant (si resolu)
@@ -88,10 +107,24 @@ namespace EscapeGame.Journal.UI
                     if (route != null)
                     {
                         var next = route.GetNext(step);
-                        if (next != null && next.stepData != null
-                            && next.stepData.initialClue != null)
+                        if (next != null)
                         {
-                            data.NextClue = next.stepData.initialClue;
+                            // Clone le ClueContent du suivant
+                            data.NextClue = new ClueContent();
+                            if (next.stepData != null && next.stepData.initialClue != null)
+                            {
+                                data.NextClue.text = next.stepData.initialClue.text;
+                                data.NextClue.image = next.stepData.initialClue.image;
+                                data.NextClue.audio = next.stepData.initialClue.audio;
+                            }
+
+                            // Si le suivant est un PositionalScan, son snapshot
+                            // devient l'image de l'indice suivant
+                            var nextPositional = next as PositionalScanPuzzleStep;
+                            if (nextPositional != null && nextPositional.snapshot != null)
+                            {
+                                data.NextClue.image = nextPositional.snapshot;
+                            }
                         }
                     }
                 }

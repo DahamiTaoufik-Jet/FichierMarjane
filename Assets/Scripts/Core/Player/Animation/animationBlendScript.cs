@@ -31,8 +31,6 @@ public class AnimationBlendScript : MonoBehaviour
         strafeLeftAction = actions.FindAction("Player/SLeft");
         strafeRightAction = actions.FindAction("Player/SRight");
         sprintAction = actions.FindAction("Player/Sprint");
-
-        actions.Enable();
     }
 
     void Update()

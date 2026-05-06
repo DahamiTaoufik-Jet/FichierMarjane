@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using System;
 
 namespace EscapeGame.Core.Player
 {
@@ -11,6 +12,8 @@ namespace EscapeGame.Core.Player
     /// </summary>
     public class PlayerCamera : MonoBehaviour
     {
+        public static event Action<Transform> FPSCameraActivated;
+
         [Header("Cameras")]
         [Tooltip("CinemachineCamera TPS a la racine de la scene.")]
         public CinemachineCamera tpsVirtualCamera;
@@ -68,7 +71,11 @@ namespace EscapeGame.Core.Player
             }
 
             if (fpsCameraObject != null)
+            {
                 fpsCameraObject.SetActive(enableFPS);
+                if (enableFPS)
+                    FPSCameraActivated?.Invoke(fpsCameraObject.transform);
+            }
 
             if (playerLook != null)
                 playerLook.SetFPSMode(enableFPS);

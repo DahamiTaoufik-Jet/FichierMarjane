@@ -59,14 +59,23 @@ namespace EscapeGame.Routes.Runtime
         [Tooltip("Dot product min entre la direction de vue et la direction vers l'objet pour atteindre waveMinFrequency. 1.0 = centre parfait.")]
         [Range(0f, 1f)] public float waveCenterDotThreshold = 0.95f;
 
+        private const string FPS_CAM_TAG = "FPSCam";
+
         private float currentGazeTimer = 0f;
         private bool  isGazingThisFrame = false;
         private Transform playerTransform;
+        private bool fpsCameraSwitchCheckDone = false;
         private float wavePhase = 0f;
 
         private void Awake()
         {
             ConfigureWaveRenderer();
+            EscapeGame.Core.Player.PlayerCamera.FPSCameraActivated += HandleFPSCameraActivated;
+        }
+
+        private void OnDestroy()
+        {
+            EscapeGame.Core.Player.PlayerCamera.FPSCameraActivated -= HandleFPSCameraActivated;
         }
 
         private void OnValidate()
@@ -77,12 +86,59 @@ namespace EscapeGame.Routes.Runtime
 
         private void Start()
         {
-            // À terme, injecté par un PlayerManager / PlayerContext.
-            if (Camera.main != null)
-                playerTransform = Camera.main.transform;
+            TryAcquireFPSCamera();
+            TryAcquireWaveRenderer();
+        }
 
-            // Auto-resolution du LineRenderer via le singleton si non assigne.
-            if (waveRenderer == null && WaveOverlayHUD.Instance != null)
+        private void TryAcquireFPSCamera()
+        {
+            if (playerTransform != null)
+            {
+                Debug.Log($"[AudioVisualPuzzleStep:{name}] Camera deja acquise : {playerTransform.name}");
+                return;
+            }
+
+            Debug.Log($"[AudioVisualPuzzleStep:{name}] Recherche FPSCam...");
+
+            // Cherche la camera FPS via son tag
+            GameObject fpsCamGO = GameObject.FindWithTag(FPS_CAM_TAG);
+            if (fpsCamGO != null)
+            {
+                Debug.Log($"[AudioVisualPuzzleStep:{name}] FPSCam trouvee : {fpsCamGO.name}");
+                playerTransform = fpsCamGO.transform;
+                return;
+            }
+
+            // Fallback sur Camera.main
+            if (Camera.main != null)
+            {
+                Debug.Log($"[AudioVisualPuzzleStep:{name}] FPSCam introuvable, fallback Camera.main : {Camera.main.name}");
+                playerTransform = Camera.main.transform;
+            }
+            else
+            {
+                Debug.LogWarning($"[AudioVisualPuzzleStep:{name}] Aucune camera trouvee avec le tag '{FPS_CAM_TAG}' et Camera.main est null.");
+            }
+        }
+
+        private void HandleFPSCameraActivated(Transform fpsCameraTransform)
+        {
+            if (fpsCameraSwitchCheckDone) return;
+            fpsCameraSwitchCheckDone = true;
+
+            if (fpsCameraTransform == null) return;
+
+            var fpsCamera = fpsCameraTransform.GetComponentInChildren<Camera>(true);
+            playerTransform = fpsCamera != null ? fpsCamera.transform : fpsCameraTransform;
+
+            TryAcquireWaveRenderer();
+            Debug.Log($"[AudioVisualPuzzleStep:{name}] FPSCam assignee apres switch : {playerTransform.name}");
+        }
+
+        private void TryAcquireWaveRenderer()
+        {
+            if (waveRenderer != null) return;
+            if (WaveOverlayHUD.Instance != null)
             {
                 waveRenderer = WaveOverlayHUD.Instance.Line;
                 ConfigureWaveRenderer();
@@ -91,23 +147,32 @@ namespace EscapeGame.Routes.Runtime
 
         private void Update()
         {
-            if (IsResolved || playerTransform == null) return;
+            if (IsResolved) return;
+
+            // Lazy retry : la FPSCamera ou le WaveOverlayHUD peuvent etre
+            // inactifs au Start (mode TPS au demarrage)
+            if (playerTransform == null)
+            {
+                TryAcquireFPSCamera();
+                if (playerTransform == null) return;
+            }
+            if (waveRenderer == null)
+                TryAcquireWaveRenderer();
+
+            float distance = Vector3.Distance(transform.position, playerTransform.position);
+
+            if (distance > maxDetectionDistance)
+            {
+                HideWave();
+                currentGazeTimer = 0f;
+                isGazingThisFrame = false;
+                return;
+            }
+
+            UpdateWaveVisual(distance);
 
             if (isGazingThisFrame)
             {
-                float distance = Vector3.Distance(transform.position, playerTransform.position);
-
-                // Hors de portee de DETECTION : pas d'onde et pas de timer
-                if (distance > maxDetectionDistance)
-                {
-                    HideWave();
-                    currentGazeTimer = 0f;
-                    isGazingThisFrame = false;
-                    return;
-                }
-
-                // Dans la zone de detection : l'onde s'affiche.
-                // Le timer ne progresse que dans la zone de VALIDATION (plus restrictive).
                 if (distance <= maxValidationDistance)
                 {
                     currentGazeTimer += Time.deltaTime;
@@ -119,24 +184,15 @@ namespace EscapeGame.Routes.Runtime
                 }
                 else
                 {
-                    // Visible mais trop loin pour valider : on reset.
                     currentGazeTimer = 0f;
                 }
-
-                UpdateWaveVisual(distance);
-
-                // Le flag doit être renvoyé par OnHover à la frame suivante,
-                // sinon le timer redescend.
-                isGazingThisFrame = false;
             }
             else
             {
-                // Pas hover : on reset notre timer mais on NE TOUCHE PAS au LineRenderer.
-                // Il est partage avec les autres instances : seule celle qui est hover
-                // dessine, et OnHoverExit (appele par le scanner sur changement de cible)
-                // se charge de masquer l'onde.
                 currentGazeTimer = 0f;
             }
+
+            isGazingThisFrame = false;
         }
 
         public override void OnHover()
@@ -169,7 +225,6 @@ namespace EscapeGame.Routes.Runtime
             base.OnHoverExit();
             isGazingThisFrame = false;
             currentGazeTimer = 0f;
-            HideWave();
         }
 
         protected override void ResolveStep()
@@ -185,15 +240,13 @@ namespace EscapeGame.Routes.Runtime
         private void ConfigureWaveRenderer()
         {
             if (waveRenderer == null) return;
-            // Local space pour que les positions soient relatives au transform du
-            // LineRenderer (lui-meme parente sous la cam FPS = effet overlay).
-            waveRenderer.useWorldSpace = false;
+            waveRenderer.useWorldSpace = true;
             waveRenderer.enabled = false;
         }
 
         private void UpdateWaveVisual(float distance)
         {
-            if (waveRenderer == null) return;
+            if (waveRenderer == null || playerTransform == null) return;
 
             // Amplitude : 1 a distance 0, 0 a distance >= maxDetectionDistance
             float safeMax = Mathf.Max(0.0001f, maxDetectionDistance);
@@ -211,18 +264,27 @@ namespace EscapeGame.Routes.Runtime
             wavePhase += waveSpeed * Time.deltaTime;
             if (wavePhase > Mathf.PI * 2f) wavePhase -= Mathf.PI * 2f;
 
-            // Rendu en LOCAL space : x = horizontal, y = vertical, z = profondeur ecran
+            // Rendu en WORLD space : on calcule les positions par rapport
+            // a la camera active pour que la ligne soit toujours visible
             waveRenderer.enabled = true;
             if (waveRenderer.positionCount != waveSegments)
                 waveRenderer.positionCount = waveSegments;
+
+            Vector3 camPos = playerTransform.position;
+            Vector3 camFwd = playerTransform.forward;
+            Vector3 camRight = playerTransform.right;
+            Vector3 camUp = playerTransform.up;
+
+            // Point d'ancrage : devant la camera, decale vers le bas
+            Vector3 anchor = camPos + camFwd * waveForwardDistance + camUp * waveVerticalOffset;
 
             float twoPiFreq = 2f * Mathf.PI * frequency;
             for (int i = 0; i < waveSegments; i++)
             {
                 float t = (float)i / (waveSegments - 1);
-                float xLocal = (t - 0.5f) * waveLength;
-                float yLocal = waveVerticalOffset + amplitude * Mathf.Sin(twoPiFreq * t + wavePhase);
-                waveRenderer.SetPosition(i, new Vector3(xLocal, yLocal, waveForwardDistance));
+                float xOffset = (t - 0.5f) * waveLength;
+                float yOffset = amplitude * Mathf.Sin(twoPiFreq * t + wavePhase);
+                waveRenderer.SetPosition(i, anchor + camRight * xOffset + camUp * yOffset);
             }
         }
 

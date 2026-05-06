@@ -1,7 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace EscapeGame.Routes.Runtime
 {
@@ -52,6 +55,9 @@ namespace EscapeGame.Routes.Runtime
 
         [Tooltip("Dessine un gizmo runtime sur le spot choisi + ligne vers le joueur.")]
         public bool drawRuntimeGizmos = true;
+
+        /// <summary>Snapshot genere au chargement depuis le scan spot vers la cible.</summary>
+        [HideInInspector] public Sprite snapshot;
 
         // ====================================================================
         // Runtime
@@ -122,24 +128,26 @@ namespace EscapeGame.Routes.Runtime
 
         private void TryAcquirePlayer()
         {
-            var cc = FindFirstObjectByType<CharacterController>();
-            if (cc != null)
-                playerTransform = cc.transform;
-
-            if (Camera.main != null)
+            if (playerTransform == null)
             {
-                cameraTransform = Camera.main.transform;
-                return;
+                var cc = FindFirstObjectByType<CharacterController>();
+                if (cc != null)
+                    playerTransform = cc.transform;
             }
 
-            var cams = FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < cams.Length; i++)
+            if (cameraTransform == null)
             {
-                if (cams[i] != null && cams[i].CompareTag("MainCamera"))
+                // Priorite : FPSCamera via tag
+                GameObject fpsCamGO = GameObject.FindWithTag("FPSCam");
+                if (fpsCamGO != null)
                 {
-                    cameraTransform = cams[i].transform;
+                    cameraTransform = fpsCamGO.transform;
                     return;
                 }
+
+                // Fallback sur Camera.main
+                if (Camera.main != null)
+                    cameraTransform = Camera.main.transform;
             }
         }
 
@@ -253,6 +261,94 @@ namespace EscapeGame.Routes.Runtime
         {
             base.ResolveStep();
             ApplyEmissive(idleEmissive);
+        }
+
+        // ====================================================================
+        // Snapshot
+        // ====================================================================
+
+        [Header("Snapshot")]
+        [Tooltip("Resolution du snapshot genere au chargement.")]
+        public int snapshotWidth = 512;
+        public int snapshotHeight = 512;
+
+        [Tooltip("Champ de vision de la camera de capture.")]
+        public float snapshotFOV = 60f;
+
+        [Tooltip("Hauteur ajoutee a la position du spot pour simuler la vue du joueur.")]
+        public float snapshotEyeOffset = 1.6f;
+
+        /// <summary>
+        /// Lance la capture du snapshot via une coroutine (necessaire pour URP).
+        /// Appele par le ProceduralRouteGenerator apres Configure().
+        /// </summary>
+        public void CaptureSnapshot()
+        {
+            if (!spotChosen)
+            {
+                Debug.LogWarning($"[PositionalScanPuzzleStep:{name}] CaptureSnapshot appele sans spot configure.");
+                return;
+            }
+            StartCoroutine(CaptureSnapshotCoroutine());
+        }
+
+        private IEnumerator CaptureSnapshotCoroutine()
+        {
+            // Attendre la fin de la frame pour que la scene soit entierement chargee
+            yield return new WaitForEndOfFrame();
+
+            // Camera temporaire avec composant URP
+            var camGO = new GameObject("SnapshotCam_Temp");
+            var cam = camGO.AddComponent<Camera>();
+            var urpData = camGO.AddComponent<UniversalAdditionalCameraData>();
+            urpData.renderType = CameraRenderType.Base;
+
+            cam.enabled = false;
+            cam.fieldOfView = snapshotFOV;
+            cam.clearFlags = CameraClearFlags.Skybox;
+            cam.cullingMask = ~0;
+
+            // Position : spot + offset vertical pour simuler les yeux
+            Vector3 eyePos = chosenSpot.position + Vector3.up * snapshotEyeOffset;
+            camGO.transform.position = eyePos;
+            camGO.transform.LookAt(transform.position);
+
+            // Render dans une RenderTexture
+            var rt = RenderTexture.GetTemporary(snapshotWidth, snapshotHeight, 24, RenderTextureFormat.ARGB32);
+            cam.targetTexture = rt;
+            cam.Render();
+
+            // Lire les pixels dans une Texture2D
+            RenderTexture.active = rt;
+            var tex = new Texture2D(snapshotWidth, snapshotHeight, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, snapshotWidth, snapshotHeight), 0, 0);
+            tex.Apply();
+            RenderTexture.active = null;
+
+            // Nettoyage camera + RT
+            cam.targetTexture = null;
+            RenderTexture.ReleaseTemporary(rt);
+            Object.Destroy(camGO);
+
+            // Conversion en Sprite
+            snapshot = Sprite.Create(tex,
+                new Rect(0, 0, snapshotWidth, snapshotHeight),
+                new Vector2(0.5f, 0.5f));
+
+            // Sauvegarde debug en PNG (editeur uniquement)
+#if UNITY_EDITOR
+            string debugDir = Application.dataPath + "/_Debug";
+            if (!System.IO.Directory.Exists(debugDir))
+                System.IO.Directory.CreateDirectory(debugDir);
+
+            string safeName = name.Replace(" ", "_").Replace("/", "_");
+            string path = debugDir + "/Snapshot_" + safeName + ".png";
+            System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
+            Debug.Log($"[PositionalScanPuzzleStep:{name}] Snapshot debug sauvegarde : {path}");
+#endif
+
+            if (verboseLogs)
+                Debug.Log($"[PositionalScanPuzzleStep:{name}] Snapshot capture ({snapshotWidth}x{snapshotHeight}) depuis {eyePos} vers {transform.position}.");
         }
 
         // ====================================================================

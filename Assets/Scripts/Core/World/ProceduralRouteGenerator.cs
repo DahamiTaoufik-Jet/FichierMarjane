@@ -238,7 +238,10 @@ namespace EscapeGame.Core.World
                 // spotId pour matcher les ScanSpots.
                 var positional = step as PositionalScanPuzzleStep;
                 if (positional != null)
+                {
                     InjectScanSpots(positional, assignment.Placeholder);
+                    positional.CaptureSnapshot();
+                }
 
                 if (cleanupUsedPlaceholders && assignment.Placeholder != null)
                     Destroy(assignment.Placeholder.gameObject);

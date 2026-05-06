@@ -11,7 +11,7 @@ namespace EscapeGame.Core.Player
     {
         [Header("Scanner Properties")]
         public float scanEffectiveRange = 8f;
-        public float scanRadius = 0.5f; // Used to simulate a circular UI center.
+        public float scanRadius = 0.5f; // Obsolete with Raycast scan.
         public LayerMask scannableLayer;
         
         [Header("References")]
@@ -32,10 +32,10 @@ namespace EscapeGame.Core.Player
         {
             if (fpsCamera == null) return;
 
-            // SphereCast from the camera center
+            // Raycast from the camera center
             Ray ray = new Ray(fpsCamera.transform.position, fpsCamera.transform.forward);
             
-            if (Physics.SphereCast(ray, scanRadius, out RaycastHit hitInfo, scanEffectiveRange, scannableLayer))
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, scanEffectiveRange, scannableLayer))
             {
                 IScannable detectedScannable = hitInfo.collider.GetComponentInParent<IScannable>();
 
