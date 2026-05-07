@@ -9,7 +9,8 @@ namespace EscapeGame.Journal.UI
     /// <summary>
     /// Visuel d'un noeud d'etape sur la carte du journal.
     /// Affiche un numero, une couleur de fond et une icone selon l'etat
-    /// (Resolved/Discovered/Locked → Completed/Current/Locked).
+    /// (Resolved/Discovered/Locked). Supporte le mode selection generique
+    /// via <see cref="JournalSelectionMode"/>.
     /// </summary>
     [RequireComponent(typeof(Button))]
     public class StageNodeView : MonoBehaviour
@@ -30,20 +31,24 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Icone affichee quand l'etape est Locked (cadenas ferme).")]
         public GameObject lockClosedIcon;
 
-        [Header("Couleurs")]
+        [Header("Couleurs normales")]
         public Color completedBgColor = new Color(0.12f, 0.12f, 0.12f);
         public Color currentBgColor = Color.white;
         public Color lockedBgColor = new Color(0.87f, 0.87f, 0.87f);
 
-        [Tooltip("Couleur du fond quand le bloc est eligible au dechiffrement (mode Dechiffreur).")]
-        public Color decryptEligibleBgColor = new Color(0.9f, 0.7f, 0.1f);
-
-        [Tooltip("Couleur du fond quand le bloc n'est PAS eligible en mode Dechiffreur.")]
-        public Color decryptIneligibleBgColor = new Color(0.5f, 0.5f, 0.5f, 0.4f);
-
         public Color completedTextColor = Color.white;
         public Color currentTextColor = new Color(0.12f, 0.12f, 0.12f);
         public Color lockedTextColor = new Color(0.73f, 0.73f, 0.73f);
+
+        [Header("Couleurs mode selection")]
+        [Tooltip("Jaune dore (Dechiffreur).")]
+        public Color goldEligibleColor = new Color(0.9f, 0.7f, 0.1f);
+
+        [Tooltip("Vert (Resolveur).")]
+        public Color greenEligibleColor = new Color(0.2f, 0.8f, 0.3f);
+
+        [Tooltip("Grise pour les blocs non eligibles en mode selection.")]
+        public Color ineligibleBgColor = new Color(0.5f, 0.5f, 0.5f, 0.4f);
 
         private StepBehaviour boundStep;
         private StageModalView modalView;
@@ -55,13 +60,11 @@ namespace EscapeGame.Journal.UI
             modalView = modal;
             button = GetComponent<Button>();
 
-            // Numero affiche (1-indexed)
             if (numberText != null)
                 numberText.text = (stageIndex + 1).ToString("00");
 
             Refresh();
 
-            // Clic : feedback contextuel
             if (button != null)
             {
                 button.onClick.RemoveAllListeners();
@@ -74,25 +77,24 @@ namespace EscapeGame.Journal.UI
             if (boundStep == null) return;
 
             StepState state = boundStep.CurrentState;
-            bool inDecryptMode = DecryptionTracker.IsInSelectionMode;
-            bool isEligible = false;
-
-            // Verifier si ce bloc est eligible au dechiffrement
-            if (inDecryptMode && boundStep.stepData != null)
-            {
-                isEligible = DecryptionTracker.IsEligibleForDecryption(
-                    boundStep.stepData.puzzleEncrypted,
-                    boundStep.stepData.puzzleEncryptedQuestion,
-                    boundStep.stepData.stepId);
-            }
+            bool inSelection = JournalSelectionMode.IsActive;
+            bool isEligible = inSelection && JournalSelectionMode.IsEligible(boundStep);
 
             // Fond
             if (background != null)
             {
-                if (inDecryptMode)
+                if (inSelection)
                 {
-                    // Mode dechiffrement : jaune dore pour eligible, grise pour les autres
-                    background.color = isEligible ? decryptEligibleBgColor : decryptIneligibleBgColor;
+                    if (isEligible)
+                    {
+                        background.color = JournalSelectionMode.ColorType == SelectionColorType.Green
+                            ? greenEligibleColor
+                            : goldEligibleColor;
+                    }
+                    else
+                    {
+                        background.color = ineligibleBgColor;
+                    }
                 }
                 else
                 {
@@ -108,10 +110,8 @@ namespace EscapeGame.Journal.UI
             // Texte
             if (numberText != null)
             {
-                if (inDecryptMode)
-                {
+                if (inSelection)
                     numberText.color = isEligible ? currentTextColor : lockedTextColor;
-                }
                 else
                 {
                     switch (state)
@@ -123,16 +123,16 @@ namespace EscapeGame.Journal.UI
                 }
             }
 
-            // Icones
-            if (doubleCheckIcon != null) doubleCheckIcon.SetActive(!inDecryptMode && state == StepState.Resolved);
-            if (lockOpenIcon != null)    lockOpenIcon.SetActive(!inDecryptMode && state == StepState.Discovered);
-            if (lockClosedIcon != null)  lockClosedIcon.SetActive(!inDecryptMode && state == StepState.Locked);
+            // Icones (masquees en mode selection)
+            if (doubleCheckIcon != null) doubleCheckIcon.SetActive(!inSelection && state == StepState.Resolved);
+            if (lockOpenIcon != null)    lockOpenIcon.SetActive(!inSelection && state == StepState.Discovered);
+            if (lockClosedIcon != null)  lockClosedIcon.SetActive(!inSelection && state == StepState.Locked);
 
             // Interactivite
             if (button != null)
             {
-                if (inDecryptMode)
-                    button.interactable = isEligible; // Seuls les blocs eligibles sont cliquables
+                if (inSelection)
+                    button.interactable = isEligible;
                 else
                     button.interactable = state != StepState.Locked;
             }
@@ -142,30 +142,21 @@ namespace EscapeGame.Journal.UI
         {
             if (boundStep == null) return;
 
-            // ---- Mode dechiffrement ----
-            if (DecryptionTracker.IsInSelectionMode)
+            // ---- Mode selection (Dechiffreur, Resolveur, etc.) ----
+            if (JournalSelectionMode.IsActive)
             {
-                if (boundStep.stepData == null) return;
-
-                bool eligible = DecryptionTracker.IsEligibleForDecryption(
-                    boundStep.stepData.puzzleEncrypted,
-                    boundStep.stepData.puzzleEncryptedQuestion,
-                    boundStep.stepData.stepId);
-
-                if (!eligible)
+                if (!JournalSelectionMode.IsEligible(boundStep))
                 {
-                    Debug.Log($"[StageNode] Bloc '{boundStep.stepData.stepId}' non eligible au dechiffrement.");
+                    Debug.Log($"[StageNode] Bloc '{boundStep.stepData?.stepId}' non eligible.");
                     return;
                 }
 
-                Debug.Log($"[StageNode] Dechiffrement du bloc '{boundStep.stepData.stepId}'.");
-                DecryptionTracker.SelectStep(boundStep.stepData.stepId);
+                Debug.Log($"[StageNode] Selection du bloc '{boundStep.stepData?.stepId}'.");
+                JournalSelectionMode.Select(boundStep);
                 return;
             }
 
             // ---- Mode normal ----
-            Debug.Log($"[StageNode] Clic sur step {(boundStep != null ? boundStep.stepData?.stepId : "null")}, state={boundStep?.CurrentState}, modal={modalView != null}");
-
             if (modalView != null)
             {
                 var data = StageModalData.Build(boundStep);

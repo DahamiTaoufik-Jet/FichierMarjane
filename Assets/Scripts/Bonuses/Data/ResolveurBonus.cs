@@ -7,12 +7,12 @@ using EscapeGame.Routes.Runtime;
 namespace EscapeGame.Bonuses.Data
 {
     /// <summary>
-    /// Bonus Dechiffreur : ouvre le journal et laisse le joueur choisir
-    /// UNE enigme chiffree a reveler.
+    /// Bonus Resolveur : ouvre le journal et laisse le joueur choisir
+    /// UNE enigme deja revelee (Discovered) pour la resoudre de force.
     /// Utilise <see cref="JournalSelectionMode"/> pour le mode selection.
     /// </summary>
-    [CreateAssetMenu(menuName = "EscapeGame/Bonuses/Dechiffreur", fileName = "DechiffreurBonus")]
-    public class DechiffreurBonus : BonusItem
+    [CreateAssetMenu(menuName = "EscapeGame/Bonuses/Resolveur", fileName = "ResolveurBonus")]
+    public class ResolveurBonus : BonusItem
     {
         private void Reset() { consumeOnUse = false; }
 
@@ -23,7 +23,7 @@ namespace EscapeGame.Bonuses.Data
             var journalView = Object.FindAnyObjectByType<JournalView>();
             if (journalView == null)
             {
-                Debug.LogWarning("[DechiffreurBonus] JournalView introuvable.");
+                Debug.LogWarning("[ResolveurBonus] JournalView introuvable.");
                 return;
             }
 
@@ -31,16 +31,13 @@ namespace EscapeGame.Bonuses.Data
             JournalSelectionMode.Enter(
                 isEligible: step =>
                 {
-                    if (step.stepData == null) return false;
-                    return DecryptionTracker.IsEligibleForDecryption(
-                        step.stepData.puzzleEncrypted,
-                        step.stepData.puzzleEncryptedQuestion,
-                        step.stepData.stepId);
+                    // Eligible = Discovered (revele) + pas encore resolu
+                    return step.CurrentState == StepState.Discovered;
                 },
                 onSelected: step =>
                 {
-                    DecryptionTracker.MarkDecrypted(step.stepData.stepId);
-                    Debug.Log($"[DechiffreurBonus] Bloc '{step.stepData.stepId}' dechiffre.");
+                    step.ForceResolve();
+                    Debug.Log($"[ResolveurBonus] Step '{step.stepData?.stepId}' resolu de force.");
                 },
                 onDone: () =>
                 {
@@ -48,11 +45,11 @@ namespace EscapeGame.Bonuses.Data
                         context.inventory.RemoveItem(this);
                     journalView.ExitSelectionMode();
                 },
-                colorType: SelectionColorType.Gold
+                colorType: SelectionColorType.Green
             );
 
             journalView.OpenForSelection();
-            Debug.Log("[DechiffreurBonus] Journal ouvert en mode selection.");
+            Debug.Log("[ResolveurBonus] Journal ouvert en mode selection.");
         }
     }
 }

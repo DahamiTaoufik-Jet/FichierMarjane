@@ -108,12 +108,12 @@ namespace EscapeGame.Journal.UI
         {
             if (panelRoot == null) return;
 
-            // Si on est en mode dechiffrement et que le joueur ferme le journal,
-            // annuler le mode selection pour ne pas rester bloque.
-            if (panelRoot.activeSelf && DecryptionTracker.IsInSelectionMode)
+            // Si on est en mode selection bonus et que le joueur ferme le journal,
+            // annuler le mode pour ne pas rester bloque.
+            if (panelRoot.activeSelf && JournalSelectionMode.IsActive)
             {
-                DecryptionTracker.ExitSelectionMode();
-                Debug.Log("[JournalView] Mode dechiffrement annule (fermeture journal).");
+                JournalSelectionMode.Exit();
+                Debug.Log("[JournalView] Mode selection annule (fermeture journal).");
             }
 
             bool open = !panelRoot.activeSelf;
@@ -139,14 +139,14 @@ namespace EscapeGame.Journal.UI
         }
 
         // ====================================================================
-        // Mode dechiffrement (appele par DechiffreurBonus)
+        // Mode selection bonus (Dechiffreur, Resolveur, etc.)
         // ====================================================================
 
         /// <summary>
-        /// Ouvre le journal de force pour le mode selection du Dechiffreur.
+        /// Ouvre le journal de force pour le mode selection d'un bonus.
         /// Si le journal est deja ouvert, le reconstruit simplement.
         /// </summary>
-        public void OpenForDecryption()
+        public void OpenForSelection()
         {
             if (panelRoot == null) return;
 
@@ -159,19 +159,17 @@ namespace EscapeGame.Journal.UI
             }
 
             Rebuild();
-            Debug.Log("[JournalView] Ouvert en mode dechiffrement — choisissez un bloc chiffre.");
+            Debug.Log("[JournalView] Ouvert en mode selection bonus.");
         }
 
         /// <summary>
-        /// Ferme le journal apres un dechiffrement reussi.
-        /// Appele par le callback du DechiffreurBonus.
+        /// Ferme le journal apres une selection reussie.
+        /// Appele par le callback des bonus (Dechiffreur, Resolveur).
         /// </summary>
-        public void ExitDecryptionMode()
+        public void ExitSelectionMode()
         {
-            // Rebuild pour mettre a jour l'affichage du bloc dechiffre
             Rebuild();
 
-            // Fermer le journal
             if (panelRoot != null)
             {
                 panelRoot.SetActive(false);
@@ -180,7 +178,7 @@ namespace EscapeGame.Journal.UI
                 Cursor.visible = false;
             }
 
-            Debug.Log("[JournalView] Mode dechiffrement termine, journal ferme.");
+            Debug.Log("[JournalView] Mode selection termine, journal ferme.");
         }
 
         private void OnEnable()
