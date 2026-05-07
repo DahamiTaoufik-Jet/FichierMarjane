@@ -171,9 +171,9 @@ RectTransform:
   m_Father: {fileID: 2073800344}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 300}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -0.000067270674}
+  m_SizeDelta: {x: 1720, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &187976040
 GameObject:
@@ -818,12 +818,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 324834333}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2020857702}
+  m_Father: {fileID: 1533122272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ea77653ac0e66642b8473f33f6b45e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.JournalView
-  toggleKey: 3
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   panelRoot: {fileID: 1786887291}
   journalManager: {fileID: 379627601}
   worldContainer: {fileID: 156945355}
@@ -1224,6 +1224,7 @@ MonoBehaviour:
   zigAmp: 28
   routeGap: 140
   startX: 80
+  startY: -100
   activeLineColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
   inactiveLineColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
 --- !u!4 &401515185 stripped
@@ -5883,6 +5884,8 @@ RectTransform:
   - {fileID: 187976041}
   - {fileID: 475634587}
   - {fileID: 1826311597}
+  - {fileID: 324834334}
+  - {fileID: 2102253359}
   m_Father: {fileID: 2020857702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6344,6 +6347,18 @@ PrefabInstance:
     - target: {fileID: 8623235331836178600, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8865942060738893883, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
+      propertyPath: scanEffectiveRange
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8865942060738893883, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
+      propertyPath: positionalScanRange
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 8865942060738893883, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
+      propertyPath: positionalScanLayer.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7031,8 +7046,6 @@ RectTransform:
   m_Children:
   - {fileID: 1361427233}
   - {fileID: 1533122272}
-  - {fileID: 324834334}
-  - {fileID: 2102253359}
   m_Father: {fileID: 1786887295}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7280,10 +7293,10 @@ RectTransform:
   - {fileID: 1818362129}
   m_Father: {fileID: 448214774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -17}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 440}
+  m_SizeDelta: {x: 1720, y: 863}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2073800345
 MonoBehaviour:
@@ -7384,12 +7397,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2102253358}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2020857702}
+  m_Father: {fileID: 1533122272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8755,6 +8768,7 @@ MonoBehaviour:
   questionLabel: {fileID: 436993172}
   answerInput: {fileID: 1382904175}
   feedbackLabel: {fileID: 1893077093}
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   cancelKey: 60
 --- !u!114 &8392449177518892066
 MonoBehaviour:
@@ -8775,8 +8789,6 @@ MonoBehaviour:
   arrowLeft: {fileID: 775060410}
   arrowRight: {fileID: 1223369924}
   actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  toggleKey: 31
-  useKey: 31
   closeKey: 60
   inventory: {fileID: 8409286329420425217}
 --- !u!114 &8409286329420425217
@@ -8794,6 +8806,8 @@ MonoBehaviour:
   playerContext: {fileID: 154456717}
   startingItems:
   - {fileID: 11400000, guid: 7c5acaec435f64ba2baa92c6ad500a81, type: 2}
+  - {fileID: 11400000, guid: 9f1dcf576bd474b6fa4c6bf278083ee5, type: 2}
+  - {fileID: 11400000, guid: d1117521696944389918805f7d154ea8, type: 2}
 --- !u!1001 &8565791443308250516
 PrefabInstance:
   m_ObjectHideFlags: 0

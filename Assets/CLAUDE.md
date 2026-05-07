@@ -13,15 +13,19 @@ Jeu d'escape en vue first-person/third-person. Le joueur explore un monde et ré
 ```
 Assets/Scripts/
 ├── Bonuses/Data/
-│   └── BonusData.cs                  abstract SO, Strategy pour les bonus (Execute(PlayerContext))
+│   ├── BonusItem.cs                  abstract SO, Strategy pour les bonus (Execute(PlayerContext))
+│   ├── DechiffreurBonus.cs           ouvre le journal en mode selection, dechiffre 1 bloc
+│   └── DecryptionTracker.cs          static : selection mode + suivi des blocs dechiffres
 │
 ├── Core/
 │   ├── Interfaces/IScannable.cs      OnHover/OnScan/Reveal/OnHoverExit
 │   ├── Player/
 │   │   ├── PlayerContext.cs          enveloppe : fpsCamera, inventory, scanner
 │   │   ├── PlayerCamera.cs           bascule TPS/FPS (touche C)
-│   │   ├── PlayerLook.cs             rotation tête/corps indépendante
-│   │   └── PlayerScanner.cs          SphereCast FPS, OnHover continu / OnScan validation
+│   │   ├── PlayerLook.cs             rotation tête/corps indépendante (bloqué si UIState.IsAnyUIOpen)
+│   │   ├── PlayerControls.cs         mouvement (bloqué si UIState.IsAnyUIOpen)
+│   │   ├── PlayerScanner.cs          dual ray : main ray (8m) + positional ray (30m, configurable)
+│   │   └── UIState.cs                compteur statique d'UIs ouvertes + IsInputFieldActive
 │   └── World/
 │       ├── PlaceholderNode.cs        composant à poser sur Empty GameObjects
 │       ├── ProceduralRouteGenerator.cs  orchestrateur de la génération
@@ -66,9 +70,11 @@ Assets/Scripts/
 ├── Journal/
 │   ├── Runtime/JournalManager.cs     singleton, s'abonne à RouteEvents
 │   └── UI/
-│       ├── JournalView.cs            panneau racine
-│       ├── RouteRowView.cs           ligne de blocs + fond doré quand Completed
-│       └── StepBlockView.cs          bouton avec 3 visuels selon StepState
+│       ├── JournalView.cs            panneau racine, mode dechiffrement, InputAction OpenJournal
+│       ├── StageNodeView.cs          bloc cliquable, coloration jaune en mode dechiffrement
+│       ├── StageModalView.cs         modal detail d'un bloc
+│       ├── StageModalData.cs         donnees du modal (gere puzzleEncrypted vs decrypted)
+│       └── TextPuzzlePanelView.cs    HUD enigme textuelle (2 phases : hover → interact)
 │
 └── Interactables/                    LEGACY (anciens scripts, à supprimer quand
     ├── Clues/CluePanel.cs              les prefabs Indice/Radio auront migré)
@@ -117,13 +123,9 @@ Le `ProceduralRouteGenerator` au `Start` :
 - **Encodage** : UTF-8 sans BOM. Éviter les accents dans les chaînes affichées (Unity Windows peut avoir des soucis sur les vieilles consoles).
 - **Éviter les nouveaux fichiers** : la base est posée. Toute nouvelle fonctionnalité doit s'ajouter dans la structure existante.
 
-## Code legacy à supprimer
+## Code legacy (peut etre supprime)
 
-Quand les prefabs `Assets/Prefab/Indice.prefab` et `Assets/Prefab/Radio.prefab` auront été remplacés par des prefabs basés sur `ClueStep` et `AudioVisualPuzzleStep` :
-
-- `Assets/Scripts/Interactables/Clues/CluePanel.cs`
-- `Assets/Scripts/Interactables/Puzzles/PuzzleBase.cs`
-- `Assets/Scripts/Interactables/Puzzles/AudioVisualPuzzle.cs`
+- `Assets/Scripts/Interactables/` (CluePanel, PuzzleBase, AudioVisualPuzzle)
 - `Assets/Scripts/Core/World/LevelGenerator.cs`
 - Le champ `zoneID` de `PlaceholderNode` (tag `Legacy`)
 
@@ -141,17 +143,19 @@ Quand les prefabs `Assets/Prefab/Indice.prefab` et `Assets/Prefab/Radio.prefab` 
 ## État actuel
 
 - ✅ Couche Data complète (StepData, PlacementData, RewardData, RouteGeneratorConfig, LetterAlphabet, ClueContent)
-- ✅ Couche Runtime (StepBehaviour, ClueStep, PuzzleStep, AudioVisualPuzzleStep, RouteRuntime)
+- ✅ Couche Runtime (StepBehaviour, ClueStep, PuzzleStep, AudioVisualPuzzleStep, TextPuzzleStep, PositionalScanPuzzleStep, RouteRuntime)
 - ✅ Services (RouteManager singleton + chaînage + distribution récompense)
 - ✅ Bus d'événements (RouteEvents, InventoryEvents)
-- ✅ Inventaire (Inventory, ItemData, LetterItem, BonusItem)
-- ✅ Journal (JournalManager + UI views)
+- ✅ Inventaire (Inventory, ItemData, LetterItem, BonusItem) + UI panneau (InventoryPanelView)
+- ✅ Journal (JournalManager + JournalView carte 2D avec pan/zoom, StageNodeView, StageModalView)
 - ✅ Génération procédurale (Planner + ProceduralRouteGenerator avec mot de passe)
-- ⏳ Tests manuels en scène pas encore validés bout-en-bout (en cours côté utilisateur)
-- ⏳ Migration des prefabs Indice/Radio vers ClueStep/AudioVisualPuzzleStep
-- ⏳ UI réelle pour révéler `ClueContent` au joueur (pour le moment, simple Debug.Log)
-- ⏳ Pas de système de sauvegarde / persistance
-- ⏳ Bonus existant : seulement la base abstraite `BonusData`. Implémentations concrètes (PathFinder, Dechiffreur, Resolver…) à écrire.
+- ✅ UIState : blocage mouvement/visée/scan quand une UI est ouverte (compteur imbriqué)
+- ✅ Input System : Game action map (Select/Enter, OpenJournal/Tab, ToggleBonusInventory/Q)
+- ✅ Scanner dual ray : ray principal (8m, tout sauf PositionalScan) + ray positionnel (30m, configurable)
+- ✅ Bonus Déchiffreur : mode sélection interactif dans le journal (blocs jaunes, consommation au clic)
+- ✅ Enigmes textuelles : TextPuzzlePanelView avec phases hover/interact, saisie sur Enter
+- ✅ Migration prefabs Indice/Radio vers ClueStep/AudioVisualPuzzleStep
+- ✅ UI révélation des indices (ClueContent)
 
 ## Pièges à éviter
 

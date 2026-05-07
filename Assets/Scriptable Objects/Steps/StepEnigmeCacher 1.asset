@@ -15,7 +15,7 @@ MonoBehaviour:
   stepId: StepEnigme
   type: 1
   initialClue:
-    text: Prepare toi a une enigme cacher
+    text: Prepare toi a une enigme cacher AUTRE
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
@@ -25,6 +25,6 @@ MonoBehaviour:
   puzzleQuestion: Animal qui vis parmis nous
   puzzleAnswer: etranger
   puzzleEncrypted: 1
-  puzzleEncryptedQuestion: haw haw
+  puzzleEncryptedQuestion: kuyazgflahzdbcdjlhazfkjazvhkjagvdzc
   cluePrefab: {fileID: 0}
   puzzlePrefab: {fileID: 153127477668461108, guid: 11c0ea3311c077d418857204497bc25b, type: 3}

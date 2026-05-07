@@ -20,11 +20,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f1e07f12f9671864993aca4c76762351, type: 2}
   - {fileID: 11400000, guid: d682c1915f4f4c547a195db9ec9b9746, type: 2}
   - {fileID: 11400000, guid: 6e9757f971b274575a253952d2424e3c, type: 2}
+  - {fileID: 11400000, guid: 9b14a8bb5b1fd402c818eda93e6bdb0f, type: 2}
   passwordWords: []
   minPasswordLength: 2
   letterAlphabet: {fileID: 11400000, guid: 2939724f6b6e8154f8671806d7b0d83f, type: 2}
   bonusPool:
   - bonus: {fileID: 11400000, guid: 90ee05110f457354bb1567814efe797a, type: 2}
+    maxCount: 5
+  - bonus: {fileID: 11400000, guid: 7c5acaec435f64ba2baa92c6ad500a81, type: 2}
+    maxCount: 5
+  - bonus: {fileID: 11400000, guid: 9f1dcf576bd474b6fa4c6bf278083ee5, type: 2}
     maxCount: 5
   minRouteLength: 3
   maxRouteLength: 5
