@@ -56,6 +56,9 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Position X du premier stage.")]
         public float startX = 80f;
 
+        [Tooltip("Decalage vertical depuis le haut du container.")]
+        public float startY = -80f;
+
         [Header("Couleurs lignes")]
         public Color activeLineColor = new Color(0.12f, 0.12f, 0.12f);
         public Color inactiveLineColor = new Color(0.80f, 0.80f, 0.80f);
@@ -242,7 +245,7 @@ namespace EscapeGame.Journal.UI
 
                 // Position en zigzag
                 float x = startX + s * hStep;
-                float y = -(routeIndex * routeGap) + (s % 2 == 0 ? zigAmp : -zigAmp);
+                float y = startY - (routeIndex * routeGap) + (s % 2 == 0 ? zigAmp : -zigAmp);
                 Vector2 pos = new Vector2(x, y);
                 positions.Add(pos);
 
@@ -251,7 +254,12 @@ namespace EscapeGame.Journal.UI
                 var nodeGo = Instantiate(stageNodePrefab, worldContainer);
                 var nodeRect = nodeGo.GetComponent<RectTransform>();
                 if (nodeRect != null)
+                {
+                    nodeRect.anchorMin = new Vector2(0, 1);
+                    nodeRect.anchorMax = new Vector2(0, 1);
+                    nodeRect.pivot = new Vector2(0.5f, 0.5f);
                     nodeRect.anchoredPosition = pos;
+                }
 
                 var nodeView = nodeGo.GetComponent<StageNodeView>();
                 if (nodeView != null)
@@ -279,6 +287,9 @@ namespace EscapeGame.Journal.UI
                 var lineRect = lineGo.GetComponent<RectTransform>();
                 if (lineRect != null)
                 {
+                    lineRect.anchorMin = new Vector2(0, 1);
+                    lineRect.anchorMax = new Vector2(0, 1);
+                    lineRect.pivot = new Vector2(0, 0.5f);
                     lineRect.anchoredPosition = posA;
                     lineRect.sizeDelta = new Vector2(dist, isActive ? 3f : 2f);
                     lineRect.localEulerAngles = new Vector3(0, 0, angle);
