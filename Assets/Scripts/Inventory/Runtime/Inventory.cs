@@ -16,10 +16,26 @@ namespace EscapeGame.Inventory.Runtime
         [Tooltip("Contexte joueur transmis aux bonus lors de leur utilisation.")]
         public PlayerContext playerContext;
 
+        [Header("Debug / Test")]
+        [Tooltip("Items ajoutes automatiquement a l'inventaire au Start. Pratique pour tester des bonus ou lettres sans completer de route.")]
+        public List<ItemData> startingItems = new List<ItemData>();
+
         private readonly List<ItemData> items = new List<ItemData>();
 
         public IReadOnlyList<ItemData> Items => items;
         public int Count => items.Count;
+
+        private void Start()
+        {
+            if (startingItems != null)
+            {
+                for (int i = 0; i < startingItems.Count; i++)
+                {
+                    if (startingItems[i] != null)
+                        AddItem(startingItems[i]);
+                }
+            }
+        }
 
         // ====================================================================
         // API publique

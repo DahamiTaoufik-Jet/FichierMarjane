@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5117447033892096327}
   - component: {fileID: 3904398785879483183}
   - component: {fileID: 298044624972375603}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: PositionScanLookAt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,3 +144,13 @@ MonoBehaviour:
   OnExitedScanZone:
     m_PersistentCalls:
       m_Calls: []
+  allowDirectValidation: 1
+  validateKey: 19
+  directValidationDotThreshold: 0.85
+  verboseLogs: 1
+  drawRuntimeGizmos: 1
+  snapshot: {fileID: 0}
+  snapshotWidth: 512
+  snapshotHeight: 512
+  snapshotFOV: 60
+  snapshotEyeOffset: 1.6

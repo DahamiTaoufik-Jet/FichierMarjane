@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using Unity.Cinemachine;
-using System;
 
 namespace EscapeGame.Core.Player
 {
@@ -52,6 +52,9 @@ namespace EscapeGame.Core.Player
 
         private void Update()
         {
+            // Bloque le switch de camera quand une UI est ouverte
+            if (UIState.IsAnyUIOpen) return;
+
             if (UnityEngine.InputSystem.Keyboard.current != null
                 && UnityEngine.InputSystem.Keyboard.current[switchKey].wasPressedThisFrame)
             {

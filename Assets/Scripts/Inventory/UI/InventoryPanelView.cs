@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
+using EscapeGame.Core.Player;
 using EscapeGame.Inventory.Data;
 using EscapeGame.Inventory.Events;
 
@@ -37,12 +38,6 @@ namespace EscapeGame.Inventory.UI
         public InputActionAsset actions;
 
         [Header("Touches")]
-        [Tooltip("Touche pour ouvrir l'inventaire.")]
-        public Key toggleKey = Key.Q;
-
-        [Tooltip("Touche pour utiliser l'item affiche.")]
-        public Key useKey = Key.Q;
-
         [Tooltip("Touche pour fermer l'inventaire.")]
         public Key closeKey = Key.Escape;
 
@@ -55,6 +50,8 @@ namespace EscapeGame.Inventory.UI
         private bool isOpen = false;
 
         private InputAction moveAction;
+        private InputAction toggleAction;
+        private InputAction selectAction;
 
         private void Awake()
         {
@@ -69,9 +66,17 @@ namespace EscapeGame.Inventory.UI
         {
             if (actions != null)
             {
-                var map = actions.FindActionMap("Player");
-                if (map != null)
-                    moveAction = map.FindAction("Move");
+                var playerMap = actions.FindActionMap("Player");
+                if (playerMap != null)
+                    moveAction = playerMap.FindAction("Move");
+
+                var gameMap = actions.FindActionMap("Game");
+                if (gameMap != null)
+                {
+                    toggleAction = gameMap.FindAction("ToggleBonusInventory");
+                    selectAction = gameMap.FindAction("Select");
+                    gameMap.Enable();
+                }
             }
         }
 
@@ -83,9 +88,11 @@ namespace EscapeGame.Inventory.UI
 
         private void Update()
         {
-            if (Keyboard.current == null) return;
+            // Bloque si un champ texte capture le clavier
+            if (UIState.IsInputFieldActive) return;
 
-            if (!isOpen && Keyboard.current[toggleKey].wasPressedThisFrame)
+            // Ouvrir avec l'action ToggleBonusInventory (Q)
+            if (!isOpen && toggleAction != null && toggleAction.WasPressedThisFrame())
             {
                 Open();
                 return;
@@ -93,34 +100,22 @@ namespace EscapeGame.Inventory.UI
 
             if (!isOpen) return;
 
-            if (Keyboard.current[closeKey].wasPressedThisFrame)
+            if (Keyboard.current != null && Keyboard.current[closeKey].wasPressedThisFrame)
             {
                 Close();
                 return;
             }
 
-            if (Keyboard.current[useKey].wasPressedThisFrame)
+            // Utiliser l'item avec Select (Enter)
+            if (selectAction != null && selectAction.WasPressedThisFrame())
             {
                 UseCurrentItem();
                 return;
             }
 
-            bool left = false;
-            bool right = false;
-
-            if (moveAction != null)
-            {
-                Vector2 move = moveAction.ReadValue<Vector2>();
-                if (Keyboard.current.aKey.wasPressedThisFrame || move.x < -0.5f && Keyboard.current.aKey.wasPressedThisFrame)
-                    left = true;
-                if (Keyboard.current.dKey.wasPressedThisFrame || move.x > 0.5f && Keyboard.current.dKey.wasPressedThisFrame)
-                    right = true;
-            }
-            else
-            {
-                left = Keyboard.current.aKey.wasPressedThisFrame;
-                right = Keyboard.current.dKey.wasPressedThisFrame;
-            }
+            // Navigation A/D
+            bool left = Keyboard.current != null && Keyboard.current.aKey.wasPressedThisFrame;
+            bool right = Keyboard.current != null && Keyboard.current.dKey.wasPressedThisFrame;
 
             if (left) Navigate(-1);
             if (right) Navigate(1);
@@ -134,6 +129,9 @@ namespace EscapeGame.Inventory.UI
             isOpen = true;
             currentIndex = 0;
             panelRoot.SetActive(true);
+            UIState.SetUIOpen();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             DisplayCurrent();
         }
 
@@ -141,6 +139,15 @@ namespace EscapeGame.Inventory.UI
         {
             isOpen = false;
             panelRoot.SetActive(false);
+            UIState.SetUIClosed();
+
+            // Ne relock le curseur que si plus aucune UI n'est ouverte
+            // (le dechiffreur peut avoir ouvert le journal entre-temps)
+            if (!UIState.IsAnyUIOpen)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
 
         private void UseCurrentItem()

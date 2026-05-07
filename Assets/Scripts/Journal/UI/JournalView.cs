@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using EscapeGame.Bonuses.Data;
+using EscapeGame.Core.Player;
 using EscapeGame.Journal.Runtime;
 using EscapeGame.Routes.Runtime;
 
@@ -16,8 +18,8 @@ namespace EscapeGame.Journal.UI
     public class JournalView : MonoBehaviour
     {
         [Header("Toggle")]
-        [Tooltip("Touche pour ouvrir/fermer le journal.")]
-        public Key toggleKey = Key.Tab;
+        [Tooltip("InputActionAsset contenant la map 'Game' avec l'action OpenJournal.")]
+        public InputActionAsset actions;
 
         [Tooltip("Panel racine a activer/desactiver.")]
         public GameObject panelRoot;
@@ -60,6 +62,8 @@ namespace EscapeGame.Journal.UI
 
         // Cache interne
         private readonly List<GameObject> spawnedObjects = new List<GameObject>();
+        private InputAction openJournalAction;
+        private bool journalIsOpen = false;
 
         // ====================================================================
         // Cycle de vie
@@ -74,34 +78,106 @@ namespace EscapeGame.Journal.UI
                 return;
             }
 
+            // Resolver l'InputAction
+            if (actions != null)
+            {
+                var map = actions.FindActionMap("Game");
+                if (map != null)
+                {
+                    openJournalAction = map.FindAction("OpenJournal");
+                    map.Enable();
+                }
+            }
+
             // Demarre ferme
             if (panelRoot != null) panelRoot.SetActive(false);
         }
 
         private void Update()
         {
-            if (Keyboard.current == null) return;
-            if (Keyboard.current[toggleKey].wasPressedThisFrame)
+            if (UIState.IsInputFieldActive) return;
+
+            if (openJournalAction != null && openJournalAction.WasPressedThisFrame())
                 ToggleJournal();
         }
 
         public void ToggleJournal()
         {
             if (panelRoot == null) return;
+
+            // Si on est en mode dechiffrement et que le joueur ferme le journal,
+            // annuler le mode selection pour ne pas rester bloque.
+            if (panelRoot.activeSelf && DecryptionTracker.IsInSelectionMode)
+            {
+                DecryptionTracker.ExitSelectionMode();
+                Debug.Log("[JournalView] Mode dechiffrement annule (fermeture journal).");
+            }
+
             bool open = !panelRoot.activeSelf;
             panelRoot.SetActive(open);
 
             if (open)
             {
+                journalIsOpen = true;
+                UIState.SetUIOpen();
                 Rebuild();
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else
             {
+                if (journalIsOpen) { journalIsOpen = false; UIState.SetUIClosed(); }
+                if (!UIState.IsAnyUIOpen)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+            }
+        }
+
+        // ====================================================================
+        // Mode dechiffrement (appele par DechiffreurBonus)
+        // ====================================================================
+
+        /// <summary>
+        /// Ouvre le journal de force pour le mode selection du Dechiffreur.
+        /// Si le journal est deja ouvert, le reconstruit simplement.
+        /// </summary>
+        public void OpenForDecryption()
+        {
+            if (panelRoot == null) return;
+
+            if (!panelRoot.activeSelf)
+            {
+                panelRoot.SetActive(true);
+                if (!journalIsOpen) { journalIsOpen = true; UIState.SetUIOpen(); }
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+
+            Rebuild();
+            Debug.Log("[JournalView] Ouvert en mode dechiffrement — choisissez un bloc chiffre.");
+        }
+
+        /// <summary>
+        /// Ferme le journal apres un dechiffrement reussi.
+        /// Appele par le callback du DechiffreurBonus.
+        /// </summary>
+        public void ExitDecryptionMode()
+        {
+            // Rebuild pour mettre a jour l'affichage du bloc dechiffre
+            Rebuild();
+
+            // Fermer le journal
+            if (panelRoot != null)
+            {
+                panelRoot.SetActive(false);
+                if (journalIsOpen) { journalIsOpen = false; UIState.SetUIClosed(); }
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
+
+            Debug.Log("[JournalView] Mode dechiffrement termine, journal ferme.");
         }
 
         private void OnEnable()

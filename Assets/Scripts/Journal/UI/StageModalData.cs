@@ -1,3 +1,4 @@
+using EscapeGame.Bonuses.Data;
 using EscapeGame.Routes.Data;
 using EscapeGame.Routes.Runtime;
 using EscapeGame.Routes.Services;
@@ -81,14 +82,17 @@ namespace EscapeGame.Journal.UI
             {
                 if (!string.IsNullOrEmpty(step.stepData.puzzleQuestion))
                 {
-                    // Si chiffre : on masque la question claire et on montre
-                    // uniquement la version chiffree. Le bonus Dechiffreur
-                    // (a coder) viendra inverser ce comportement.
-                    if (step.stepData.puzzleEncrypted
-                        && !string.IsNullOrEmpty(step.stepData.puzzleEncryptedQuestion))
+                    // Si chiffre ET pas encore dechiffre par le bonus :
+                    // on montre uniquement la version chiffree.
+                    // Si dechiffre (ou pas chiffre) : on montre la question claire.
+                    bool isEncrypted = step.stepData.puzzleEncrypted
+                        && !string.IsNullOrEmpty(step.stepData.puzzleEncryptedQuestion);
+                    bool isDecrypted = isEncrypted
+                        && DecryptionTracker.IsDecrypted(step.stepData.stepId);
+
+                    if (isEncrypted && !isDecrypted)
                     {
                         data.PuzzleEncryptedQuestion = step.stepData.puzzleEncryptedQuestion;
-                        // PuzzleQuestion reste null -> pas affichee
                     }
                     else
                     {

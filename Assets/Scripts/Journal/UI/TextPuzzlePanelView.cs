@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using EscapeGame.Core.Player;
 using EscapeGame.Routes.Events;
 using EscapeGame.Routes.Runtime;
 
@@ -26,12 +27,18 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Texte affiche quand la reponse est fausse.")]
         public TMP_Text feedbackLabel;
 
+        [Header("Input")]
+        [Tooltip("InputActionAsset contenant la map 'Game' avec l'action Select.")]
+        public InputActionAsset actions;
+
         [Header("Fermeture")]
         [Tooltip("Touche pour annuler l'interaction et refermer le panneau.")]
         public Key cancelKey = Key.Escape;
 
         private TextPuzzleStep activeStep;
         private bool isInteracting = false;
+        private bool inputFieldActive = false;
+        private InputAction selectAction;
 
         private void Awake()
         {
@@ -41,6 +48,16 @@ namespace EscapeGame.Journal.UI
             RouteEvents.TextPuzzleShown += HandleShown;
             RouteEvents.TextPuzzleInteract += HandleInteract;
             RouteEvents.TextPuzzleClosed += HandleClosed;
+
+            if (actions != null)
+            {
+                var gameMap = actions.FindActionMap("Game");
+                if (gameMap != null)
+                {
+                    selectAction = gameMap.FindAction("Select");
+                    gameMap.Enable();
+                }
+            }
         }
 
         private void OnDestroy()
@@ -49,6 +66,8 @@ namespace EscapeGame.Journal.UI
             RouteEvents.TextPuzzleInteract -= HandleInteract;
             RouteEvents.TextPuzzleClosed -= HandleClosed;
         }
+
+        private bool shownOnly = false;
 
         private void HandleShown(string question, StepBehaviour step)
         {
@@ -66,6 +85,8 @@ namespace EscapeGame.Journal.UI
             }
 
             isInteracting = false;
+            shownOnly = true;
+            UIState.SetUIOpen();
         }
 
         private void HandleInteract(string question, StepBehaviour step)
@@ -75,17 +96,22 @@ namespace EscapeGame.Journal.UI
 
             panelRoot.SetActive(true);
             if (questionLabel != null) questionLabel.text = question;
-            if (feedbackLabel != null) feedbackLabel.text = "";
+            if (feedbackLabel != null) feedbackLabel.text = "Appuyez sur Entree pour repondre.";
 
+            // Le champ de saisie est visible mais INACTIF.
+            // Le joueur doit appuyer sur Enter (Select) pour commencer a ecrire.
             if (answerInput != null)
             {
                 answerInput.gameObject.SetActive(true);
                 answerInput.text = "";
-                answerInput.ActivateInputField();
-                answerInput.Select();
+                answerInput.DeactivateInputField();
             }
 
             isInteracting = true;
+            inputFieldActive = false;
+            // SetUIOpen deja appele par HandleShown, pas de double comptage
+            if (!shownOnly) UIState.SetUIOpen();
+            shownOnly = false;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -98,9 +124,22 @@ namespace EscapeGame.Journal.UI
             if (isInteracting)
             {
                 isInteracting = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                inputFieldActive = false;
+                UIState.IsInputFieldActive = false;
+                UIState.SetUIClosed();
+                if (!UIState.IsAnyUIOpen)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
             }
+            else if (shownOnly)
+            {
+                // Fermeture depuis la phase Shown (hover exit sans interact)
+                UIState.SetUIClosed();
+            }
+
+            shownOnly = false;
         }
 
         private void Update()
@@ -109,11 +148,37 @@ namespace EscapeGame.Journal.UI
 
             if (isInteracting)
             {
-                if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
-                    SubmitAnswer();
-
+                // Escape ferme le panneau
                 if (Keyboard.current != null && Keyboard.current[cancelKey].wasPressedThisFrame)
+                {
                     activeStep.CancelInteraction();
+                    return;
+                }
+
+                bool selectPressed = selectAction != null
+                    ? selectAction.WasPressedThisFrame()
+                    : (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame);
+
+                if (selectPressed)
+                {
+                    if (!inputFieldActive)
+                    {
+                        // Premier Enter : active le champ de saisie
+                        inputFieldActive = true;
+                        UIState.IsInputFieldActive = true;
+                        if (answerInput != null)
+                        {
+                            answerInput.ActivateInputField();
+                            answerInput.Select();
+                        }
+                        if (feedbackLabel != null) feedbackLabel.text = "";
+                    }
+                    else
+                    {
+                        // Enter suivant : soumet la reponse
+                        SubmitAnswer();
+                    }
+                }
             }
         }
 

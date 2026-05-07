@@ -59,6 +59,13 @@ namespace EscapeGame.Core.Player
         {
             if (moveAction == null) return;
 
+            // Bloque le mouvement quand une UI est ouverte
+            if (UIState.IsAnyUIOpen)
+            {
+                controller.SimpleMove(Vector3.zero);
+                return;
+            }
+
             Vector2 input = moveAction.ReadValue<Vector2>();
             bool sprinting = sprintAction != null && sprintAction.IsPressed();
             float speed = walkSpeed * (sprinting ? sprintMultiplier : 1f);

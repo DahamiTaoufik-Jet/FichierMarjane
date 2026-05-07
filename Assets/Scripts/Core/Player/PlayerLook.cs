@@ -69,6 +69,9 @@ namespace EscapeGame.Core.Player
         {
             if (playerBody == null) return;
 
+            // Bloque la visee quand une UI est ouverte
+            if (UIState.IsAnyUIOpen) return;
+
             if (isFPS)
                 UpdateFPS();
             else
