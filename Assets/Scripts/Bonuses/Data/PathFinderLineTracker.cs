@@ -1,7 +1,6 @@
 using UnityEngine;
 using EscapeGame.Routes.Events;
 using EscapeGame.Routes.Runtime;
-using EscapeGame.Routes.Services;
 
 namespace EscapeGame.Bonuses.Data
 {
@@ -63,35 +62,9 @@ namespace EscapeGame.Bonuses.Data
 
         private Transform FindClosestUnresolved()
         {
-            var rm = RouteManager.Instance;
-            if (rm == null || player == null) return null;
-
-            Vector3 playerPos = player.position;
-            StepBehaviour closest = null;
-            float closestDist = float.MaxValue;
-
-            for (int r = 0; r < rm.Routes.Count; r++)
-            {
-                var route = rm.Routes[r];
-                if (route.State == RouteState.Completed) continue;
-
-                for (int s = 0; s < route.Steps.Count; s++)
-                {
-                    var step = route.Steps[s];
-                    if (step != null && !step.IsResolved)
-                    {
-                        float dist = Vector3.Distance(playerPos, step.transform.position);
-                        if (dist < closestDist)
-                        {
-                            closestDist = dist;
-                            closest = step;
-                        }
-                        break;
-                    }
-                }
-            }
-
-            return closest != null ? closest.transform : null;
+            if (player == null) return null;
+            var step = BonusUtils.FindClosestUnresolvedStep(player.position);
+            return step != null ? step.transform : null;
         }
 
         private void Update()

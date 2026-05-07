@@ -1,16 +1,12 @@
 using UnityEngine;
 using EscapeGame.Core.Player;
 using EscapeGame.Inventory.Data;
-using EscapeGame.Routes.Runtime;
-using EscapeGame.Routes.Services;
 
 namespace EscapeGame.Bonuses.Data
 {
     /// <summary>
     /// Bonus PathFinder : dessine une ligne temporaire entre le joueur et la
-    /// prochaine step non resolue la plus proche. Cherche parmi toutes les
-    /// routes actives la premiere step non resolue, puis choisit la plus
-    /// proche du joueur.
+    /// prochaine step non resolue la plus proche.
     /// </summary>
     [CreateAssetMenu(menuName = "EscapeGame/Bonuses/PathFinder", fileName = "PathFinderBonus")]
     public class PathFinderBonus : BonusItem
@@ -32,53 +28,17 @@ namespace EscapeGame.Bonuses.Data
         {
             if (context == null) return;
 
-            var rm = RouteManager.Instance;
-            if (rm == null || rm.Routes.Count == 0)
-            {
-                Debug.Log("[PathFinderBonus] Aucune route enregistree.");
-                return;
-            }
-
             Transform player = context.GetPlayerTransform();
-            Vector3 playerPos = player.position;
-
-            StepBehaviour closest = null;
-            float closestDist = float.MaxValue;
-
-            for (int r = 0; r < rm.Routes.Count; r++)
-            {
-                var route = rm.Routes[r];
-                if (route.State == RouteState.Completed) continue;
-
-                StepBehaviour nextStep = FindFirstUnresolved(route);
-                if (nextStep == null) continue;
-
-                float dist = Vector3.Distance(playerPos, nextStep.transform.position);
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    closest = nextStep;
-                }
-            }
+            var closest = BonusUtils.FindClosestUnresolvedStep(player.position);
 
             if (closest == null)
             {
-                Debug.Log("[PathFinderBonus] Toutes les routes sont completees.");
+                Debug.Log("[PathFinderBonus] Aucune step non resolue trouvee.");
                 return;
             }
 
-            Debug.Log($"[PathFinderBonus] Pointage vers '{closest.name}' a {closestDist:F1}m.");
+            Debug.Log($"[PathFinderBonus] Pointage vers '{closest.name}'.");
             SpawnLine(player, closest.transform);
-        }
-
-        private StepBehaviour FindFirstUnresolved(RouteRuntime route)
-        {
-            for (int i = 0; i < route.Steps.Count; i++)
-            {
-                if (route.Steps[i] != null && !route.Steps[i].IsResolved)
-                    return route.Steps[i];
-            }
-            return null;
         }
 
         private void SpawnLine(Transform player, Transform target)
