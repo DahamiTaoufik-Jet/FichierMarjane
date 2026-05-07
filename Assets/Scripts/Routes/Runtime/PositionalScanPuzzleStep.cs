@@ -75,6 +75,12 @@ namespace EscapeGame.Routes.Runtime
         private bool wasInZone = false;
         private bool wasOnSpot = false;
 
+        // Compteur statique : combien d'instances detectent le joueur sur leur spot
+        private static int onSpotCount = 0;
+
+        /// <summary>True si le joueur est sur au moins un spot de scan.</summary>
+        public static bool IsPlayerOnAnySpot => onSpotCount > 0;
+
         /// <summary>
         /// Appele par le <c>ProceduralRouteGenerator</c> pour transmettre les
         /// positions valides extraites des ScanSpot lies. Une seule position est
@@ -119,60 +125,55 @@ namespace EscapeGame.Routes.Runtime
                 feedbackRenderer = GetComponentInChildren<Renderer>();
             mpb = new MaterialPropertyBlock();
             ApplyEmissive(idleEmissive);
+
+            // S'abonner a l'event FPS pour capter la camera au switch
+            EscapeGame.Core.Player.PlayerCamera.FPSCameraActivated += HandleFPSCameraActivated;
+        }
+
+        private void OnDestroy()
+        {
+            EscapeGame.Core.Player.PlayerCamera.FPSCameraActivated -= HandleFPSCameraActivated;
+            if (wasOnSpot) onSpotCount = Mathf.Max(0, onSpotCount - 1);
+        }
+
+        private void HandleFPSCameraActivated(Transform fpsCameraTransform)
+        {
+            if (fpsCameraTransform == null) return;
+            var cam = fpsCameraTransform.GetComponentInChildren<Camera>(true);
+            cameraTransform = cam != null ? cam.transform : fpsCameraTransform;
         }
 
         private void Start()
         {
-            TryAcquirePlayer();
-        }
+            // CharacterController : cherche une seule fois au Start
+            var cc = FindFirstObjectByType<CharacterController>();
+            if (cc != null)
+                playerTransform = cc.transform;
 
-        private void TryAcquirePlayer()
-        {
-            if (playerTransform == null)
-            {
-                var cc = FindFirstObjectByType<CharacterController>();
-                if (cc != null)
-                    playerTransform = cc.transform;
-            }
-
+            // Camera : tente une acquisition immediate
             if (cameraTransform == null)
             {
-                // Priorite : FPSCamera via tag
                 GameObject fpsCamGO = GameObject.FindWithTag("FPSCam");
                 if (fpsCamGO != null)
-                {
                     cameraTransform = fpsCamGO.transform;
-                    return;
-                }
-
-                // Fallback sur Camera.main
-                if (Camera.main != null)
+                else if (Camera.main != null)
                     cameraTransform = Camera.main.transform;
             }
         }
 
         private void Update()
         {
-            if (IsResolved || !spotChosen) return;
-
-            // Lazy retry : Camera.main peut etre null au Start si la cam FPS etait
-            // desactivee (mode TPS). Une fois le joueur switch en FPS, on l'attrape.
-            if (playerTransform == null)
-            {
-                TryAcquirePlayer();
-                if (playerTransform == null) return;
-            }
+            if (IsResolved || !spotChosen || playerTransform == null) return;
 
             bool onSpot = IsPlayerInZone();
             bool inZone = isGazingThisFrame && onSpot;
 
-            // Validation directe : sur le spot + touche pressee + regard sur le cube.
-            // Le check d'angle est essentiel pour desambiguer quand plusieurs cubes
-            // partagent le meme spot : sans lui, presser E validerait toutes les
-            // instances dont le spot choisi est sous le joueur. Distance au cube libre.
-            if (allowDirectValidation && onSpot && IsPlayerAimingAtMe()
+            // Validation directe : touche d'abord (quasi gratuit), puis raycast
+            // seulement si la touche est pressee ET le joueur est sur le spot.
+            if (allowDirectValidation && onSpot
                 && Keyboard.current != null
-                && Keyboard.current[validateKey].wasPressedThisFrame)
+                && Keyboard.current[validateKey].wasPressedThisFrame
+                && IsPlayerAimingAtMe())
             {
                 if (verboseLogs)
                     Debug.Log($"[PositionalScanPuzzleStep:{name}] Validation directe (vise + sur le spot). Distance={DistanceToSpot():F2}m");
@@ -183,11 +184,13 @@ namespace EscapeGame.Routes.Runtime
             // Transition position seule (independante du regard)
             if (onSpot && !wasOnSpot)
             {
+                onSpotCount++;
                 if (verboseLogs)
                     Debug.Log($"[PositionalScanPuzzleStep:{name}] Position OK - sur le spot. Distance={DistanceToSpot():F2}m");
             }
             else if (!onSpot && wasOnSpot)
             {
+                onSpotCount = Mathf.Max(0, onSpotCount - 1);
                 if (verboseLogs)
                     Debug.Log($"[PositionalScanPuzzleStep:{name}] Position perdue. Distance={DistanceToSpot():F2}m");
             }
@@ -259,6 +262,12 @@ namespace EscapeGame.Routes.Runtime
 
         protected override void ResolveStep()
         {
+            // Liberer le compteur si le joueur etait sur le spot
+            if (wasOnSpot)
+            {
+                onSpotCount = Mathf.Max(0, onSpotCount - 1);
+                wasOnSpot = false;
+            }
             base.ResolveStep();
             ApplyEmissive(idleEmissive);
         }

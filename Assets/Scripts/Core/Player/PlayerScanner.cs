@@ -47,7 +47,12 @@ namespace EscapeGame.Core.Player
             }
 
             PerformScreenCenterScan();
-            PerformPositionalScan();
+
+            // Ray positionnel uniquement si le joueur est sur un spot de scan
+            if (PositionalScanPuzzleStep.IsPlayerOnAnySpot)
+                PerformPositionalScan();
+            else
+                ClearPositionalTarget();
         }
 
         // ====================================================================
