@@ -1,4 +1,5 @@
 using UnityEngine;
+using EscapeGame.Bonuses.Data;
 using EscapeGame.Routes.Events;
 
 namespace EscapeGame.Routes.Runtime
@@ -26,8 +27,11 @@ namespace EscapeGame.Routes.Runtime
         private bool Encrypted => stepData != null && stepData.puzzleEncrypted;
         private string EncryptedQuestion => stepData != null ? stepData.puzzleEncryptedQuestion : "";
 
+        private bool IsDeciphered =>
+            deciphered || (stepData != null && DecryptionTracker.IsDecrypted(stepData.stepId));
+
         private string DisplayQuestion =>
-            (Encrypted && !deciphered && !string.IsNullOrEmpty(EncryptedQuestion))
+            (Encrypted && !IsDeciphered && !string.IsNullOrEmpty(EncryptedQuestion))
                 ? EncryptedQuestion
                 : Question;
 

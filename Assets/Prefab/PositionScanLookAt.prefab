@@ -150,7 +150,7 @@ MonoBehaviour:
   verboseLogs: 1
   drawRuntimeGizmos: 1
   snapshot: {fileID: 0}
-  snapshotWidth: 512
-  snapshotHeight: 512
+  snapshotWidth: 1920
+  snapshotHeight: 1080
   snapshotFOV: 60
   snapshotEyeOffset: 1.6
