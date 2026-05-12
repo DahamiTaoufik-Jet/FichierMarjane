@@ -22,8 +22,8 @@ MonoBehaviour:
     mode: 0
     regionId: 
     spotId: 
-  puzzleQuestion: Animal qui vis parmis nous
-  puzzleAnswer: etranger
+  puzzleQuestion: Utile pour tirer sur pc
+  puzzleAnswer: souris
   puzzleEncrypted: 1
   puzzleEncryptedQuestion: kuyazgflahzdbcdjlhazfkjazvhkjagvdzc
   cluePrefab: {fileID: 0}

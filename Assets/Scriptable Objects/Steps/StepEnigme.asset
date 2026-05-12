@@ -22,8 +22,8 @@ MonoBehaviour:
     mode: 0
     regionId: 
     spotId: 
-  puzzleQuestion: Animal qui vis parmis nous
-  puzzleAnswer: etranger
+  puzzleQuestion: Animal mais aussi un outil
+  puzzleAnswer: souris
   puzzleEncrypted: 0
   puzzleEncryptedQuestion: 
   cluePrefab: {fileID: 0}

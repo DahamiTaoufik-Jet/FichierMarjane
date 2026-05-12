@@ -22,9 +22,9 @@ MonoBehaviour:
     mode: 0
     regionId: 
     spotId: 
-  puzzleQuestion: Animal qui vis parmis nous
-  puzzleAnswer: etranger
+  puzzleQuestion: Indispensable pour un pc
+  puzzleAnswer: clavier
   puzzleEncrypted: 1
-  puzzleEncryptedQuestion: haw haw
+  puzzleEncryptedQuestion: blerg blerg blerg
   cluePrefab: {fileID: 0}
   puzzlePrefab: {fileID: 153127477668461108, guid: 11c0ea3311c077d418857204497bc25b, type: 3}

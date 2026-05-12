@@ -22952,10 +22952,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -23075,6 +23075,10 @@ PrefabInstance:
       propertyPath: fpsCanvas
       value: 
       objectReference: {fileID: 8383854011286437299}
+    - target: {fileID: 6157595246817044767, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 5921526768444543930}
     - target: {fileID: 6157595246817044767, guid: 2e1826a900c28194c933ac050befb4af, type: 3}
       propertyPath: tpsVirtualCamera
       value: 
@@ -27071,7 +27075,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: 04720524dbbb54026a5304cfe90dffc4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28271,6 +28275,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7c5acaec435f64ba2baa92c6ad500a81, type: 2}
   - {fileID: 11400000, guid: 9f1dcf576bd474b6fa4c6bf278083ee5, type: 2}
   - {fileID: 11400000, guid: d1117521696944389918805f7d154ea8, type: 2}
+  - {fileID: 11400000, guid: 90ee05110f457354bb1567814efe797a, type: 2}
 --- !u!1001 &8565791443308250516
 PrefabInstance:
   m_ObjectHideFlags: 0
