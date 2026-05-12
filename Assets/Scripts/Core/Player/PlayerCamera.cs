@@ -18,6 +18,9 @@ namespace EscapeGame.Core.Player
         [Tooltip("CinemachineCamera TPS a la racine de la scene.")]
         public CinemachineCamera tpsVirtualCamera;
 
+        [Tooltip("Main Camera pilotee par Cinemachine en TPS. Desactivee en FPS pour eviter le double rendu.")]
+        public Camera mainCamera;
+
         [Tooltip("GameObject de la camera FPS (enfant de Camera Look).")]
         public GameObject fpsCameraObject;
 
@@ -72,6 +75,10 @@ namespace EscapeGame.Core.Player
                 tpsVirtualCamera.Priority = enableFPS ? PriorityInactive : PriorityActive;
                 tpsVirtualCamera.gameObject.SetActive(!enableFPS);
             }
+
+            // Desactiver la Main Camera en FPS pour eviter le double rendu
+            if (mainCamera != null)
+                mainCamera.enabled = !enableFPS;
 
             if (fpsCameraObject != null)
             {
