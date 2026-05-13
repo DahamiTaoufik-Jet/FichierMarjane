@@ -26,9 +26,14 @@ namespace EscapeGame.Core.Player
         [Tooltip("Vitesse a laquelle le corps s'aligne sur la vision quand on marche.")]
         public float bodyRotationSpeed = 8f;
 
+        [Header("Input (pour detecter le recul)")]
+        [Tooltip("InputActionAsset contenant la map 'Player' avec l'action Move.")]
+        public InputActionAsset actions;
+
         private float pitch = 0f;
         private float yaw = 0f;
         private bool isFPS = false;
+        private InputAction moveAction;
 
         private void Start()
         {
@@ -44,6 +49,13 @@ namespace EscapeGame.Core.Player
 
             if (mainCameraTransform == null && Camera.main != null)
                 mainCameraTransform = Camera.main.transform;
+
+            if (actions != null)
+            {
+                var map = actions.FindActionMap("Player");
+                if (map != null)
+                    moveAction = map.FindAction("Move");
+            }
         }
 
         private void LateUpdate()
@@ -91,7 +103,9 @@ namespace EscapeGame.Core.Player
 
             if (IsMoving())
             {
-                Quaternion target = Quaternion.Euler(0f, yaw, 0f);
+                float inputAngle = GetInputAngle();
+                float bodyYaw = yaw + inputAngle;
+                Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
                 playerBody.rotation = Quaternion.Slerp(
                     playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
             }
@@ -102,19 +116,47 @@ namespace EscapeGame.Core.Player
             if (!IsMoving() || mainCameraTransform == null) return;
 
             float camYaw = mainCameraTransform.eulerAngles.y;
-            Quaternion target = Quaternion.Euler(0f, camYaw, 0f);
+            float inputAngle = GetInputAngle();
+            float bodyYaw = camYaw + inputAngle;
+            Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
             playerBody.rotation = Quaternion.Slerp(
                 playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
         }
 
         private bool IsMoving()
         {
+            if (moveAction != null)
+            {
+                Vector2 input = moveAction.ReadValue<Vector2>();
+                return input.sqrMagnitude > 0.01f;
+            }
             if (Keyboard.current == null) return false;
             return Keyboard.current.wKey.isPressed
                 || Keyboard.current.aKey.isPressed
                 || Keyboard.current.sKey.isPressed
                 || Keyboard.current.dKey.isPressed
                 || Keyboard.current.upArrowKey.isPressed;
+        }
+
+        /// <summary>
+        /// Retourne l'angle (en degres) entre l'avant de la camera et la direction d'input.
+        /// W = 0, D = 90, A = -90, S = 180, W+D = 45, W+A = -45, S+D = 135, S+A = -135.
+        /// </summary>
+        private float GetInputAngle()
+        {
+            Vector2 input = Vector2.zero;
+            if (moveAction != null)
+                input = moveAction.ReadValue<Vector2>();
+            else if (Keyboard.current != null)
+            {
+                if (Keyboard.current.wKey.isPressed) input.y += 1f;
+                if (Keyboard.current.sKey.isPressed) input.y -= 1f;
+                if (Keyboard.current.dKey.isPressed) input.x += 1f;
+                if (Keyboard.current.aKey.isPressed) input.x -= 1f;
+            }
+
+            if (input.sqrMagnitude < 0.01f) return 0f;
+            return Mathf.Atan2(input.x, input.y) * Mathf.Rad2Deg;
         }
     }
 }

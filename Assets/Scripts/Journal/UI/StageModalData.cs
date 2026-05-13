@@ -70,11 +70,12 @@ namespace EscapeGame.Journal.UI
                 data.InitialClue = new ClueContent();
             }
 
-            // Si c'est un PositionalScan, le snapshot REMPLACE l'image de l'indice initial
+            // Si c'est un PositionalScan, le snapshot va dans PuzzleSnapshot
+            // pour s'afficher dans l'onglet Enigme via enigmeImage.
             var positional = step as PositionalScanPuzzleStep;
             if (positional != null && positional.snapshot != null)
             {
-                data.InitialClue.image = positional.snapshot;
+                data.PuzzleSnapshot = positional.snapshot;
             }
 
             // Zone enigme (seulement si c'est un Puzzle avec question textuelle)

@@ -145,10 +145,10 @@ namespace EscapeGame.Routes.Runtime
 
         private void Start()
         {
-            // CharacterController : cherche une seule fois au Start
-            var cc = FindFirstObjectByType<CharacterController>();
-            if (cc != null)
-                playerTransform = cc.transform;
+            // Cherche le joueur via le composant RootMotionController
+            var rmc = FindFirstObjectByType<EscapeGame.Core.Player.RootMotionController>();
+            if (rmc != null)
+                playerTransform = rmc.transform;
 
             // Camera : tente une acquisition immediate
             if (cameraTransform == null)

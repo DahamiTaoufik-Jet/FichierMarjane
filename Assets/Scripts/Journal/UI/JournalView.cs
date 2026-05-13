@@ -37,11 +37,27 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Prefab ConnectorLine (Image, pivot 0/0.5).")]
         public GameObject connectorLinePrefab;
 
-        [Tooltip("Slider de progression globale.")]
-        public Slider progressBar;
-
-        [Tooltip("Modal affiche au clic sur un StageNode.")]
+        [Tooltip("Composant StageModalView (sur ce meme GameObject).")]
         public StageModalView stageModal;
+
+        [Header("Zoom")]
+        [Tooltip("Bouton zoom avant.")]
+        public Button zoomInButton;
+
+        [Tooltip("Bouton zoom arriere.")]
+        public Button zoomOutButton;
+
+        [Tooltip("Bouton reset zoom.")]
+        public Button zoomResetButton;
+
+        [Tooltip("Vitesse du zoom.")]
+        public float zoomStep = 0.2f;
+
+        [Tooltip("Zoom minimum.")]
+        public float zoomMin = 0.5f;
+
+        [Tooltip("Zoom maximum.")]
+        public float zoomMax = 2.0f;
 
         [Header("Layout")]
         [Tooltip("Distance horizontale entre deux stages.")]
@@ -92,6 +108,14 @@ namespace EscapeGame.Journal.UI
                 }
             }
 
+            // Zoom buttons
+            if (zoomInButton != null)
+                zoomInButton.onClick.AddListener(() => Zoom(zoomStep));
+            if (zoomOutButton != null)
+                zoomOutButton.onClick.AddListener(() => Zoom(-zoomStep));
+            if (zoomResetButton != null)
+                zoomResetButton.onClick.AddListener(() => ResetZoom());
+
             // Demarre ferme
             if (panelRoot != null) panelRoot.SetActive(false);
         }
@@ -118,6 +142,10 @@ namespace EscapeGame.Journal.UI
 
             bool open = !panelRoot.activeSelf;
             panelRoot.SetActive(open);
+
+            // Fermer le detail si ouvert quand on toggle le journal
+            if (stageModal != null && stageModal.IsOpen)
+                stageModal.Close();
 
             if (open)
             {
@@ -227,7 +255,7 @@ namespace EscapeGame.Journal.UI
                 BuildRoute(routes[r], r);
             }
 
-            UpdateProgressBar();
+            // Progress bar retiree
         }
 
         private void BuildRoute(RouteRuntime route, int routeIndex)
@@ -304,31 +332,6 @@ namespace EscapeGame.Journal.UI
         }
 
         // ====================================================================
-        // Progress bar
-        // ====================================================================
-
-        private void UpdateProgressBar()
-        {
-            if (progressBar == null || journalManager == null) return;
-
-            var routes = journalManager.KnownRoutes;
-            int total = 0;
-            int completed = 0;
-
-            for (int r = 0; r < routes.Count; r++)
-            {
-                for (int s = 0; s < routes[r].Steps.Count; s++)
-                {
-                    total++;
-                    if (routes[r].Steps[s] != null && routes[r].Steps[s].IsResolved)
-                        completed++;
-                }
-            }
-
-            progressBar.value = total > 0 ? (float)completed / total : 0f;
-        }
-
-        // ====================================================================
         // Cleanup
         // ====================================================================
 
@@ -340,6 +343,24 @@ namespace EscapeGame.Journal.UI
                     Destroy(spawnedObjects[i]);
             }
             spawnedObjects.Clear();
+        }
+
+        // ====================================================================
+        // Zoom
+        // ====================================================================
+
+        private void Zoom(float delta)
+        {
+            if (worldContainer == null) return;
+            float current = worldContainer.localScale.x;
+            float target = Mathf.Clamp(current + delta, zoomMin, zoomMax);
+            worldContainer.localScale = new Vector3(target, target, 1f);
+        }
+
+        private void ResetZoom()
+        {
+            if (worldContainer == null) return;
+            worldContainer.localScale = Vector3.one;
         }
     }
 }
