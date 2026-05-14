@@ -66,6 +66,9 @@ namespace EscapeGame.Journal.UI
         // Etat interne
         private bool hasEnigmeContent;
         private bool hasSuiteContent;
+        private bool hasSnapshot;
+        private bool hasQuestion;
+        private bool hasEncrypted;
         private bool isOpen;
 
         // ====================================================================
@@ -106,35 +109,45 @@ namespace EscapeGame.Journal.UI
 
             if (data.StepType == StepType.Puzzle)
             {
-                bool hasQuestion = !string.IsNullOrEmpty(data.PuzzleQuestion);
+                hasQuestion = !string.IsNullOrEmpty(data.PuzzleQuestion);
                 if (enigmeText != null)
                 {
-                    enigmeText.gameObject.SetActive(hasQuestion);
-                    if (hasQuestion) enigmeText.text = data.PuzzleQuestion;
+                    enigmeText.gameObject.SetActive(false);
+                    enigmeText.text = hasQuestion ? data.PuzzleQuestion : "";
                 }
 
-                bool hasEncrypted = !string.IsNullOrEmpty(data.PuzzleEncryptedQuestion);
+                hasEncrypted = !string.IsNullOrEmpty(data.PuzzleEncryptedQuestion);
                 if (enigmeTextEncrypter != null)
                 {
-                    enigmeTextEncrypter.gameObject.SetActive(hasEncrypted);
-                    if (hasEncrypted) enigmeTextEncrypter.text = data.PuzzleEncryptedQuestion;
+                    enigmeTextEncrypter.gameObject.SetActive(false);
+                    enigmeTextEncrypter.text = hasEncrypted ? data.PuzzleEncryptedQuestion : "";
                 }
 
-                bool hasSnapshot = data.PuzzleSnapshot != null;
+                hasSnapshot = data.PuzzleSnapshot != null;
                 if (enigmeImage != null)
                 {
-                    enigmeImage.gameObject.SetActive(hasSnapshot);
-                    if (hasSnapshot) enigmeImage.sprite = data.PuzzleSnapshot;
+                    enigmeImage.gameObject.SetActive(false);
+                    enigmeImage.sprite = hasSnapshot ? data.PuzzleSnapshot : null;
                 }
 
                 hasEnigmeContent = hasQuestion || hasEncrypted || hasSnapshot;
+            }
+            else
+            {
+                hasQuestion = false;
+                hasEncrypted = false;
+                hasSnapshot = false;
             }
 
             if (!hasEnigmeContent)
             {
                 if (enigmeText != null) enigmeText.gameObject.SetActive(false);
                 if (enigmeTextEncrypter != null) enigmeTextEncrypter.gameObject.SetActive(false);
-                if (enigmeImage != null) enigmeImage.gameObject.SetActive(false);
+                if (enigmeImage != null)
+                {
+                    enigmeImage.sprite = null;
+                    enigmeImage.gameObject.SetActive(false);
+                }
             }
 
             // ---- Contenu Suite ----
@@ -196,11 +209,11 @@ namespace EscapeGame.Journal.UI
                     if (clueText != null) clueText.gameObject.SetActive(true);
                     break;
                 case 1:
-                    if (enigmeText != null && !string.IsNullOrEmpty(enigmeText.text))
+                    if (enigmeText != null && hasQuestion)
                         enigmeText.gameObject.SetActive(true);
-                    if (enigmeTextEncrypter != null && !string.IsNullOrEmpty(enigmeTextEncrypter.text))
+                    if (enigmeTextEncrypter != null && hasEncrypted)
                         enigmeTextEncrypter.gameObject.SetActive(true);
-                    if (enigmeImage != null && enigmeImage.sprite != null)
+                    if (enigmeImage != null && hasSnapshot)
                         enigmeImage.gameObject.SetActive(true);
                     break;
                 case 2:
