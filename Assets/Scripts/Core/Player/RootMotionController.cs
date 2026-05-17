@@ -7,8 +7,8 @@ namespace EscapeGame.Core.Player
     /// Deplacement du joueur par Root Motion.
     /// Lit les inputs (Move + Sprint), envoie VelocityZ a l'Animator,
     /// et applique le deltaPosition du root motion via OnAnimatorMove().
-    /// Le body est toujours oriente dans la direction du mouvement
-    /// (rotation geree par PlayerLook).
+    /// Les collisions sont gerees manuellement par CapsuleCast (pas de physique).
+    /// Le Rigidbody reste kinematic pour eviter tout jitter.
     /// </summary>
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(CapsuleCollider))]
@@ -26,11 +26,19 @@ namespace EscapeGame.Core.Player
         [Tooltip("Deceleration quand l'input revient a zero.")]
         public float animDecel = 10f;
 
+        [Header("Collision")]
+        [Tooltip("Marge de securite pour le CapsuleCast (evite de coller aux murs).")]
+        public float skinWidth = 0.02f;
+
+        [Tooltip("Layers bloques par le CapsuleCast.")]
+        public LayerMask collisionMask = ~0;
+
         private const float WALK_VAL = 0.5f;
         private const float RUN_VAL = 2.0f;
 
         private Animator animator;
         private Rigidbody rb;
+        private CapsuleCollider capsule;
         private InputAction moveAction;
         private InputAction sprintAction;
 
@@ -42,6 +50,7 @@ namespace EscapeGame.Core.Player
         {
             animator = GetComponent<Animator>();
             rb = GetComponent<Rigidbody>();
+            capsule = GetComponent<CapsuleCollider>();
 
             rb.isKinematic = true;
             rb.useGravity = false;
@@ -82,7 +91,6 @@ namespace EscapeGame.Core.Player
             bool sprinting = sprintAction != null && sprintAction.IsPressed();
             float maxVal = sprinting ? RUN_VAL : WALK_VAL;
 
-            // N'importe quel input (W, A, S, D) = avancer dans la direction du body
             float targetZ = input.sqrMagnitude > 0.01f ? maxVal : 0f;
 
             float accel = targetZ < 0.01f ? animDecel : animAccel;
@@ -95,10 +103,51 @@ namespace EscapeGame.Core.Player
         {
             if (animator == null) return;
 
-            transform.position += animator.deltaPosition;
+            Vector3 delta = animator.deltaPosition;
+            delta = CollideAndSlide(delta);
+
+            transform.position += delta;
 
             ApplyGravity();
         }
+
+        // ====================================================================
+        // CapsuleCast — collision manuelle
+        // ====================================================================
+
+        private Vector3 CollideAndSlide(Vector3 movement)
+        {
+            if (movement.sqrMagnitude < 0.0001f) return movement;
+
+            float radius = capsule.radius - skinWidth;
+            float halfHeight = (capsule.height * 0.5f) - capsule.radius;
+            Vector3 center = transform.position + capsule.center;
+            Vector3 bottom = center + Vector3.down * halfHeight;
+            Vector3 top = center + Vector3.up * halfHeight;
+
+            float distance = movement.magnitude;
+            Vector3 direction = movement.normalized;
+
+            if (Physics.CapsuleCast(bottom, top, radius, direction, out RaycastHit hit,
+                distance + skinWidth, collisionMask, QueryTriggerInteraction.Ignore))
+            {
+                // Avancer jusqu'au point de contact moins la marge
+                float safeDistance = Mathf.Max(0f, hit.distance - skinWidth);
+                Vector3 safeDelta = direction * safeDistance;
+
+                // Slide : projeter le reste du mouvement sur le plan du mur
+                Vector3 remaining = movement - safeDelta;
+                Vector3 slide = Vector3.ProjectOnPlane(remaining, hit.normal);
+
+                return safeDelta + slide;
+            }
+
+            return movement;
+        }
+
+        // ====================================================================
+        // Gravite par Raycast
+        // ====================================================================
 
         private void ApplyGravity()
         {

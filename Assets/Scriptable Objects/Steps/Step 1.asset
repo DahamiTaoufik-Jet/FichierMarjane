@@ -15,12 +15,16 @@ MonoBehaviour:
   stepId: Step 1
   type: 0
   initialClue:
-    text: STEP 1
+    text: Bienvenu
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
-    mode: 0
+    mode: 2
     regionId: 
-    spotId: 
+    spotId: StartCouloir
+  puzzleQuestion: 
+  puzzleAnswer: 
+  puzzleEncrypted: 0
+  puzzleEncryptedQuestion: 
   cluePrefab: {fileID: 153127477668461108, guid: c48fbd66259272047a2ccede9bbb0ce6, type: 3}
-  puzzlePrefab: {fileID: 2497826107234880697, guid: ce44aa55ed1289e44921fcebc4389d24, type: 3}
+  puzzlePrefab: {fileID: 0}

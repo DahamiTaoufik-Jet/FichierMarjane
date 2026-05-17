@@ -40,6 +40,10 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Composant StageModalView (sur ce meme GameObject).")]
         public StageModalView stageModal;
 
+        [Header("Navigation")]
+        [Tooltip("Bouton pour fermer le journal et revenir au jeu (comme Tab).")]
+        public Button buttonRetourAuJournal;
+
         [Header("Zoom")]
         [Tooltip("Bouton zoom avant.")]
         public Button zoomInButton;
@@ -107,6 +111,10 @@ namespace EscapeGame.Journal.UI
                     map.Enable();
                 }
             }
+
+            // Bouton retour au jeu
+            if (buttonRetourAuJournal != null)
+                buttonRetourAuJournal.onClick.AddListener(ToggleJournal);
 
             // Zoom buttons
             if (zoomInButton != null)

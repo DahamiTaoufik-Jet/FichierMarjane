@@ -15,12 +15,12 @@ MonoBehaviour:
   stepId: StepEnigme
   type: 1
   initialClue:
-    text: Prepare toi a une enigme
+    text: La ou il manque des frigo
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
-    mode: 0
-    regionId: 
+    mode: 1
+    regionId: FrigoTrou
     spotId: 
   puzzleQuestion: Animal mais aussi un outil
   puzzleAnswer: souris

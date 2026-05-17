@@ -15,12 +15,16 @@ MonoBehaviour:
   stepId: Step 3
   type: 1
   initialClue:
-    text: Regarde etagere
+    text: Regarde Frigo du coin
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
-    mode: 0
-    regionId: 
+    mode: 1
+    regionId: SurFrigo
     spotId: 
-  cluePrefab: {fileID: 153127477668461108, guid: c48fbd66259272047a2ccede9bbb0ce6, type: 3}
-  puzzlePrefab: {fileID: 2497826107234880697, guid: ce44aa55ed1289e44921fcebc4389d24, type: 3}
+  puzzleQuestion: 
+  puzzleAnswer: 
+  puzzleEncrypted: 0
+  puzzleEncryptedQuestion: 
+  cluePrefab: {fileID: 0}
+  puzzlePrefab: {fileID: 5334677827005958496, guid: d52e58d73e6e3a44e978c2b9b5498b38, type: 3}
