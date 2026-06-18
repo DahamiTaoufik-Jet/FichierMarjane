@@ -86,6 +86,7 @@ namespace EscapeGame.Routes.Runtime
         public void ForceResolve()
         {
             if (IsResolved) return;
+            if (IsLocked) Discover();
             ResolveStep();
         }
 

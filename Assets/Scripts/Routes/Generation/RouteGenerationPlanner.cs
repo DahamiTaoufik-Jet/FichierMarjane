@@ -172,7 +172,10 @@ namespace EscapeGame.Routes.Generation
             foreach (var idx in indices)
             {
                 var ph = placeholders[idx];
-                if (ph == null || ph.nodeType != expected) continue;
+                if (ph == null) continue;
+                bool typeOk = ph.nodeType == expected
+                           || ph.nodeType == ProceduralNodeType.PuzzleOrClue;
+                if (!typeOk) continue;
 
                 switch (step.placement.mode)
                 {

@@ -1,0 +1,20 @@
+Region Ids:
+
+SurFrigo --> Audessus des frigo.
+FrigoTrou --> Dans la zone ou il manque des frigo
+JouetArrow --> La partie Jouet ou ya les fleches
+JouetBallon --> La partie Jouet ou ya les ballon de basket
+JouetArc
+JouetSword
+SpotIds:
+
+PosFrigoCoin --> Proche des frigo au coin a gauche
+PosEtagereMid --> Vers le millieu de la scene
+StartCouloir --> Le spot de depart du joueur
+Ball0-x --> Etage des ballon
+Arrow0-x --> Etage des arrow --  -Arrow0-Planter --> Variation ou les fleches sont vertical
+Arc0-x --> Etage --  -Verti --> Si ils sont vertical
+Sword0-x(L/M/R) --> Etage -- -
+
+
+NE PAS OUBLIER DE CHANGER LES NODE TYPE

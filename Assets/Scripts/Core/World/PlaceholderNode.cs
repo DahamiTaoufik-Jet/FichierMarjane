@@ -16,7 +16,13 @@ namespace EscapeGame.Core.World
         /// de type <c>PositionalScanPuzzleStep</c>. Lie a un ou plusieurs placeholders
         /// Puzzle via <see cref="linkedSpotIds"/>.
         /// </summary>
-        ScanSpot
+        ScanSpot,
+
+        /// <summary>
+        /// Emplacement polyvalent : accepte aussi bien un step Puzzle qu'un step Clue.
+        /// Ajoute en dernier pour preserver les valeurs serialisees existantes.
+        /// </summary>
+        PuzzleOrClue
     }
 
     /// <summary>
@@ -79,7 +85,8 @@ namespace EscapeGame.Core.World
                     foreach (var other in all)
                     {
                         if (other == null || other == this) continue;
-                        if (other.nodeType != ProceduralNodeType.Puzzle) continue;
+                        if (other.nodeType != ProceduralNodeType.Puzzle
+                            && other.nodeType != ProceduralNodeType.PuzzleOrClue) continue;
                         if (string.IsNullOrEmpty(other.spotId)) continue;
 
                         for (int i = 0; i < linkedSpotIds.Count; i++)
