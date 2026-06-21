@@ -35,6 +35,12 @@ namespace EscapeGame.Core.Player
         private bool isFPS = false;
         private InputAction moveAction;
 
+        /// <summary>
+        /// 1 quand le corps fait face a la direction d'input, 0 quand il est en
+        /// pleine rotation. Sert a couper le root motion pendant les demi-tours / spam A-D.
+        /// </summary>
+        public float BodyMoveAlignment { get; private set; } = 1f;
+
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -84,6 +90,8 @@ namespace EscapeGame.Core.Player
             // Bloque la visee quand une UI est ouverte
             if (UIState.IsAnyUIOpen) return;
 
+            BodyMoveAlignment = 1f;
+
             if (isFPS)
                 UpdateFPS();
             else
@@ -105,6 +113,7 @@ namespace EscapeGame.Core.Player
             {
                 float inputAngle = GetInputAngle();
                 float bodyYaw = yaw + inputAngle;
+                BodyMoveAlignment = Mathf.Clamp01(Vector3.Dot(playerBody.forward, Quaternion.Euler(0f, bodyYaw, 0f) * Vector3.forward));
                 Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
                 playerBody.rotation = Quaternion.Slerp(
                     playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
@@ -118,6 +127,7 @@ namespace EscapeGame.Core.Player
             float camYaw = mainCameraTransform.eulerAngles.y;
             float inputAngle = GetInputAngle();
             float bodyYaw = camYaw + inputAngle;
+            BodyMoveAlignment = Mathf.Clamp01(Vector3.Dot(playerBody.forward, Quaternion.Euler(0f, bodyYaw, 0f) * Vector3.forward));
             Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
             playerBody.rotation = Quaternion.Slerp(
                 playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);

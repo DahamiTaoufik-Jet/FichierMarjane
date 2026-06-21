@@ -39,6 +39,7 @@ namespace EscapeGame.Core.Player
         private Animator animator;
         private Rigidbody rb;
         private CapsuleCollider capsule;
+        private PlayerLook playerLook;
         private InputAction moveAction;
         private InputAction sprintAction;
 
@@ -51,6 +52,7 @@ namespace EscapeGame.Core.Player
             animator = GetComponent<Animator>();
             rb = GetComponent<Rigidbody>();
             capsule = GetComponent<CapsuleCollider>();
+            playerLook = GetComponentInChildren<PlayerLook>(true);
 
             rb.isKinematic = true;
             rb.useGravity = false;
@@ -104,6 +106,11 @@ namespace EscapeGame.Core.Player
             if (animator == null) return;
 
             Vector3 delta = animator.deltaPosition;
+
+            // Coupe le root motion tant que le corps n'est pas aligne sur la
+            // direction voulue : evite la derive vers l'avant au spam A-D.
+            if (playerLook != null)
+                delta *= playerLook.BodyMoveAlignment;
             delta = CollideAndSlide(delta);
 
             transform.position += delta;
