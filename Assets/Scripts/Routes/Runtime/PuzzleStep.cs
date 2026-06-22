@@ -18,9 +18,7 @@ namespace EscapeGame.Routes.Runtime
 
         public override void OnScan()
         {
-            // À la différence d'un ClueStep, le scan ne résout PAS automatiquement
-            // l'énigme : il déclenche uniquement la découverte si l'étape était
-            // verrouillée. Les sous-classes décident quand appeler ResolveStep().
+            if (IsInteractionBlocked()) return;
             base.OnScan();
 
             // Re-affiche l'enonce de l'enigme a chaque scan tant qu'elle n'est pas resolue.

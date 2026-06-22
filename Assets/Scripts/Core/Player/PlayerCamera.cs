@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Unity.Cinemachine;
+using StarterAssets;
 
 namespace EscapeGame.Core.Player
 {
@@ -43,6 +44,10 @@ namespace EscapeGame.Core.Player
         [Header("Controles")]
         [Tooltip("Touche pour intervertir les cameras.")]
         public UnityEngine.InputSystem.Key switchKey = UnityEngine.InputSystem.Key.C;
+
+        [Header("Starter Assets")]
+        [Tooltip("ThirdPersonController du Starter Assets (sur le meme GO).")]
+        public ThirdPersonController thirdPersonController;
 
         private const int PriorityActive = 10;
         private const int PriorityInactive = 0;
@@ -89,6 +94,10 @@ namespace EscapeGame.Core.Player
 
             if (playerLook != null)
                 playerLook.SetFPSMode(enableFPS);
+
+            if (thirdPersonController != null)
+                thirdPersonController.SetFPSMode(enableFPS,
+                    fpsCameraObject != null ? fpsCameraObject.transform : null);
 
             if (fpsCanvas != null)
                 fpsCanvas.SetActive(enableFPS);

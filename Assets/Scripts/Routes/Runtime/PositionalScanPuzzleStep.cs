@@ -145,10 +145,9 @@ namespace EscapeGame.Routes.Runtime
 
         private void Start()
         {
-            // Cherche le joueur via le composant RootMotionController
-            var rmc = FindFirstObjectByType<EscapeGame.Core.Player.RootMotionController>();
-            if (rmc != null)
-                playerTransform = rmc.transform;
+            var cc = FindFirstObjectByType<CharacterController>();
+            if (cc != null)
+                playerTransform = cc.transform;
 
             // Camera : tente une acquisition immediate
             if (cameraTransform == null)
@@ -164,6 +163,7 @@ namespace EscapeGame.Routes.Runtime
         private void Update()
         {
             if (IsResolved || !spotChosen || playerTransform == null) return;
+            if (IsInteractionBlocked()) return;
 
             bool onSpot = IsPlayerInZone();
             bool inZone = isGazingThisFrame && onSpot;

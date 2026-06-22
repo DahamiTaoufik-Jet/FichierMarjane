@@ -112,6 +112,22 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool _isFPSMode;
+        private Transform _fpsCameraRef;
+
+        public void SetFPSMode(bool fps, Transform fpsCameraTransform)
+        {
+            _isFPSMode = fps;
+            _fpsCameraRef = fpsCameraTransform;
+
+            if (!fps && CinemachineCameraTarget != null)
+            {
+                Vector3 euler = CinemachineCameraTarget.transform.eulerAngles;
+                _cinemachineTargetYaw = euler.y;
+                _cinemachineTargetPitch = euler.x;
+                if (_cinemachineTargetPitch > 180f) _cinemachineTargetPitch -= 360f;
+            }
+        }
 
         private bool IsCurrentDeviceMouse
         {
@@ -195,6 +211,8 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
+            if (_isFPSMode) return;
+
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
@@ -258,13 +276,18 @@ namespace StarterAssets
             // if there is a move input rotate player when the player is moving
             if (_input.move != Vector2.zero)
             {
+                float cameraYaw = _isFPSMode && _fpsCameraRef != null
+                    ? _fpsCameraRef.eulerAngles.y
+                    : _mainCamera.transform.eulerAngles.y;
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    RotationSmoothTime);
+                                  cameraYaw;
 
-                // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                if (!_isFPSMode)
+                {
+                    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation,
+                        ref _rotationVelocity, RotationSmoothTime);
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
             }
 
 

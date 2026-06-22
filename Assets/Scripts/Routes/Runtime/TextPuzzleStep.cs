@@ -39,6 +39,7 @@ namespace EscapeGame.Routes.Runtime
         {
             base.OnHover();
             if (IsResolved || interacting) return;
+            if (IsInteractionBlocked()) return;
 
             hoverTimer += Time.deltaTime;
 
@@ -54,6 +55,8 @@ namespace EscapeGame.Routes.Runtime
 
         public override void OnScan()
         {
+            if (IsInteractionBlocked()) return;
+
             if (currentState == StepState.Locked)
                 Discover();
             if (IsResolved) return;

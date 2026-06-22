@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using EscapeGame.Core.Interfaces;
 using EscapeGame.Routes.Data;
+using EscapeGame.Routes.Services;
 
 namespace EscapeGame.Routes.Runtime
 {
@@ -35,22 +36,20 @@ namespace EscapeGame.Routes.Runtime
         public bool IsDiscovered => currentState >= StepState.Discovered;
         public bool IsResolved   => currentState == StepState.Resolved;
 
+        // ========= Garde-fou skip =========
+
+        protected bool IsInteractionBlocked()
+        {
+            return RouteManager.Instance != null && !RouteManager.Instance.CanInteract(this);
+        }
+
         // ========= IScannable =========
 
-        /// <summary>
-        /// Feedback continu (outline, hint UI, gauge de gaze…).
-        /// Surchargeable par les sous-classes.
-        /// </summary>
         public virtual void OnHover() { }
 
-        /// <summary>
-        /// Validation de l'interaction. Comportement de base :
-        /// si l'étape est verrouillée, le scan la fait passer en Discovered.
-        /// Les sous-classes ajoutent leur logique (auto-résolution pour
-        /// <see cref="ClueStep"/>, vérification pour <see cref="PuzzleStep"/>, etc.).
-        /// </summary>
         public virtual void OnScan()
         {
+            if (IsInteractionBlocked()) return;
             if (currentState == StepState.Locked)
                 Discover();
         }

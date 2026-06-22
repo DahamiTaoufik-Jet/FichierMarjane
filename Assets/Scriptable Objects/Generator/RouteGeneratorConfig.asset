@@ -21,8 +21,37 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d682c1915f4f4c547a195db9ec9b9746, type: 2}
   - {fileID: 11400000, guid: 6e9757f971b274575a253952d2424e3c, type: 2}
   - {fileID: 11400000, guid: 9b14a8bb5b1fd402c818eda93e6bdb0f, type: 2}
-  passwordWords: []
-  minPasswordLength: 2
+  - {fileID: 11400000, guid: 71262d3e877aa4d5ba48c603e7764246, type: 2}
+  - {fileID: 11400000, guid: 1fae49f7fe7514a0c953d83758915bf5, type: 2}
+  - {fileID: 11400000, guid: ca82c356c8abc4dc1b3fab394ff9185b, type: 2}
+  - {fileID: 11400000, guid: 5eac1a244c1c54b6088a6310e482ca49, type: 2}
+  - {fileID: 11400000, guid: 375e9433faef9408b929f616fb04893f, type: 2}
+  - {fileID: 11400000, guid: 30845e21119f44d219dee0168b15f911, type: 2}
+  - {fileID: 11400000, guid: de5b49ac877c94529b5cea93cab13377, type: 2}
+  - {fileID: 11400000, guid: 70f71844c1b2249a68dc8999a8c01b4b, type: 2}
+  - {fileID: 11400000, guid: 73db7c66439b0456cbb6d0ae371cfe13, type: 2}
+  - {fileID: 11400000, guid: 0dc3c947f676f4a0cabdd4ae2fd20f14, type: 2}
+  - {fileID: 11400000, guid: de9e02dcc106646c8a09015b8a957a89, type: 2}
+  - {fileID: 11400000, guid: 35a79e6d6c3b94065a861983bea3143a, type: 2}
+  - {fileID: 11400000, guid: e70d282494f9644f88054fc94f2896ef, type: 2}
+  - {fileID: 11400000, guid: 30ebb66ee669d49249b88f83ea30c719, type: 2}
+  - {fileID: 11400000, guid: 26fa59af76ecc4faa8a9a7b5ba76bce5, type: 2}
+  - {fileID: 11400000, guid: e2f4888046b794482a042bc1ab66be6f, type: 2}
+  - {fileID: 11400000, guid: 860e884559d0c4f21ab5aa5401f2d332, type: 2}
+  - {fileID: 11400000, guid: 6564958778216487d9d8254d9f5f5c6f, type: 2}
+  - {fileID: 11400000, guid: cd90157afbf094710921602006c4b53a, type: 2}
+  - {fileID: 11400000, guid: 62465b35207a84e1d8f360fab00e9fec, type: 2}
+  - {fileID: 11400000, guid: b22177b370a4342d5b294ba0495f9760, type: 2}
+  - {fileID: 11400000, guid: 5c046063fe64543db93375a83c0c1875, type: 2}
+  - {fileID: 11400000, guid: 091852f4c94854887b4873d5f369521e, type: 2}
+  - {fileID: 11400000, guid: 5f11917a9cdd44986b1e1dfad4ed8531, type: 2}
+  - {fileID: 11400000, guid: cdc0f23f1be2e407193302d38bb13683, type: 2}
+  - {fileID: 11400000, guid: a96b7d093c45047b59d9051ed478cfa7, type: 2}
+  passwordWords:
+  - LIBRE
+  - JOUER
+  - FUTUR
+  minPasswordLength: 5
   letterAlphabet: {fileID: 11400000, guid: 2939724f6b6e8154f8671806d7b0d83f, type: 2}
   bonusPool:
   - bonus: {fileID: 11400000, guid: 90ee05110f457354bb1567814efe797a, type: 2}
@@ -31,8 +60,8 @@ MonoBehaviour:
     maxCount: 5
   - bonus: {fileID: 11400000, guid: 9f1dcf576bd474b6fa4c6bf278083ee5, type: 2}
     maxCount: 5
-  minRouteLength: 3
-  maxRouteLength: 5
-  maxStepUsage: 1
+  minRouteLength: 7
+  maxRouteLength: 7
+  maxStepUsage: 2
   regionFilter: 
   seed: 1234

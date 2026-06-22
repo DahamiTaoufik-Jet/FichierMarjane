@@ -21,6 +21,9 @@ namespace EscapeGame.Core.Player
         [Tooltip("La Main Camera (pilotee par Cinemachine en TPS).")]
         public Transform mainCameraTransform;
 
+        [Tooltip("Transform de la camera FPS (synchronisee en mode FPS).")]
+        public Transform fpsCameraTransform;
+
         [Header("Parametres")]
         public float mouseSensitivity = 15f;
         [Tooltip("Vitesse a laquelle le corps s'aligne sur la vision quand on marche.")]
@@ -75,10 +78,10 @@ namespace EscapeGame.Core.Player
         public void SetFPSMode(bool fps)
         {
             isFPS = fps;
-            if (fps && mainCameraTransform != null)
+            if (fps && playerHead != null)
             {
-                yaw = mainCameraTransform.eulerAngles.y;
-                pitch = mainCameraTransform.eulerAngles.x;
+                yaw = playerHead.eulerAngles.y;
+                pitch = playerHead.eulerAngles.x;
                 if (pitch > 180f) pitch -= 360f;
             }
         }
@@ -103,34 +106,19 @@ namespace EscapeGame.Core.Player
             if (Mouse.current == null || playerHead == null) return;
 
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
-            yaw += mouseDelta.x * mouseSensitivity * Time.deltaTime;
-            pitch -= mouseDelta.y * mouseSensitivity * Time.deltaTime;
+            yaw += mouseDelta.x * mouseSensitivity;
+            pitch -= mouseDelta.y * mouseSensitivity;
             pitch = Mathf.Clamp(pitch, -85f, 85f);
 
-            playerHead.rotation = Quaternion.Euler(pitch, yaw, 0f);
+            Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
+            playerHead.rotation = rot;
 
-            if (IsMoving())
-            {
-                float inputAngle = GetInputAngle();
-                float bodyYaw = yaw + inputAngle;
-                BodyMoveAlignment = Mathf.Clamp01(Vector3.Dot(playerBody.forward, Quaternion.Euler(0f, bodyYaw, 0f) * Vector3.forward));
-                Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
-                playerBody.rotation = Quaternion.Slerp(
-                    playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
-            }
+            if (fpsCameraTransform != null)
+                fpsCameraTransform.rotation = rot;
         }
 
         private void UpdateTPS()
         {
-            if (!IsMoving() || mainCameraTransform == null) return;
-
-            float camYaw = mainCameraTransform.eulerAngles.y;
-            float inputAngle = GetInputAngle();
-            float bodyYaw = camYaw + inputAngle;
-            BodyMoveAlignment = Mathf.Clamp01(Vector3.Dot(playerBody.forward, Quaternion.Euler(0f, bodyYaw, 0f) * Vector3.forward));
-            Quaternion target = Quaternion.Euler(0f, bodyYaw, 0f);
-            playerBody.rotation = Quaternion.Slerp(
-                playerBody.rotation, target, Time.deltaTime * bodyRotationSpeed);
         }
 
         private bool IsMoving()

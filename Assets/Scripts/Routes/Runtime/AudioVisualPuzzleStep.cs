@@ -148,6 +148,7 @@ namespace EscapeGame.Routes.Runtime
         private void Update()
         {
             if (IsResolved) return;
+            if (IsInteractionBlocked()) { HideWave(); return; }
 
             // Lazy retry : la FPSCamera ou le WaveOverlayHUD peuvent etre
             // inactifs au Start (mode TPS au demarrage)
@@ -204,7 +205,7 @@ namespace EscapeGame.Routes.Runtime
 
         public override void OnScan()
         {
-            // Découverte standard si verrouillé.
+            if (IsInteractionBlocked()) return;
             base.OnScan();
             if (IsResolved) return;
 

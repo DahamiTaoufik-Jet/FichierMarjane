@@ -24,6 +24,10 @@ namespace EscapeGame.Routes.Services
         [Tooltip("Si true, ce manager survit aux changements de scene.")]
         public bool persistAcrossScenes = false;
 
+        [Header("Garde-fou (skip)")]
+        [Tooltip("Nombre max de steps non resolues que le joueur peut sauter. Au-dela la step est intouchable.")]
+        public int maxSkipSteps = 3;
+
         [Header("Debug Gizmos")]
         [Tooltip("Dessine les routes en gizmos (lignes entre steps, couleurs par route).")]
         public bool drawRouteGizmos = false;
@@ -91,6 +95,30 @@ namespace EscapeGame.Routes.Services
             }
 
             return runtime;
+        }
+
+        /// <summary>
+        /// Verifie si le joueur peut interagir avec cette step sans sauter
+        /// trop d'etapes non resolues. Renvoie false si le gap depasse
+        /// <see cref="maxSkipSteps"/>.
+        /// </summary>
+        public bool CanInteract(StepBehaviour step)
+        {
+            for (int i = 0; i < routes.Count; i++)
+            {
+                int idx = routes[i].IndexOf(step);
+                if (idx < 0) continue;
+
+                int unresolvedBefore = 0;
+                for (int j = 0; j < idx; j++)
+                {
+                    var s = routes[i].Steps[j];
+                    if (s != null && !s.IsResolved)
+                        unresolvedBefore++;
+                }
+                return unresolvedBefore <= maxSkipSteps;
+            }
+            return true;
         }
 
         public RouteRuntime FindRoute(string routeId)
