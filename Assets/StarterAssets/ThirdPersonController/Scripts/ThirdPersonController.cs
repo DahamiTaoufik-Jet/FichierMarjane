@@ -175,6 +175,8 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
+            if (EscapeGame.Core.Player.UIState.IsAnyUIOpen) return;
+
             JumpAndGravity();
             GroundedCheck();
             Move();
@@ -182,6 +184,7 @@ namespace StarterAssets
 
         private void LateUpdate()
         {
+            if (EscapeGame.Core.Player.UIState.IsAnyUIOpen) return;
             CameraRotation();
         }
 

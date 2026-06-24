@@ -105,15 +105,18 @@ namespace EscapeGame.Core.Player
         {
             if (animator == null) return;
 
-            Vector3 delta = animator.deltaPosition;
+            if (!UIState.IsAnyUIOpen)
+            {
+                Vector3 delta = animator.deltaPosition;
 
-            // Coupe le root motion tant que le corps n'est pas aligne sur la
-            // direction voulue : evite la derive vers l'avant au spam A-D.
-            if (playerLook != null)
-                delta *= playerLook.BodyMoveAlignment;
-            delta = CollideAndSlide(delta);
+                // Coupe le root motion tant que le corps n'est pas aligne sur la
+                // direction voulue : evite la derive vers l'avant au spam A-D.
+                if (playerLook != null)
+                    delta *= playerLook.BodyMoveAlignment;
+                delta = CollideAndSlide(delta);
 
-            transform.position += delta;
+                transform.position += delta;
+            }
 
             ApplyGravity();
         }
