@@ -139,7 +139,14 @@ namespace EscapeGame.Core.World
             }
 
             if (!string.IsNullOrEmpty(password))
+            {
                 Debug.Log($"[ProceduralRouteGenerator] Mot de passe genere : {password}");
+                var pm = EscapeGame.Routes.Services.PasswordManager.Instance;
+                if (pm != null)
+                    pm.SetPassword(password);
+                else
+                    Debug.LogWarning("[ProceduralRouteGenerator] PasswordManager absent de la scene — mot de passe non transmis.");
+            }
         }
 
         private string ChoosePassword(int routeCount)
