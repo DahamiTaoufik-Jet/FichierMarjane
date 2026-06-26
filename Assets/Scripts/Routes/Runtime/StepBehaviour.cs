@@ -97,7 +97,18 @@ namespace EscapeGame.Routes.Runtime
         {
             if (IsResolved) return;
             currentState = StepState.Resolved;
+            HideVisual();
             OnResolved?.Invoke();
+        }
+
+        protected void HideVisual()
+        {
+            var renderers = GetComponentsInChildren<Renderer>();
+            for (int i = 0; i < renderers.Length; i++)
+                renderers[i].enabled = false;
+            var col = GetComponentInChildren<Collider>();
+            if (col != null)
+                col.enabled = false;
         }
     }
 }

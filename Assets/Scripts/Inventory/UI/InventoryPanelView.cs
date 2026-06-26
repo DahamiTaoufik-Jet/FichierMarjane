@@ -88,8 +88,9 @@ namespace EscapeGame.Inventory.UI
 
         private void Update()
         {
-            // Bloque si un champ texte capture le clavier
+            // Bloque si un champ texte capture le clavier ou si une autre UI est ouverte
             if (UIState.IsInputFieldActive) return;
+            if (!isOpen && UIState.IsAnyUIOpen) return;
 
             // Ouvrir avec l'action ToggleBonusInventory (Q)
             if (!isOpen && toggleAction != null && toggleAction.WasPressedThisFrame())

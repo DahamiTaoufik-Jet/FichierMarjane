@@ -39,6 +39,7 @@ namespace EscapeGame.Journal.UI
         private bool isInteracting = false;
         private bool inputFieldActive = false;
         private InputAction selectAction;
+        private bool clickListenerAdded = false;
 
         private void Awake()
         {
@@ -105,6 +106,12 @@ namespace EscapeGame.Journal.UI
                 answerInput.gameObject.SetActive(true);
                 answerInput.text = "";
                 answerInput.DeactivateInputField();
+
+                if (!clickListenerAdded)
+                {
+                    clickListenerAdded = true;
+                    answerInput.onSelect.AddListener(OnInputFieldClicked);
+                }
             }
 
             isInteracting = true;
@@ -180,6 +187,14 @@ namespace EscapeGame.Journal.UI
                     }
                 }
             }
+        }
+
+        private void OnInputFieldClicked(string _)
+        {
+            if (!isInteracting || inputFieldActive) return;
+            inputFieldActive = true;
+            UIState.IsInputFieldActive = true;
+            if (feedbackLabel != null) feedbackLabel.text = "";
         }
 
         public void SubmitAnswer()
