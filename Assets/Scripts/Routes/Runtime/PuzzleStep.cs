@@ -10,6 +10,11 @@ namespace EscapeGame.Routes.Runtime
     /// </summary>
     public abstract class PuzzleStep : StepBehaviour
     {
+        // Les enigmes se revelent (mesh visible) quand on les scanne. Les
+        // sous-classes qui ne doivent PAS se reveler (radio, scan positionnel)
+        // redefinissent ceci a false.
+        protected override bool RevealMeshOnScan => true;
+
         public override void OnHover()
         {
             base.OnHover();
@@ -20,6 +25,10 @@ namespace EscapeGame.Routes.Runtime
         {
             if (IsInteractionBlocked()) return;
             base.OnScan();
+
+            // Revelation du mesh de l'enigme (reste visible jusqu'a resolution).
+            if (RevealMeshOnScan && !IsResolved)
+                ShowMesh();
 
             // Re-affiche l'enonce de l'enigme a chaque scan tant qu'elle n'est pas resolue.
             if (!IsResolved && stepData != null && stepData.initialClue != null

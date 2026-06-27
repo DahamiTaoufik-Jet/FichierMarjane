@@ -61,6 +61,10 @@ namespace EscapeGame.Routes.Runtime
                 Discover();
             if (IsResolved) return;
 
+            // Revelation du mesh de l'enigme (reste visible jusqu'a resolution).
+            if (RevealMeshOnScan)
+                ShowMesh();
+
             if (!questionShown)
             {
                 if (currentState == StepState.Locked)

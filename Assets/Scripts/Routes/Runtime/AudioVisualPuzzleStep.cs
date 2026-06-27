@@ -67,6 +67,9 @@ namespace EscapeGame.Routes.Runtime
         private bool fpsCameraSwitchCheckDone = false;
         private float wavePhase = 0f;
 
+        // La radio ne se revele jamais : son mesh reste invisible.
+        protected override bool RevealMeshOnScan => false;
+
         private void Awake()
         {
             ConfigureWaveRenderer();

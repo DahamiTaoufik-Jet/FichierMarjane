@@ -36,6 +36,18 @@ namespace EscapeGame.Core.Player
         private IScannable currentTarget;
         private IScannable currentPositionalTarget;
 
+        /// <summary>
+        /// Cible actuelle du ray principal (indice, enigme texte, radio...).
+        /// Null si rien n'est vise a portee. Expose pour l'UI (crosshair).
+        /// </summary>
+        public IScannable CurrentTarget => currentTarget;
+
+        /// <summary>
+        /// Cible actuelle du ray positionnel (PositionalScanPuzzleStep), non null
+        /// uniquement quand le joueur vise une zone depuis un spot valide.
+        /// </summary>
+        public IScannable CurrentPositionalTarget => currentPositionalTarget;
+
         private void Update()
         {
             // Bloque le scan quand une UI est ouverte

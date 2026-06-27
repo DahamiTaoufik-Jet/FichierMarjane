@@ -17,6 +17,10 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: ca359e6bd79c0cf4b8e853299fff6338, type: 3}
   consumeOnUse: 0
   duration: 20
-  lineWidth: 0.08
-  lineColor: {r: 0.2, g: 0.8, b: 1, a: 0.8}
   playerHeightOffset: 1
+  lineWidth: 0
+  lineColor: {r: 0.25, g: 1, b: 0.45, a: 0.5}
+  particleColor: {r: 0.25, g: 1, b: 0.45, a: 1}
+  particleSize: 0.16
+  particleSpeed: 24
+  emissionRate: 30

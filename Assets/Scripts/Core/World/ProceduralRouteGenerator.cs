@@ -240,6 +240,11 @@ namespace EscapeGame.Core.World
                 step.routeId = plan.RouteId;
                 stepInstances.Add(step);
 
+                // Tous les blocs sont invisibles a la vue (mesh masque, colliders
+                // conserves pour le scan). Seules les enigmes revelables (texte)
+                // reaffichent leur mesh au scan, jusqu'a resolution.
+                step.HideMesh();
+
                 // Injection des positions de scan pour les enigmes positionnelles.
                 // On le fait AVANT de detruire le placeholder car on a besoin de son
                 // spotId pour matcher les ScanSpots.

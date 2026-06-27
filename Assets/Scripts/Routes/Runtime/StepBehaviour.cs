@@ -43,6 +43,32 @@ namespace EscapeGame.Routes.Runtime
             return RouteManager.Instance != null && !RouteManager.Instance.CanInteract(this);
         }
 
+        // ========= Visibilite du mesh =========
+
+        /// <summary>
+        /// Si true, le mesh de cette etape se revele (reste visible jusqu'a
+        /// resolution) quand le joueur la scanne. Faux par defaut : les indices
+        /// et certaines enigmes (radio, scan positionnel) restent invisibles.
+        /// </summary>
+        protected virtual bool RevealMeshOnScan => false;
+
+        /// <summary>Masque le mesh (MeshRenderer/SkinnedMeshRenderer) sans toucher aux colliders.</summary>
+        public void HideMesh() => SetMeshVisible(false);
+
+        /// <summary>Affiche le mesh (utilise lors de la revelation d'une enigme).</summary>
+        protected void ShowMesh() => SetMeshVisible(true);
+
+        private void SetMeshVisible(bool visible)
+        {
+            var meshes = GetComponentsInChildren<MeshRenderer>(true);
+            for (int i = 0; i < meshes.Length; i++)
+                if (meshes[i] != null) meshes[i].enabled = visible;
+
+            var skinned = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            for (int i = 0; i < skinned.Length; i++)
+                if (skinned[i] != null) skinned[i].enabled = visible;
+        }
+
         // ========= IScannable =========
 
         public virtual void OnHover() { }

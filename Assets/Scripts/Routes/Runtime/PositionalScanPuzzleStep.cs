@@ -78,6 +78,10 @@ namespace EscapeGame.Routes.Runtime
         // Compteur statique : combien d'instances detectent le joueur sur leur spot
         private static int onSpotCount = 0;
 
+        // Le scan positionnel ne revele jamais son mesh : seul le crosshair
+        // signale qu'on regarde la zone depuis une position valide.
+        protected override bool RevealMeshOnScan => false;
+
         /// <summary>True si le joueur est sur au moins un spot de scan.</summary>
         public static bool IsPlayerOnAnySpot => onSpotCount > 0;
 

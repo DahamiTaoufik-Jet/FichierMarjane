@@ -16,13 +16,18 @@ namespace EscapeGame.Bonuses.Data
         private float heightOffset;
         private float endTime;
         private LineRenderer line;
+        private ParticleSystem vfx;
+        private float particleSpeed;
 
-        public void Init(Transform player, Transform target, float heightOffset, float duration)
+        public void Init(Transform player, Transform target, float heightOffset,
+                         float duration, ParticleSystem vfx, float particleSpeed)
         {
             this.player = player;
             this.target = target;
             this.heightOffset = heightOffset;
             this.endTime = Time.time + duration;
+            this.vfx = vfx;
+            this.particleSpeed = particleSpeed;
             line = GetComponent<LineRenderer>();
         }
 
@@ -78,8 +83,28 @@ namespace EscapeGame.Bonuses.Data
             Vector3 start = player.position + Vector3.up * heightOffset;
             Vector3 end = target.position + Vector3.up * 0.5f;
 
-            line.SetPosition(0, start);
-            line.SetPosition(1, end);
+            if (line != null)
+            {
+                line.SetPosition(0, start);
+                line.SetPosition(1, end);
+            }
+
+            // Pilote le flux de particules : emetteur au depart, oriente vers la
+            // cible, duree de vie calee pour que les particules atteignent pile
+            // la cible (le "train" remplit tout le chemin).
+            if (vfx != null)
+            {
+                Vector3 dir = end - start;
+                float dist = dir.magnitude;
+
+                var t = vfx.transform;
+                t.position = start;
+                if (dist > 0.0001f)
+                    t.rotation = Quaternion.LookRotation(dir);
+
+                var main = vfx.main;
+                main.startLifetime = Mathf.Max(0.05f, dist / Mathf.Max(0.01f, particleSpeed));
+            }
         }
     }
 }
