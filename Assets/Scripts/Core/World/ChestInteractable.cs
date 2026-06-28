@@ -22,6 +22,9 @@ namespace EscapeGame.Core.World
         [Tooltip("UI de selection de lettre (ChestLetterPanelView). Si null, recherche au Start.")]
         public Inventory.UI.ChestLetterPanelView letterPanel;
 
+        [Tooltip("Avertissement affiche au premier coffre. Si null, recherche au Start.")]
+        public ChestWarningView warningView;
+
         private Transform playerTransform;
         private bool opened;
 
@@ -36,6 +39,9 @@ namespace EscapeGame.Core.World
 
             if (letterPanel == null)
                 letterPanel = FindFirstObjectByType<Inventory.UI.ChestLetterPanelView>(FindObjectsInactive.Include);
+
+            if (warningView == null)
+                warningView = FindFirstObjectByType<ChestWarningView>(FindObjectsInactive.Include);
 
             PasswordManager.PositionSolved += OnPositionSolved;
         }
@@ -62,6 +68,33 @@ namespace EscapeGame.Core.World
 
             if (!IsPlayerCloseEnough()) return;
 
+            // Garde-fou : le coffre reste inerte tant que le joueur ne possede
+            // pas au moins une lettre en inventaire.
+            if (letterPanel != null && letterPanel.inventory != null
+                && letterPanel.inventory.GetItemsOfType<EscapeGame.Inventory.Data.LetterItem>().Count == 0)
+            {
+                Debug.Log($"[ChestInteractable:{name}] Aucune lettre en inventaire - coffre non interactif.");
+                return;
+            }
+
+            // Premier coffre : avertir avant d'engager la phase coffres
+            // (apres quoi les enigmes/indices sont verrouilles).
+            if (!PasswordManager.Instance.ChestPhaseCommitted && warningView != null)
+            {
+                warningView.Show(() =>
+                {
+                    PasswordManager.Instance.CommitChestPhase();
+                    OpenLetterPanel();
+                });
+                return;
+            }
+
+            PasswordManager.Instance.CommitChestPhase();
+            OpenLetterPanel();
+        }
+
+        private void OpenLetterPanel()
+        {
             if (letterPanel != null)
                 letterPanel.Open(this, passwordPosition);
         }

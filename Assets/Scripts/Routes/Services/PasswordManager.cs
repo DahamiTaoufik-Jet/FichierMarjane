@@ -26,6 +26,18 @@ namespace EscapeGame.Routes.Services
         public string Password => password;
         public int AttemptsRemaining => maxAttempts - attemptsUsed;
         public bool IsGameLost => attemptsUsed >= maxAttempts;
+
+        /// <summary>Vrai une fois que le joueur s'est engage dans la phase coffres
+        /// (apres confirmation de l'avertissement). Verrouille les enigmes/indices.</summary>
+        public bool ChestPhaseCommitted { get; private set; }
+
+        /// <summary>Engage definitivement la phase coffres (irreversible).</summary>
+        public void CommitChestPhase()
+        {
+            if (ChestPhaseCommitted) return;
+            ChestPhaseCommitted = true;
+            Debug.Log("[PasswordManager] Phase coffres engagee : enigmes/indices verrouilles.");
+        }
         public bool IsAllSolved
         {
             get
@@ -78,6 +90,7 @@ namespace EscapeGame.Routes.Services
             solvedPositions = new bool[password.Length];
             announcedPositions = new bool[password.Length];
             attemptsUsed = 0;
+            ChestPhaseCommitted = false;
             Debug.Log($"[PasswordManager] Mot de passe configure : {password} ({password.Length} lettres)");
         }
 

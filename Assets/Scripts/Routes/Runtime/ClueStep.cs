@@ -21,7 +21,6 @@ namespace EscapeGame.Routes.Runtime
         public UnityEvent<ClueContent> OnContentRevealed;
 
         private float hoverTimer = 0f;
-        private bool isHovering = false;
         private bool contentShown = false;
 
         public override void OnHover()
@@ -30,7 +29,6 @@ namespace EscapeGame.Routes.Runtime
             if (IsResolved && contentShown) return;
             if (IsInteractionBlocked()) return;
 
-            isHovering = true;
             hoverTimer += Time.deltaTime;
 
             if (hoverTimer >= hoverDelay && !contentShown)
@@ -49,7 +47,6 @@ namespace EscapeGame.Routes.Runtime
         public override void OnHoverExit()
         {
             base.OnHoverExit();
-            isHovering = false;
             hoverTimer = 0f;
 
             if (contentShown)

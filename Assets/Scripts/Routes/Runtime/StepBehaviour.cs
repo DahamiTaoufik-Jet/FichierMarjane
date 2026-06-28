@@ -40,6 +40,10 @@ namespace EscapeGame.Routes.Runtime
 
         protected bool IsInteractionBlocked()
         {
+            // Une fois la phase coffres engagee, plus aucune interaction d'etape
+            // (indices et enigmes verrouilles : il faut repondre aux coffres).
+            if (PasswordManager.Instance != null && PasswordManager.Instance.ChestPhaseCommitted)
+                return true;
             return RouteManager.Instance != null && !RouteManager.Instance.CanInteract(this);
         }
 

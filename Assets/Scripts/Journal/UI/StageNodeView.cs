@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using EscapeGame.Bonuses.Data;
 using EscapeGame.Routes.Runtime;
+using EscapeGame.Routes.Services;
 
 namespace EscapeGame.Journal.UI
 {
@@ -49,6 +50,11 @@ namespace EscapeGame.Journal.UI
 
         [Tooltip("Grise pour les blocs non eligibles en mode selection.")]
         public Color ineligibleBgColor = new Color(0.5f, 0.5f, 0.5f, 0.4f);
+
+        [Header("Couleurs phase coffres")]
+        [Tooltip("Rouge applique aux enigmes non resolues une fois la phase coffres engagee (inclicables).")]
+        public Color lockedEnigmaBgColor = new Color(0.75f, 0.12f, 0.12f, 1f);
+        public Color lockedEnigmaTextColor = Color.white;
 
         private StepBehaviour boundStep;
         private StageModalView modalView;
@@ -135,6 +141,19 @@ namespace EscapeGame.Journal.UI
                     button.interactable = isEligible;
                 else
                     button.interactable = state != StepState.Locked;
+            }
+
+            // Phase coffres : les enigmes non resolues passent en ROUGE et
+            // deviennent inclicables (les indices/enigmes ne sont plus jouables).
+            if (!inSelection && boundStep is PuzzleStep && state != StepState.Resolved
+                && PasswordManager.Instance != null && PasswordManager.Instance.ChestPhaseCommitted)
+            {
+                if (background != null) background.color = lockedEnigmaBgColor;
+                if (numberText != null) numberText.color = lockedEnigmaTextColor;
+                if (doubleCheckIcon != null) doubleCheckIcon.SetActive(false);
+                if (lockOpenIcon != null) lockOpenIcon.SetActive(false);
+                if (lockClosedIcon != null) lockClosedIcon.SetActive(true);
+                if (button != null) button.interactable = false;
             }
         }
 
