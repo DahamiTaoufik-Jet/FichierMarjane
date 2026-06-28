@@ -85,6 +85,9 @@ namespace EscapeGame.Routes.Runtime
         /// <summary>True si le joueur est sur au moins un spot de scan.</summary>
         public static bool IsPlayerOnAnySpot => onSpotCount > 0;
 
+        /// <summary>Remet le compteur statique a zero (nouvelle partie / reset de scene).</summary>
+        public static void ResetSpotCount() => onSpotCount = 0;
+
         /// <summary>
         /// Appele par le <c>ProceduralRouteGenerator</c> pour transmettre les
         /// positions valides extraites des ScanSpot lies. Une seule position est
