@@ -44,6 +44,11 @@ namespace EscapeGame.Core.World
         public TMP_Text felicitationsRewardText;
         public string felicitationsRewardPrefix = "Recompense finale : ";
 
+        [Tooltip("Source audio pour le son de victoire.")]
+        public AudioSource victoryAudioSource;
+        [Tooltip("Son joue a l'affichage de l'ecran Felicitations (Total Victory).")]
+        public AudioClip victorySound;
+
         [Header("Ecran Game Over (plus d'essais ou plus de lettres)")]
         public GameObject gameOverRoot;
         public TMP_Text gameOverRewardText;
@@ -129,6 +134,8 @@ namespace EscapeGame.Core.World
             ended = true;
             if (felicitationsRewardText != null)
                 felicitationsRewardText.text = felicitationsRewardPrefix + GetRewardText(openedCount);
+            if (victoryAudioSource != null && victorySound != null)
+                victoryAudioSource.PlayOneShot(victorySound);
             ShowEndScreen(felicitationsRoot);
         }
 
