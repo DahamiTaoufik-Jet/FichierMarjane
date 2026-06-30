@@ -60,8 +60,8 @@ MonoBehaviour:
     maxCount: 5
   - bonus: {fileID: 11400000, guid: 9f1dcf576bd474b6fa4c6bf278083ee5, type: 2}
     maxCount: 5
-  minRouteLength: 7
-  maxRouteLength: 7
-  maxStepUsage: 2
+  minRouteLength: 5
+  maxRouteLength: 5
+  maxStepUsage: 1
   regionFilter: 
   seed: 1234
