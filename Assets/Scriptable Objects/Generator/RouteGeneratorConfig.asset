@@ -47,6 +47,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5f11917a9cdd44986b1e1dfad4ed8531, type: 2}
   - {fileID: 11400000, guid: cdc0f23f1be2e407193302d38bb13683, type: 2}
   - {fileID: 11400000, guid: a96b7d093c45047b59d9051ed478cfa7, type: 2}
+  - {fileID: 11400000, guid: 002fc597edb1ead47945a21f86d5270a, type: 2}
+  - {fileID: 11400000, guid: cb95e9d3f8d504e4cb0c263171c74aed, type: 2}
+  - {fileID: 11400000, guid: 27d5cdad7cffb2d4d8db3529af3c5af2, type: 2}
+  - {fileID: 11400000, guid: 60f713e3c7a1a2e439d825b50bcbf322, type: 2}
+  - {fileID: 11400000, guid: b523b671a2fdcc34f94f5c9658e80228, type: 2}
+  - {fileID: 11400000, guid: 9a76316cfe8db0a44915801905eb63ed, type: 2}
+  - {fileID: 11400000, guid: 803a364c0769a184b8acee203cfd2b46, type: 2}
+  - {fileID: 11400000, guid: d38a6b6628876564e8c6b8aab41f1190, type: 2}
+  - {fileID: 11400000, guid: cce494065ed2f0049a69a05026dc4375, type: 2}
+  - {fileID: 11400000, guid: 7ce4ed30d0263284db03e4c5f8b5edd7, type: 2}
+  - {fileID: 11400000, guid: 149a947ec1305e64689d33d735ce4ca4, type: 2}
+  - {fileID: 11400000, guid: 5a1a439d69052894890906b1625862fa, type: 2}
+  - {fileID: 11400000, guid: cc1b12233e8f87645823ea1fae636d67, type: 2}
   passwordWords:
   - LIBRE
   - JOUER
