@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using EscapeGame.Bonuses.Data;
 using EscapeGame.Core.Player;
+using EscapeGame.Inventory.UI;
 using EscapeGame.Journal.Runtime;
 using EscapeGame.Routes.Runtime;
 
@@ -39,6 +40,9 @@ namespace EscapeGame.Journal.UI
 
         [Tooltip("Composant StageModalView (sur ce meme GameObject).")]
         public StageModalView stageModal;
+
+        [Tooltip("Menu des bonus a fermer avant d'ouvrir le journal (evite le chevauchement des UI).")]
+        public InventoryPanelView bonusInventory;
 
         [Header("Navigation")]
         [Tooltip("Bouton pour fermer le journal et revenir au jeu (comme Tab).")]
@@ -83,10 +87,19 @@ namespace EscapeGame.Journal.UI
         public Color activeLineColor = new Color(0.12f, 0.12f, 0.12f);
         public Color inactiveLineColor = new Color(0.80f, 0.80f, 0.80f);
 
+        [Header("Contenu (dimensionnement auto)")]
+        [Tooltip("Marge ajoutee autour du contenu pour dimensionner le WorldContainer (px). " +
+                 "Le ScrollRect ne rappelle qu'au-dela de ces bornes.")]
+        public float contentPadding = 160f;
+
         // Cache interne
         private readonly List<GameObject> spawnedObjects = new List<GameObject>();
         private InputAction openJournalAction;
         private bool journalIsOpen = false;
+
+        // Bornes du contenu (centres des nodes) calculees pendant Rebuild
+        private float cMinX, cMaxX, cMinY, cMaxY;
+        private bool hasContent;
 
         // ====================================================================
         // Cycle de vie
@@ -157,6 +170,10 @@ namespace EscapeGame.Journal.UI
 
             if (open)
             {
+                // Fermer le menu bonus s'il etait ouvert, pour ne pas empiler
+                // deux UI (le menu bonus resterait persistant sous le journal).
+                if (bonusInventory != null) bonusInventory.ForceClose();
+
                 journalIsOpen = true;
                 UIState.SetUIOpen();
                 Rebuild();
@@ -258,12 +275,42 @@ namespace EscapeGame.Journal.UI
             var routes = journalManager.KnownRoutes;
             if (routes.Count == 0) return;
 
+            // Reset des bornes de contenu
+            cMinX = cMinY = float.MaxValue;
+            cMaxX = cMaxY = float.MinValue;
+            hasContent = false;
+
             for (int r = 0; r < routes.Count; r++)
             {
                 BuildRoute(routes[r], r);
             }
 
-            // Progress bar retiree
+            // Dimensionne le WorldContainer sur son contenu reel pour que le
+            // ScrollRect connaisse sa vraie taille (fin du snap-back intempestif).
+            ResizeContainerToContent();
+        }
+
+        /// <summary>
+        /// Redimensionne le WorldContainer (content du ScrollRect) pour englober
+        /// toutes les routes + une marge. Le container a un pivot (0,1) en haut a
+        /// gauche : le contenu s'etend vers la droite (+x) et vers le bas (-y).
+        /// </summary>
+        private void ResizeContainerToContent()
+        {
+            if (worldContainer == null || !hasContent) return;
+
+            float width = cMaxX + contentPadding;
+            float height = (-cMinY) + contentPadding;
+
+            // Au minimum la taille du viewport (sinon contenu plus petit que la vue).
+            var viewport = worldContainer.parent as RectTransform;
+            if (viewport != null)
+            {
+                width = Mathf.Max(width, viewport.rect.width);
+                height = Mathf.Max(height, viewport.rect.height);
+            }
+
+            worldContainer.sizeDelta = new Vector2(width, height);
         }
 
         private void BuildRoute(RouteRuntime route, int routeIndex)
@@ -282,6 +329,13 @@ namespace EscapeGame.Journal.UI
                 float y = startY - (routeIndex * routeGap) + (s % 2 == 0 ? zigAmp : -zigAmp);
                 Vector2 pos = new Vector2(x, y);
                 positions.Add(pos);
+
+                // Suivi des bornes du contenu (centres des nodes)
+                if (pos.x < cMinX) cMinX = pos.x;
+                if (pos.x > cMaxX) cMaxX = pos.x;
+                if (pos.y < cMinY) cMinY = pos.y;
+                if (pos.y > cMaxY) cMaxY = pos.y;
+                hasContent = true;
 
                 // Instancier le StageNode
                 if (stageNodePrefab == null) continue;
