@@ -128,6 +128,29 @@ namespace EscapeGame.Routes.Services
             return null;
         }
 
+        /// <summary>
+        /// Vrai si ce step est la PROCHAINE etape non resolue de sa route,
+        /// c'est-a-dire si tous les blocs avant lui sont deja resolus. Utilise
+        /// par les radios pour n'emettre l'onde que lorsqu'elles sont vraiment la
+        /// suivante (meme si elles restent cliquables via le saut).
+        /// </summary>
+        public bool IsNextInRoute(StepBehaviour step)
+        {
+            for (int i = 0; i < routes.Count; i++)
+            {
+                int idx = routes[i].IndexOf(step);
+                if (idx < 0) continue;
+
+                for (int j = 0; j < idx; j++)
+                {
+                    var s = routes[i].Steps[j];
+                    if (s != null && !s.IsResolved) return false;
+                }
+                return true;
+            }
+            return true; // pas trouve dans une route : ne pas bloquer
+        }
+
         // ====================================================================
         // Abonnements aux Steps
         // ====================================================================

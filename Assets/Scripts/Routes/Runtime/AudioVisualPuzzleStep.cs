@@ -208,14 +208,27 @@ namespace EscapeGame.Routes.Runtime
                 return;
             }
 
-            // --- Onde HUD partagee : seule la radio a portee la plus proche la pilote ---
-            lastWaveDistance = distance;
-            bool ownsWave = waveOwner == null || waveOwner == this
-                            || distance <= waveOwner.lastWaveDistance;
-            if (ownsWave)
+            // --- Onde HUD : uniquement si cette radio est la PROCHAINE de sa route ---
+            // (elle peut rester cliquable via le saut, mais reste silencieuse tant
+            //  qu'il y a des blocs non resolus avant elle).
+            var rm = EscapeGame.Routes.Services.RouteManager.Instance;
+            bool isNextInRoute = rm == null || rm.IsNextInRoute(this);
+
+            if (isNextInRoute)
             {
-                waveOwner = this;
-                UpdateWaveVisual(distance);
+                // Onde partagee : seule la radio a portee la plus proche la pilote.
+                lastWaveDistance = distance;
+                bool ownsWave = waveOwner == null || waveOwner == this
+                                || distance <= waveOwner.lastWaveDistance;
+                if (ownsWave)
+                {
+                    waveOwner = this;
+                    UpdateWaveVisual(distance);
+                }
+            }
+            else
+            {
+                ReleaseWave();
             }
 
             // --- Visee / validation : par radio (celle qu'on vise), independant de l'onde ---
