@@ -59,6 +59,16 @@ namespace EscapeGame.Routes.Runtime
         [Tooltip("Dot product min entre la direction de vue et la direction vers l'objet pour atteindre waveMinFrequency. 1.0 = centre parfait.")]
         [Range(0f, 1f)] public float waveCenterDotThreshold = 0.95f;
 
+        [Header("Couleur de l'onde")]
+        [Tooltip("Si vrai, une couleur distincte est generee automatiquement pour cet emetteur (evite la confusion entre radios proches).")]
+        public bool autoWaveColor = true;
+
+        [Tooltip("Couleur de l'onde de cette radio (utilisee telle quelle si autoWaveColor = false).")]
+        public Color waveColor = new Color(0f, 1f, 0.94f, 1f);
+
+        // Compteur statique pour repartir les teintes automatiques (nombre d'or).
+        private static int waveColorCounter = 0;
+
         private const string FPS_CAM_TAG = "FPSCam";
 
         private float currentGazeTimer = 0f;
@@ -99,6 +109,15 @@ namespace EscapeGame.Routes.Runtime
 
         private void Start()
         {
+            // Couleur d'onde distincte par emetteur : teintes reparties via le
+            // nombre d'or pour un maximum de contraste entre radios.
+            if (autoWaveColor)
+            {
+                float hue = (waveColorCounter * 0.6180339887f) % 1f;
+                waveColorCounter++;
+                waveColor = Color.HSVToRGB(hue, 0.85f, 1f);
+            }
+
             TryAcquireFPSCamera();
             TryAcquireWaveRenderer();
         }
@@ -310,6 +329,10 @@ namespace EscapeGame.Routes.Runtime
             // Rendu en WORLD space : on calcule les positions par rapport
             // a la camera active pour que la ligne soit toujours visible
             waveRenderer.enabled = true;
+            // Couleur propre a cet emetteur (l'onde est partagee mais pilotee par
+            // une seule radio a la fois -> la couleur reflete la radio active).
+            waveRenderer.startColor = waveColor;
+            waveRenderer.endColor = waveColor;
             if (waveRenderer.positionCount != waveSegments)
                 waveRenderer.positionCount = waveSegments;
 
