@@ -68,6 +68,15 @@ namespace EscapeGame.Core.World
 
             if (!IsPlayerCloseEnough()) return;
 
+            // Garde-fou tutoriel : tant que la condition n'est pas remplie
+            // (ex. pas encore toutes les lettres), on refuse avec un message
+            // au lieu d'autoriser + verrouiller. Absent (null) en jeu normal.
+            if (TutorialChestGate.Instance != null && !TutorialChestGate.Instance.IsChestAccessAllowed())
+            {
+                TutorialChestGate.Instance.ShowBlockedMessage();
+                return;
+            }
+
             // Garde-fou : le coffre reste inerte tant que le joueur ne possede
             // pas au moins une lettre en inventaire.
             if (letterPanel != null && letterPanel.inventory != null
