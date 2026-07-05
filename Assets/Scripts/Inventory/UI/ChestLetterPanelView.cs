@@ -24,6 +24,10 @@ namespace EscapeGame.Inventory.UI
         [Tooltip("Texte affichant les essais restants.")]
         public TMP_Text attemptsText;
 
+        [Tooltip("Affiche le compteur d'essais et la mention '(X essais restants)'. " +
+                 "Mettre a false dans le tutoriel (essais illimites, pas de pression).")]
+        public bool showAttempts = true;
+
         [Tooltip("Texte affichant le resultat (bonne/mauvaise reponse).")]
         public TMP_Text feedbackText;
 
@@ -148,7 +152,9 @@ namespace EscapeGame.Inventory.UI
                 case PasswordManager.TryResult.Wrong:
                     UpdateAttemptsDisplay();
                     if (feedbackText != null)
-                        feedbackText.text = $"Mauvaise lettre ! ({PasswordManager.Instance.AttemptsRemaining} essais restants)";
+                        feedbackText.text = showAttempts
+                            ? $"Mauvaise lettre ! ({PasswordManager.Instance.AttemptsRemaining} essais restants)"
+                            : "Mauvaise lettre !";
                     break;
 
                 case PasswordManager.TryResult.Lost:
@@ -166,7 +172,14 @@ namespace EscapeGame.Inventory.UI
 
         private void UpdateAttemptsDisplay()
         {
-            if (attemptsText == null || PasswordManager.Instance == null) return;
+            if (attemptsText == null) return;
+            if (!showAttempts)
+            {
+                if (attemptsText.gameObject.activeSelf)
+                    attemptsText.gameObject.SetActive(false);
+                return;
+            }
+            if (PasswordManager.Instance == null) return;
             attemptsText.text = $"Essais : {PasswordManager.Instance.AttemptsRemaining}";
         }
 

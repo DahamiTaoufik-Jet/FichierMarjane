@@ -92,6 +92,11 @@ namespace EscapeGame.Journal.UI
                  "Le ScrollRect ne rappelle qu'au-dela de ces bornes.")]
         public float contentPadding = 160f;
 
+        [Header("Tutoriel")]
+        [Tooltip("Si vrai, a chaque ouverture le journal recentre la vue sur le premier bloc " +
+                 "(la tuile blanche du tutoriel) au centre du viewport, pour laisser la place de cliquer.")]
+        public bool centerFirstNodeOnOpen = false;
+
         // Cache interne
         private readonly List<GameObject> spawnedObjects = new List<GameObject>();
         private InputAction openJournalAction;
@@ -177,6 +182,7 @@ namespace EscapeGame.Journal.UI
                 journalIsOpen = true;
                 UIState.SetUIOpen();
                 Rebuild();
+                if (centerFirstNodeOnOpen) CenterViewOnFirstNode();
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
@@ -295,6 +301,36 @@ namespace EscapeGame.Journal.UI
         /// toutes les routes + une marge. Le container a un pivot (0,1) en haut a
         /// gauche : le contenu s'etend vers la droite (+x) et vers le bas (-y).
         /// </summary>
+        /// <summary>
+        /// Recentre la vue pour amener le premier bloc (StageNode) au centre du
+        /// viewport. Utilise le deplacement en espace-monde (independant des
+        /// ancres/pivots/echelle) : on decale le WorldContainer de sorte que le
+        /// centre du node coincide avec le centre du viewport.
+        /// </summary>
+        private void CenterViewOnFirstNode()
+        {
+            if (worldContainer == null) return;
+            var viewport = worldContainer.parent as RectTransform;
+            if (viewport == null) return;
+
+            RectTransform target = null;
+            for (int i = 0; i < spawnedObjects.Count; i++)
+            {
+                if (spawnedObjects[i] == null) continue;
+                if (spawnedObjects[i].GetComponent<StageNodeView>() != null)
+                {
+                    target = spawnedObjects[i].GetComponent<RectTransform>();
+                    break;
+                }
+            }
+            if (target == null) return;
+
+            Canvas.ForceUpdateCanvases();
+            Vector3 centerWorld = viewport.TransformPoint(viewport.rect.center);
+            Vector3 nodeWorld = target.position; // pivot (0.5,0.5) -> centre du node
+            worldContainer.position += (centerWorld - nodeWorld);
+        }
+
         private void ResizeContainerToContent()
         {
             if (worldContainer == null || !hasContent) return;

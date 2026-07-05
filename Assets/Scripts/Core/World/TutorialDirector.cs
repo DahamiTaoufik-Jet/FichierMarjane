@@ -51,10 +51,21 @@ namespace EscapeGame.Core.World
         [Header("Sequence")]
         public List<Beat> beats = new List<Beat>();
 
+        [Header("Recentrage")]
+        [Tooltip("Ancres verticales du panneau de consignes quand le journal est ouvert (centre de l'ecran). " +
+                 "Hors journal, le panneau reprend sa position d'origine (haut).")]
+        public Vector2 centeredAnchorY = new Vector2(0.42f, 0.58f);
+
         private int index = -1;
         private float beatStartTime;
         private bool fpsActivated;
         private bool promptSuppressed;
+
+        // Ancres verticales d'origine du panneau, capturees au Start, pour
+        // basculer entre "haut" (defaut) et "centre" (journal ouvert).
+        private Vector2 origAnchorMin, origAnchorMax;
+        private bool promptLayoutCaptured;
+        private int promptLayoutState = -1; // -1 inconnu, 0 haut, 1 centre
         private readonly HashSet<string> resolvedSteps = new HashSet<string>();
         private readonly HashSet<string> completedRoutes = new HashSet<string>();
 
@@ -74,8 +85,19 @@ namespace EscapeGame.Core.World
 
         private void Start()
         {
+            CapturePromptLayout();
             if (promptPanel != null) promptPanel.SetActive(false);
             Advance();
+        }
+
+        private void CapturePromptLayout()
+        {
+            if (promptLayoutCaptured || promptPanel == null) return;
+            var rt = promptPanel.transform as RectTransform;
+            if (rt == null) return;
+            origAnchorMin = rt.anchorMin;
+            origAnchorMax = rt.anchorMax;
+            promptLayoutCaptured = true;
         }
 
         private void Update()
@@ -101,10 +123,45 @@ namespace EscapeGame.Core.World
             if (modalOpen) promptSuppressed = true;      // on a clique une tuile
             if (!journalOpen) promptSuppressed = false;  // reaffiche a la sortie du journal
 
+            // Le texte de tutoriel est centre a l'ecran SI ET SEULEMENT SI le
+            // journal est ouvert ; sinon il reprend sa position d'origine (haut).
+            ApplyPromptLayout(journalOpen);
+
             bool hasBeat = index >= 0 && index < beats.Count && !string.IsNullOrEmpty(beats[index].text);
             bool shouldShow = hasBeat && !promptSuppressed;
             if (promptPanel.activeSelf != shouldShow)
                 promptPanel.SetActive(shouldShow);
+        }
+
+        /// <summary>
+        /// Bascule les ancres verticales du panneau de consignes : centre de
+        /// l'ecran quand <paramref name="centered"/> (journal ouvert), sinon la
+        /// position d'origine. Ne touche pas aux ancres horizontales.
+        /// </summary>
+        private void ApplyPromptLayout(bool centered)
+        {
+            CapturePromptLayout();
+            if (!promptLayoutCaptured) return;
+
+            int want = centered ? 1 : 0;
+            if (promptLayoutState == want) return;
+            promptLayoutState = want;
+
+            var rt = promptPanel.transform as RectTransform;
+            if (rt == null) return;
+
+            if (centered)
+            {
+                rt.anchorMin = new Vector2(origAnchorMin.x, centeredAnchorY.x);
+                rt.anchorMax = new Vector2(origAnchorMax.x, centeredAnchorY.y);
+            }
+            else
+            {
+                rt.anchorMin = origAnchorMin;
+                rt.anchorMax = origAnchorMax;
+            }
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
         }
 
         // ====================================================================

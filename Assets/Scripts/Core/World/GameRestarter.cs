@@ -17,13 +17,31 @@ namespace EscapeGame.Core.World
         [Tooltip("Boutons 'Rejouer' (Felicitations, Game Over). Cables ici, listener ajoute au demarrage.")]
         public Button[] restartButtons;
 
+        [Header("Chargement d'une autre scene")]
+        [Tooltip("Boutons qui chargent 'sceneToLoad' (ex. 'Jouer' sur la victoire du tutoriel -> scene principale).")]
+        public Button[] loadSceneButtons;
+
+        [Tooltip("Nom de la scene chargee par loadSceneButtons (ex. SampleScene). Doit etre dans les Build Settings.")]
+        public string sceneToLoad = "";
+
         private void Awake()
         {
-            if (restartButtons == null) return;
-            for (int i = 0; i < restartButtons.Length; i++)
+            if (restartButtons != null)
             {
-                if (restartButtons[i] != null)
-                    restartButtons[i].onClick.AddListener(RestartGame);
+                for (int i = 0; i < restartButtons.Length; i++)
+                {
+                    if (restartButtons[i] != null)
+                        restartButtons[i].onClick.AddListener(RestartGame);
+                }
+            }
+
+            if (loadSceneButtons != null)
+            {
+                for (int i = 0; i < loadSceneButtons.Length; i++)
+                {
+                    if (loadSceneButtons[i] != null)
+                        loadSceneButtons[i].onClick.AddListener(LoadConfiguredScene);
+                }
             }
         }
 
@@ -41,6 +59,25 @@ namespace EscapeGame.Core.World
 
             var scene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(scene.buildIndex);
+        }
+
+        /// <summary>
+        /// Reset des etats statiques puis chargement de <see cref="sceneToLoad"/>
+        /// (ex. bouton 'Jouer' de l'ecran de victoire du tutoriel -> scene principale).
+        /// </summary>
+        public void LoadConfiguredScene()
+        {
+            if (string.IsNullOrEmpty(sceneToLoad)) return;
+
+            UIState.Clear();
+            JournalSelectionMode.Exit();
+            DecryptionTracker.Clear();
+            PositionalScanPuzzleStep.ResetSpotCount();
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            SceneManager.LoadScene(sceneToLoad);
         }
     }
 }
