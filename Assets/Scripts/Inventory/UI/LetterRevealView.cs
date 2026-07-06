@@ -207,6 +207,11 @@ namespace EscapeGame.Inventory.UI
             if (audioSource != null && getSound != null)
                 audioSource.PlayOneShot(getSound);
 
+            // Met la musique de fond en pause pendant le clip de decouverte, puis
+            // reprise en fondu a la fin de celui-ci (SampleScene). Null en tutoriel.
+            if (EscapeGame.Core.World.BackgroundMusic.Instance != null && getSound != null)
+                EscapeGame.Core.World.BackgroundMusic.Instance.DuckForClip(getSound);
+
             // --- Pop-in (scale 0 -> 1 avec leger depassement) ---
             float t = 0f;
             while (t < popInDuration)
