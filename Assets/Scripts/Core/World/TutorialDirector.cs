@@ -51,10 +51,14 @@ namespace EscapeGame.Core.World
         [Header("Sequence")]
         public List<Beat> beats = new List<Beat>();
 
-        [Header("Recentrage")]
-        [Tooltip("Ancres verticales du panneau de consignes quand le journal est ouvert (centre de l'ecran). " +
+        [Header("Repositionnement")]
+        [Tooltip("Ancres verticales du panneau de consignes quand le journal est ouvert (bas de l'ecran). " +
                  "Hors journal, le panneau reprend sa position d'origine (haut).")]
-        public Vector2 centeredAnchorY = new Vector2(0.42f, 0.58f);
+        public Vector2 centeredAnchorY = new Vector2(0.04f, 0.20f);
+
+        [Tooltip("Ancres horizontales du panneau quand le journal est ouvert (ancre a gauche). " +
+                 "Hors journal, le panneau reprend ses ancres horizontales d'origine.")]
+        public Vector2 centeredAnchorX = new Vector2(0.02f, 0.42f);
 
         private int index = -1;
         private float beatStartTime;
@@ -134,9 +138,9 @@ namespace EscapeGame.Core.World
         }
 
         /// <summary>
-        /// Bascule les ancres verticales du panneau de consignes : centre de
-        /// l'ecran quand <paramref name="centered"/> (journal ouvert), sinon la
-        /// position d'origine. Ne touche pas aux ancres horizontales.
+        /// Repositionne le panneau de consignes : quand <paramref name="centered"/>
+        /// (journal ouvert), il s'ancre en bas a gauche (ancres X et Y dediees) ;
+        /// sinon il reprend ses ancres d'origine (haut, pleine largeur).
         /// </summary>
         private void ApplyPromptLayout(bool centered)
         {
@@ -152,8 +156,8 @@ namespace EscapeGame.Core.World
 
             if (centered)
             {
-                rt.anchorMin = new Vector2(origAnchorMin.x, centeredAnchorY.x);
-                rt.anchorMax = new Vector2(origAnchorMax.x, centeredAnchorY.y);
+                rt.anchorMin = new Vector2(centeredAnchorX.x, centeredAnchorY.x);
+                rt.anchorMax = new Vector2(centeredAnchorX.y, centeredAnchorY.y);
             }
             else
             {
