@@ -151,6 +151,15 @@ namespace EscapeGame.Inventory.UI
             }
         }
 
+        /// <summary>
+        /// Ferme le menu s'il est ouvert. Appele de l'exterieur (ex. le journal
+        /// avant de s'ouvrir) pour eviter que le menu bonus reste persistant.
+        /// </summary>
+        public void ForceClose()
+        {
+            if (isOpen) Close();
+        }
+
         private void UseCurrentItem()
         {
             if (sortedItems.Count == 0 || inventory == null) return;

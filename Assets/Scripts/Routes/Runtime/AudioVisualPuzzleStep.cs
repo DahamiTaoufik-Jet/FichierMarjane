@@ -59,6 +59,16 @@ namespace EscapeGame.Routes.Runtime
         [Tooltip("Dot product min entre la direction de vue et la direction vers l'objet pour atteindre waveMinFrequency. 1.0 = centre parfait.")]
         [Range(0f, 1f)] public float waveCenterDotThreshold = 0.95f;
 
+        [Header("Couleur de l'onde")]
+        [Tooltip("Si vrai, une couleur distincte est generee automatiquement pour cet emetteur (evite la confusion entre radios proches).")]
+        public bool autoWaveColor = true;
+
+        [Tooltip("Couleur de l'onde de cette radio (utilisee telle quelle si autoWaveColor = false).")]
+        public Color waveColor = new Color(0f, 1f, 0.94f, 1f);
+
+        // Compteur statique pour repartir les teintes automatiques (nombre d'or).
+        private static int waveColorCounter = 0;
+
         private const string FPS_CAM_TAG = "FPSCam";
 
         private float currentGazeTimer = 0f;
@@ -70,6 +80,15 @@ namespace EscapeGame.Routes.Runtime
         // La radio ne se revele jamais : son mesh reste invisible.
         protected override bool RevealMeshOnScan => false;
 
+        // L'onde HUD est PARTAGEE (une seule WaveOverlayHUD pour toutes les
+        // radios). Sans arbitrage, chaque radio hors de portee appelait HideWave
+        // a chaque frame et desactivait l'onde des voisines -> l'onde clignotait
+        // / disparaissait selon l'ordre des Update. On introduit un "proprietaire"
+        // unique : la radio a portee la plus proche, seule habilitee a piloter et
+        // masquer l'onde.
+        private static AudioVisualPuzzleStep waveOwner;
+        private float lastWaveDistance = float.MaxValue;
+
         private void Awake()
         {
             ConfigureWaveRenderer();
@@ -79,6 +98,7 @@ namespace EscapeGame.Routes.Runtime
         private void OnDestroy()
         {
             EscapeGame.Core.Player.PlayerCamera.FPSCameraActivated -= HandleFPSCameraActivated;
+            if (waveOwner == this) waveOwner = null;
         }
 
         private void OnValidate()
@@ -89,6 +109,15 @@ namespace EscapeGame.Routes.Runtime
 
         private void Start()
         {
+            // Couleur d'onde distincte par emetteur : teintes reparties via le
+            // nombre d'or pour un maximum de contraste entre radios.
+            if (autoWaveColor)
+            {
+                float hue = (waveColorCounter * 0.6180339887f) % 1f;
+                waveColorCounter++;
+                waveColor = Color.HSVToRGB(hue, 0.85f, 1f);
+            }
+
             TryAcquireFPSCamera();
             TryAcquireWaveRenderer();
         }
@@ -150,8 +179,14 @@ namespace EscapeGame.Routes.Runtime
 
         private void Update()
         {
-            if (IsResolved) return;
-            if (IsInteractionBlocked()) { HideWave(); return; }
+            if (IsResolved) { ReleaseWave(); return; }
+            if (IsInteractionBlocked())
+            {
+                ReleaseWave();
+                currentGazeTimer = 0f;
+                isGazingThisFrame = false;
+                return;
+            }
 
             // Lazy retry : la FPSCamera ou le WaveOverlayHUD peuvent etre
             // inactifs au Start (mode TPS au demarrage)
@@ -167,14 +202,36 @@ namespace EscapeGame.Routes.Runtime
 
             if (distance > maxDetectionDistance)
             {
-                HideWave();
+                ReleaseWave();
                 currentGazeTimer = 0f;
                 isGazingThisFrame = false;
                 return;
             }
 
-            UpdateWaveVisual(distance);
+            // --- Onde HUD : uniquement si cette radio est la PROCHAINE de sa route ---
+            // (elle peut rester cliquable via le saut, mais reste silencieuse tant
+            //  qu'il y a des blocs non resolus avant elle).
+            var rm = EscapeGame.Routes.Services.RouteManager.Instance;
+            bool isNextInRoute = rm == null || rm.IsNextInRoute(this);
 
+            if (isNextInRoute)
+            {
+                // Onde partagee : seule la radio a portee la plus proche la pilote.
+                lastWaveDistance = distance;
+                bool ownsWave = waveOwner == null || waveOwner == this
+                                || distance <= waveOwner.lastWaveDistance;
+                if (ownsWave)
+                {
+                    waveOwner = this;
+                    UpdateWaveVisual(distance);
+                }
+            }
+            else
+            {
+                ReleaseWave();
+            }
+
+            // --- Visee / validation : par radio (celle qu'on vise), independant de l'onde ---
             if (isGazingThisFrame)
             {
                 if (distance <= maxValidationDistance)
@@ -197,6 +254,20 @@ namespace EscapeGame.Routes.Runtime
             }
 
             isGazingThisFrame = false;
+        }
+
+        /// <summary>
+        /// Libere l'onde partagee SI cette radio en est proprietaire. Les autres
+        /// radios (hors de portee, resolues...) ne touchent jamais a l'onde d'une
+        /// voisine — c'est ce qui corrige le clignotement / la disparition.
+        /// </summary>
+        private void ReleaseWave()
+        {
+            if (waveOwner == this)
+            {
+                waveOwner = null;
+                HideWave();
+            }
         }
 
         public override void OnHover()
@@ -271,6 +342,10 @@ namespace EscapeGame.Routes.Runtime
             // Rendu en WORLD space : on calcule les positions par rapport
             // a la camera active pour que la ligne soit toujours visible
             waveRenderer.enabled = true;
+            // Couleur propre a cet emetteur (l'onde est partagee mais pilotee par
+            // une seule radio a la fois -> la couleur reflete la radio active).
+            waveRenderer.startColor = waveColor;
+            waveRenderer.endColor = waveColor;
             if (waveRenderer.positionCount != waveSegments)
                 waveRenderer.positionCount = waveSegments;
 

@@ -19,8 +19,8 @@ MonoBehaviour:
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
-    mode: 0
-    regionId: 
+    mode: 1
+    regionId: ElectroGpu
     spotId: 
   puzzleQuestion: 
   puzzleAnswer: 

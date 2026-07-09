@@ -31,12 +31,16 @@ namespace EscapeGame.Routes.Services
         /// (apres confirmation de l'avertissement). Verrouille les enigmes/indices.</summary>
         public bool ChestPhaseCommitted { get; private set; }
 
+        /// <summary>Leve au deverrouillage des coffres (engagement de la phase coffres).</summary>
+        public static event Action ChestPhaseStarted;
+
         /// <summary>Engage definitivement la phase coffres (irreversible).</summary>
         public void CommitChestPhase()
         {
             if (ChestPhaseCommitted) return;
             ChestPhaseCommitted = true;
             Debug.Log("[PasswordManager] Phase coffres engagee : enigmes/indices verrouilles.");
+            ChestPhaseStarted?.Invoke();
         }
         public bool IsAllSolved
         {

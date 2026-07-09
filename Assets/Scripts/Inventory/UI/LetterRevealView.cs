@@ -87,6 +87,16 @@ namespace EscapeGame.Inventory.UI
         [Tooltip("Si vrai, un clic ou une touche accelere la sortie pendant la phase memorisation.")]
         public bool allowSkip = true;
 
+        [Header("Tutoriel")]
+        [Tooltip("Si vrai, la TOUTE PREMIERE lettre attend une touche avant de lancer l'animation " +
+                 "(le temps que le joueur lise la consigne de memorisation).")]
+        public bool waitForInputOnFirst = false;
+
+        [Tooltip("Touche qui declenche la premiere revelation.")]
+        public Key confirmKey = Key.Enter;
+
+        private bool firstShown;
+
         private Vector2 homePosition;
         private readonly Queue<LetterItem> queue = new Queue<LetterItem>();
         private bool isPlaying;
@@ -133,9 +143,36 @@ namespace EscapeGame.Inventory.UI
             while (queue.Count > 0)
             {
                 var letter = queue.Dequeue();
+
+                // Premiere lettre du tutoriel : on attend la touche de confirmation
+                // pour que le joueur lise d'abord la consigne de memorisation.
+                if (waitForInputOnFirst && !firstShown)
+                {
+                    firstShown = true;
+                    yield return WaitForConfirmKey();
+                }
+
                 yield return PlaySequence(letter);
             }
             isPlaying = false;
+        }
+
+        private IEnumerator WaitForConfirmKey()
+        {
+            // La touche qui vient de valider l'enigme (Entree du champ texte) ne
+            // doit PAS compter : on saute la frame courante, on attend que la
+            // touche soit relachee, puis on attend une NOUVELLE pression.
+            yield return null;
+            while (Keyboard.current != null && Keyboard.current[confirmKey].isPressed)
+                yield return null;
+
+            while (true)
+            {
+                var kb = Keyboard.current;
+                if (kb != null && kb[confirmKey].wasPressedThisFrame)
+                    yield break;
+                yield return null;
+            }
         }
 
         // ====================================================================
@@ -169,6 +206,11 @@ namespace EscapeGame.Inventory.UI
             }
             if (audioSource != null && getSound != null)
                 audioSource.PlayOneShot(getSound);
+
+            // Met la musique de fond en pause pendant le clip de decouverte, puis
+            // reprise en fondu a la fin de celui-ci (SampleScene). Null en tutoriel.
+            if (EscapeGame.Core.World.BackgroundMusic.Instance != null && getSound != null)
+                EscapeGame.Core.World.BackgroundMusic.Instance.DuckForClip(getSound);
 
             // --- Pop-in (scale 0 -> 1 avec leger depassement) ---
             float t = 0f;
