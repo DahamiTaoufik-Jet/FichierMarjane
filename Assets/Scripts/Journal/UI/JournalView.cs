@@ -75,7 +75,7 @@ namespace EscapeGame.Journal.UI
         public float zigAmp = 28f;
 
         [Tooltip("Distance verticale entre deux routes.")]
-        public float routeGap = 140f;
+        public float routeGap = 180f;
 
         [Tooltip("Position X du premier stage.")]
         public float startX = 80f;
@@ -86,6 +86,13 @@ namespace EscapeGame.Journal.UI
         [Header("Couleurs lignes")]
         public Color activeLineColor = new Color(0.12f, 0.12f, 0.12f);
         public Color inactiveLineColor = new Color(0.80f, 0.80f, 0.80f);
+
+        [Header("Deck (routes completees)")]
+        [Tooltip("Decalage X entre chaque carte empilee dans le deck.")]
+        public float deckOffsetX = 6f;
+
+        [Tooltip("Decalage Y entre chaque carte empilee dans le deck.")]
+        public float deckOffsetY = -4f;
 
         [Header("Contenu (dimensionnement auto)")]
         [Tooltip("Marge ajoutee autour du contenu pour dimensionner le WorldContainer (px). " +
@@ -353,27 +360,37 @@ namespace EscapeGame.Journal.UI
         {
             if (route == null || worldContainer == null) return;
 
+            bool completed = route.State == RouteState.Completed;
+
             var positions = new List<Vector2>();
+            float baseY = startY - (routeIndex * routeGap);
 
             for (int s = 0; s < route.Steps.Count; s++)
             {
                 var step = route.Steps[s];
                 if (step == null) continue;
 
-                // Position en zigzag
-                float x = startX + s * hStep;
-                float y = startY - (routeIndex * routeGap) + (s % 2 == 0 ? zigAmp : -zigAmp);
-                Vector2 pos = new Vector2(x, y);
+                Vector2 pos;
+                if (completed)
+                {
+                    pos = new Vector2(
+                        startX + s * deckOffsetX,
+                        baseY + s * deckOffsetY);
+                }
+                else
+                {
+                    pos = new Vector2(
+                        startX + s * hStep,
+                        baseY + (s % 2 == 0 ? zigAmp : -zigAmp));
+                }
                 positions.Add(pos);
 
-                // Suivi des bornes du contenu (centres des nodes)
                 if (pos.x < cMinX) cMinX = pos.x;
                 if (pos.x > cMaxX) cMaxX = pos.x;
                 if (pos.y < cMinY) cMinY = pos.y;
                 if (pos.y > cMaxY) cMaxY = pos.y;
                 hasContent = true;
 
-                // Instancier le StageNode
                 if (stageNodePrefab == null) continue;
                 var nodeGo = Instantiate(stageNodePrefab, worldContainer);
                 var nodeRect = nodeGo.GetComponent<RectTransform>();
@@ -392,7 +409,8 @@ namespace EscapeGame.Journal.UI
                 spawnedObjects.Add(nodeGo);
             }
 
-            // Instancier les ConnectorLines entre chaque paire consecutive
+            if (completed) return;
+
             for (int i = 0; i < positions.Count - 1; i++)
             {
                 if (connectorLinePrefab == null) break;
@@ -403,7 +421,6 @@ namespace EscapeGame.Journal.UI
                 float dist = dir.magnitude;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                // Determiner si la ligne est "active" (le step source est Resolved)
                 var stepA = route.Steps[i];
                 bool isActive = stepA != null && stepA.IsResolved;
 
@@ -423,7 +440,6 @@ namespace EscapeGame.Journal.UI
                 if (lineImg != null)
                     lineImg.color = isActive ? activeLineColor : inactiveLineColor;
 
-                // S'assurer que les lignes sont derriere les nodes
                 lineGo.transform.SetAsFirstSibling();
                 spawnedObjects.Add(lineGo);
             }
