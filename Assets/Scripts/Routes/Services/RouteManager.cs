@@ -28,6 +28,13 @@ namespace EscapeGame.Routes.Services
         [Tooltip("Nombre max de steps non resolues que le joueur peut sauter. Au-dela la step est intouchable.")]
         public int maxSkipSteps = 3;
 
+        [Header("Son de resolution")]
+        [Tooltip("Clip joue a chaque resolution de step (cloche).")]
+        public AudioClip resolvedBellClip;
+
+        [Tooltip("Intervalle entre deux dings lors de resolutions en cascade (secondes).")]
+        public float bellInterval = 0.2f;
+
         [Header("Debug Gizmos")]
         [Tooltip("Dessine les routes en gizmos (lignes entre steps, couleurs par route).")]
         public bool drawRouteGizmos = false;
@@ -37,6 +44,10 @@ namespace EscapeGame.Routes.Services
 
         private readonly List<RouteRuntime> routes = new List<RouteRuntime>();
         public IReadOnlyList<RouteRuntime> Routes => routes;
+
+        private int pendingBells;
+        private float bellTimer;
+        private AudioSource bellSource;
 
         // ====================================================================
         // Cycle de vie
@@ -51,6 +62,23 @@ namespace EscapeGame.Routes.Services
             }
             Instance = this;
             if (persistAcrossScenes) DontDestroyOnLoad(gameObject);
+
+            bellSource = gameObject.AddComponent<AudioSource>();
+            bellSource.playOnAwake = false;
+            bellSource.spatialBlend = 0f;
+        }
+
+        private void Update()
+        {
+            if (pendingBells <= 0) return;
+            bellTimer -= Time.deltaTime;
+            if (bellTimer > 0f) return;
+
+            if (resolvedBellClip != null && bellSource != null)
+                bellSource.PlayOneShot(resolvedBellClip);
+
+            pendingBells--;
+            bellTimer = bellInterval;
         }
 
         private void OnDestroy()
@@ -191,6 +219,8 @@ namespace EscapeGame.Routes.Services
         {
             ResolveAllBefore(runtime, step);
 
+            QueueBell();
+
             RouteEvents.RaiseStepResolved(step);
 
             // Recompense uniquement si la step resolue est la derniere de la route
@@ -216,6 +246,18 @@ namespace EscapeGame.Routes.Services
                 runtime.SetState(RouteState.Completed);
                 RouteEvents.RaiseRouteCompleted(runtime);
             }
+        }
+
+        // ====================================================================
+        // Son de resolution
+        // ====================================================================
+
+        private void QueueBell()
+        {
+            if (resolvedBellClip == null) return;
+            if (pendingBells == 0)
+                bellTimer = 0f;
+            pendingBells++;
         }
 
         // ====================================================================
