@@ -182,5 +182,16 @@ namespace EscapeGame.Core.World
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+
+        // Unity/l'OS peuvent reinitialiser l'etat du curseur quand l'application
+        // reprend le focus (alt-tab). La doc Unity recommande de reappliquer l'etat
+        // du curseur dans OnApplicationFocus. Tant qu'un ecran de fin est affiche,
+        // on force le curseur visible et deverrouille a chaque retour de focus.
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus || !ended) return;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 }
