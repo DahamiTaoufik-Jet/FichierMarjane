@@ -63,6 +63,11 @@ namespace EscapeGame.Journal.UI
         public GameObject zoomOut;
         public GameObject zoomReset;
 
+        [Header("Fond du contenu")]
+        [Tooltip("Panneau gris affiche DERRIERE le texte du modal (centre a l'ecran), " +
+                 "visible uniquement quand le detail est ouvert.")]
+        public GameObject contentBackground;
+
         // Etat interne
         private bool hasEnigmeContent;
         private bool hasSuiteContent;
@@ -87,10 +92,35 @@ namespace EscapeGame.Journal.UI
             if (tabSuite != null)
                 tabSuite.onClick.AddListener(() => SwitchTab(2));
 
+            // Textes du modal : centres a l'ecran (bande mediane).
+            ApplyContentStyle();
+
             // Cache tout le contenu au demarrage
             HideAllContent();
             SetTabsVisible(false);
             if (buttonRetour != null) buttonRetour.gameObject.SetActive(false);
+            if (contentBackground != null) contentBackground.SetActive(false);
+        }
+
+        // Centre le texte des onglets (Indice / Enigme / Suite) dans une bande
+        // mediane (evite les onglets en haut et le bouton Retour en bas).
+        private void ApplyContentStyle()
+        {
+            StyleContentText(clueText);
+            StyleContentText(enigmeText);
+            StyleContentText(enigmeTextEncrypter);
+            StyleContentText(nextClueText);
+        }
+
+        private void StyleContentText(TMP_Text t)
+        {
+            if (t == null) return;
+            var rt = t.rectTransform;
+            rt.anchorMin = new Vector2(0.12f, 0.20f);
+            rt.anchorMax = new Vector2(0.88f, 0.88f);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            t.alignment = TMPro.TextAlignmentOptions.Center;
         }
 
         // ====================================================================
@@ -167,6 +197,7 @@ namespace EscapeGame.Journal.UI
 
             SetTabsVisible(true);
             if (buttonRetour != null) buttonRetour.gameObject.SetActive(true);
+            if (contentBackground != null) contentBackground.SetActive(true);
 
             UpdateTabStates();
             SwitchTab(0);
@@ -179,6 +210,7 @@ namespace EscapeGame.Journal.UI
             HideAllContent();
             SetTabsVisible(false);
             if (buttonRetour != null) buttonRetour.gameObject.SetActive(false);
+            if (contentBackground != null) contentBackground.SetActive(false);
 
             if (scrollView != null) scrollView.SetActive(true);
             if (zoomIn != null) zoomIn.SetActive(true);

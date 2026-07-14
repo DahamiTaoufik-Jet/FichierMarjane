@@ -35,6 +35,13 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Touche pour annuler l'interaction et refermer le panneau.")]
         public Key cancelKey = Key.Escape;
 
+        [Header("Style")]
+        [Tooltip("Fond gris du panneau d'enigme (texte blanc centre).")]
+        public Color textBackgroundColor = new Color(0.25f, 0.25f, 0.27f, 1f);
+
+        [Tooltip("Couleur du texte de l'enigme (question / feedback).")]
+        public Color textColor = Color.white;
+
         private TextPuzzleStep activeStep;
         private bool isInteracting = false;
         private bool inputFieldActive = false;
@@ -44,6 +51,9 @@ namespace EscapeGame.Journal.UI
         private void Awake()
         {
             if (panelRoot == null) panelRoot = gameObject;
+
+            ApplyStyle();
+
             panelRoot.SetActive(false);
 
             RouteEvents.TextPuzzleShown += HandleShown;
@@ -69,6 +79,39 @@ namespace EscapeGame.Journal.UI
         }
 
         private bool shownOnly = false;
+
+        // Fond gris + texte blanc centre (l'enigme est toujours du texte).
+        private void ApplyStyle()
+        {
+            var bg = panelRoot != null ? panelRoot.GetComponent<UnityEngine.UI.Image>() : null;
+            if (bg != null) bg.color = textBackgroundColor;
+
+            // Question : large boite dans le HAUT du panneau (au-dessus du champ),
+            // texte blanc centre.
+            if (questionLabel != null)
+            {
+                questionLabel.color = textColor;
+                questionLabel.alignment = TMPro.TextAlignmentOptions.Center;
+                var rt = questionLabel.rectTransform;
+                rt.anchorMin = new Vector2(0.05f, 0.60f);
+                rt.anchorMax = new Vector2(0.95f, 0.97f);
+                rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            }
+            // Feedback : large boite dans le BAS du panneau (sous le champ), centre.
+            if (feedbackLabel != null)
+            {
+                feedbackLabel.color = textColor;
+                feedbackLabel.alignment = TMPro.TextAlignmentOptions.Center;
+                var rt = feedbackLabel.rectTransform;
+                rt.anchorMin = new Vector2(0.05f, 0.05f);
+                rt.anchorMax = new Vector2(0.95f, 0.42f);
+                rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            }
+            // Le champ de saisie garde son fond blanc et son texte noir (lisible) :
+            // on centre juste la saisie.
+            if (answerInput != null && answerInput.textComponent != null)
+                answerInput.textComponent.alignment = TMPro.TextAlignmentOptions.Center;
+        }
 
         private void HandleShown(string question, StepBehaviour step)
         {

@@ -32,6 +32,14 @@ namespace EscapeGame.Core.World
         [Header("References")]
         public PlayerLook playerLook;
 
+        [Tooltip("Controleur TPS (StarterAssets) : sa sensibilite camera est synchronisee avec la FPS.")]
+        public StarterAssets.ThirdPersonController thirdPersonController;
+
+        // Sensibilite FPS de reference (capturee au Start) : au niveau de reference,
+        // le multiplicateur TPS vaut 1 (feeling d'origine). Au-dela/en-deca, les deux
+        // modes montent/descendent proportionnellement ensemble.
+        private float sensitivityBaseline = 15f;
+
         [Header("Input")]
         public Key openKey = Key.Escape;
 
@@ -45,6 +53,14 @@ namespace EscapeGame.Core.World
 
             if (playerLook == null)
                 playerLook = FindFirstObjectByType<PlayerLook>();
+
+            if (thirdPersonController == null)
+                thirdPersonController = FindFirstObjectByType<StarterAssets.ThirdPersonController>();
+
+            // Reference = sensibilite FPS d'origine ; on synchronise la TPS dessus.
+            if (playerLook != null && playerLook.mouseSensitivity > 0.01f)
+                sensitivityBaseline = playerLook.mouseSensitivity;
+            ApplyTpsSensitivity(playerLook != null ? playerLook.mouseSensitivity : sensitivityBaseline);
 
             if (volumeSlider != null)
             {
@@ -147,7 +163,16 @@ namespace EscapeGame.Core.World
         {
             if (playerLook != null)
                 playerLook.mouseSensitivity = value;
+            ApplyTpsSensitivity(value);
             SyncSensitivityInput(value);
+        }
+
+        // Synchronise la sensibilite de la camera TPS avec la valeur (partagee)
+        // de la sensibilite FPS : multiplicateur = value / reference.
+        private void ApplyTpsSensitivity(float value)
+        {
+            if (thirdPersonController == null || sensitivityBaseline <= 0.01f) return;
+            thirdPersonController.LookSensitivity = value / sensitivityBaseline;
         }
 
         private void OnSensitivityInputEnd(string text)
@@ -162,6 +187,7 @@ namespace EscapeGame.Core.World
             val = Mathf.Max(0.1f, val);
             if (playerLook != null)
                 playerLook.mouseSensitivity = val;
+            ApplyTpsSensitivity(val);
             if (sensitivitySlider != null)
                 sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(val, sensitivitySlider.minValue, sensitivitySlider.maxValue));
             SyncSensitivityInput(val);

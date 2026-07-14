@@ -104,6 +104,26 @@ namespace EscapeGame.Journal.UI
                  "(la tuile blanche du tutoriel) au centre du viewport, pour laisser la place de cliquer.")]
         public bool centerFirstNodeOnOpen = false;
 
+        [Header("Centrage")]
+        [Tooltip("Si vrai, a chaque ouverture le journal centre l'ENSEMBLE des routes " +
+                 "(boite englobante des blocs) au centre du viewport.")]
+        public bool centerContentOnOpen = false;
+
+        [Header("Animation ouverture/fermeture")]
+        [Tooltip("Panneaux a faire glisser (bas->haut a l'ouverture, haut->bas a la fermeture). Ex: Scroll View, Stage Modal.")]
+        public RectTransform[] slidePanels;
+
+        [Tooltip("Duree du slide (secondes).")]
+        public float slideDuration = 0.35f;
+
+        [Tooltip("Distance verticale du slide (px). <= 0 = hauteur de l'ecran.")]
+        public float slideDistance = 0f;
+
+        private CanvasGroup animGroup;
+        private Vector2[] slideBasePos;
+        private bool slideBaseCaptured;
+        private Coroutine animRoutine;
+
         // Cache interne
         private readonly List<GameObject> spawnedObjects = new List<GameObject>();
         private InputAction openJournalAction;
@@ -164,44 +184,47 @@ namespace EscapeGame.Journal.UI
         public void ToggleJournal()
         {
             if (panelRoot == null) return;
+            if (journalIsOpen) DoClose();
+            else DoOpen();
+        }
 
-            // Si on est en mode selection bonus et que le joueur ferme le journal,
-            // annuler le mode pour ne pas rester bloque.
-            if (panelRoot.activeSelf && JournalSelectionMode.IsActive)
+        private void DoOpen()
+        {
+            panelRoot.SetActive(true);
+
+            // Fermer le menu bonus s'il etait ouvert (evite d'empiler deux UI).
+            if (bonusInventory != null) bonusInventory.ForceClose();
+            if (stageModal != null && stageModal.IsOpen) stageModal.Close();
+
+            journalIsOpen = true;
+            UIState.SetUIOpen();
+            Rebuild(); // gere deja le centrage horizontal si centerContentOnOpen
+            if (centerFirstNodeOnOpen && !centerContentOnOpen) CenterViewOnFirstNode();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            PlayOpenClose(true); // slide bas->haut + fondu en fin d'ouverture
+        }
+
+        private void DoClose()
+        {
+            // Annule le mode selection bonus si actif.
+            if (JournalSelectionMode.IsActive)
             {
                 JournalSelectionMode.Exit();
                 Debug.Log("[JournalView] Mode selection annule (fermeture journal).");
             }
+            if (stageModal != null && stageModal.IsOpen) stageModal.Close();
 
-            bool open = !panelRoot.activeSelf;
-            panelRoot.SetActive(open);
-
-            // Fermer le detail si ouvert quand on toggle le journal
-            if (stageModal != null && stageModal.IsOpen)
-                stageModal.Close();
-
-            if (open)
+            journalIsOpen = false;
+            UIState.SetUIClosed();
+            if (!UIState.IsAnyUIOpen)
             {
-                // Fermer le menu bonus s'il etait ouvert, pour ne pas empiler
-                // deux UI (le menu bonus resterait persistant sous le journal).
-                if (bonusInventory != null) bonusInventory.ForceClose();
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
 
-                journalIsOpen = true;
-                UIState.SetUIOpen();
-                Rebuild();
-                if (centerFirstNodeOnOpen) CenterViewOnFirstNode();
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                if (journalIsOpen) { journalIsOpen = false; UIState.SetUIClosed(); }
-                if (!UIState.IsAnyUIOpen)
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                }
-            }
+            PlayOpenClose(false); // slide haut->bas (sans fondu) puis desactivation
         }
 
         // ====================================================================
@@ -298,6 +321,10 @@ namespace EscapeGame.Journal.UI
                 BuildRoute(routes[r], r);
             }
 
+            // Centre l'ensemble des routes sur l'axe horizontal (decalage des blocs
+            // eux-memes : insensible au clamp elastique du ScrollRect).
+            if (centerContentOnOpen) CenterContentHorizontally();
+
             // Dimensionne le WorldContainer sur son contenu reel pour que le
             // ScrollRect connaisse sa vraie taille (fin du snap-back intempestif).
             ResizeContainerToContent();
@@ -336,6 +363,36 @@ namespace EscapeGame.Journal.UI
             Vector3 centerWorld = viewport.TransformPoint(viewport.rect.center);
             Vector3 nodeWorld = target.position; // pivot (0.5,0.5) -> centre du node
             worldContainer.position += (centerWorld - nodeWorld);
+        }
+
+        /// <summary>
+        /// Centre l'ensemble des routes sur l'axe HORIZONTAL en decalant les blocs
+        /// et les lignes a l'interieur du WorldContainer (et non en deplacant le
+        /// container, ce que le ScrollRect elastique annulerait). La boite
+        /// englobante horizontale du contenu est ramenee au milieu du viewport.
+        /// </summary>
+        private void CenterContentHorizontally()
+        {
+            if (worldContainer == null || !hasContent) return;
+            var viewport = worldContainer.parent as RectTransform;
+            if (viewport == null) return;
+
+            float viewportW = viewport.rect.width;
+            if (viewportW <= 1f) return; // panel pas encore mis en page (inactif)
+            float contentCenterX = (cMinX + cMaxX) * 0.5f;
+            float dx = viewportW * 0.5f - contentCenterX;
+            if (Mathf.Approximately(dx, 0f)) return;
+
+            for (int i = 0; i < spawnedObjects.Count; i++)
+            {
+                if (spawnedObjects[i] == null) continue;
+                var rt = spawnedObjects[i].transform as RectTransform;
+                if (rt == null) continue;
+                rt.anchoredPosition = new Vector2(rt.anchoredPosition.x + dx, rt.anchoredPosition.y);
+            }
+
+            cMinX += dx;
+            cMaxX += dx;
         }
 
         private void ResizeContainerToContent()
@@ -404,7 +461,7 @@ namespace EscapeGame.Journal.UI
 
                 var nodeView = nodeGo.GetComponent<StageNodeView>();
                 if (nodeView != null)
-                    nodeView.Init(step, s, stageModal);
+                    nodeView.Init(step, s, routeIndex, stageModal);
 
                 spawnedObjects.Add(nodeGo);
             }
@@ -476,5 +533,84 @@ namespace EscapeGame.Journal.UI
             if (worldContainer == null) return;
             worldContainer.localScale = Vector3.one;
         }
+
+        // ====================================================================
+        // Animation ouverture / fermeture (slide + fondu)
+        // ====================================================================
+
+        private void EnsureAnim()
+        {
+            if (panelRoot == null) return;
+            if (animGroup == null)
+            {
+                animGroup = panelRoot.GetComponent<CanvasGroup>();
+                if (animGroup == null) animGroup = panelRoot.AddComponent<CanvasGroup>();
+            }
+            if (!slideBaseCaptured && slidePanels != null)
+            {
+                slideBasePos = new Vector2[slidePanels.Length];
+                for (int i = 0; i < slidePanels.Length; i++)
+                    slideBasePos[i] = slidePanels[i] != null ? slidePanels[i].anchoredPosition : Vector2.zero;
+                slideBaseCaptured = true;
+            }
+        }
+
+        private void SetSlideOffset(float yOff)
+        {
+            if (slidePanels == null || slideBasePos == null) return;
+            for (int i = 0; i < slidePanels.Length && i < slideBasePos.Length; i++)
+                if (slidePanels[i] != null)
+                    slidePanels[i].anchoredPosition = slideBasePos[i] + new Vector2(0f, yOff);
+        }
+
+        private void PlayOpenClose(bool opening)
+        {
+            EnsureAnim();
+            if (animRoutine != null) StopCoroutine(animRoutine);
+            animRoutine = StartCoroutine(AnimRoutine(opening));
+        }
+
+        private System.Collections.IEnumerator AnimRoutine(bool opening)
+        {
+            float dist = slideDistance > 0f
+                ? slideDistance
+                : Mathf.Max(1f, ((RectTransform)panelRoot.transform).rect.height);
+            float t = 0f;
+
+            if (opening)
+            {
+                // Bas -> haut, avec fondu qui se termine a l'ouverture.
+                SetSlideOffset(-dist);
+                if (animGroup != null) animGroup.alpha = 0f;
+                while (t < slideDuration)
+                {
+                    t += Time.unscaledDeltaTime;
+                    float k = slideDuration > 0f ? Mathf.Clamp01(t / slideDuration) : 1f;
+                    SetSlideOffset(-dist * (1f - EaseOutCubic(k)));
+                    if (animGroup != null) animGroup.alpha = k; // fondu lineaire, complet en fin d'ouverture
+                    yield return null;
+                }
+                SetSlideOffset(0f);
+                if (animGroup != null) animGroup.alpha = 1f;
+            }
+            else
+            {
+                // Haut -> bas, sans fondu.
+                if (animGroup != null) animGroup.alpha = 1f;
+                while (t < slideDuration)
+                {
+                    t += Time.unscaledDeltaTime;
+                    float k = slideDuration > 0f ? Mathf.Clamp01(t / slideDuration) : 1f;
+                    SetSlideOffset(-dist * EaseInCubic(k));
+                    yield return null;
+                }
+                SetSlideOffset(0f); // reset pour la prochaine ouverture
+                panelRoot.SetActive(false);
+            }
+            animRoutine = null;
+        }
+
+        private static float EaseOutCubic(float k) { float inv = 1f - k; return 1f - inv * inv * inv; }
+        private static float EaseInCubic(float k) { return k * k * k; }
     }
 }

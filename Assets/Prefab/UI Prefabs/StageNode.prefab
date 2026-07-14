@@ -542,11 +542,16 @@ MonoBehaviour:
   lockOpenIcon: {fileID: 1237115527120490129}
   lockClosedIcon: {fileID: 4847965673963817257}
   completedBgColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
-  currentBgColor: {r: 1, g: 1, b: 1, a: 1}
+  currentBgColor: {r: 0.2, g: 0.42, b: 0.78, a: 1}
   lockedBgColor: {r: 0.87, g: 0.87, b: 0.87, a: 1}
   completedTextColor: {r: 1, g: 1, b: 1, a: 1}
-  currentTextColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
+  currentTextColor: {r: 1, g: 1, b: 1, a: 1}
   lockedTextColor: {r: 0.73, g: 0.73, b: 0.73, a: 1}
+  goldEligibleColor: {r: 0.9, g: 0.7, b: 0.1, a: 1}
+  greenEligibleColor: {r: 0.2, g: 0.8, b: 0.3, a: 1}
+  ineligibleBgColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
+  lockedEnigmaBgColor: {r: 0.75, g: 0.12, b: 0.12, a: 1}
+  lockedEnigmaTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7065705944856245453
 GameObject:
   m_ObjectHideFlags: 0

@@ -60,14 +60,15 @@ namespace EscapeGame.Journal.UI
         private StageModalView modalView;
         private Button button;
 
-        public void Init(StepBehaviour step, int stageIndex, StageModalView modal = null)
+        public void Init(StepBehaviour step, int stageIndex, int routeIndex, StageModalView modal = null)
         {
             boundStep = step;
             modalView = modal;
             button = GetComponent<Button>();
 
+            // Format "etape-route", ex. 01-1 (etape 1 de la route 1), 01-2 (route 2).
             if (numberText != null)
-                numberText.text = (stageIndex + 1).ToString("00");
+                numberText.text = (stageIndex + 1).ToString("00") + "-" + (routeIndex + 1);
 
             Refresh();
 

@@ -30,11 +30,41 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Duree d'affichage en secondes avant masquage automatique. Mettre <= 0 pour ne pas masquer automatiquement.")]
         public float autoHideAfter = 6f;
 
+        [Header("Style (indice TEXTE uniquement)")]
+        [Tooltip("Fond gris applique quand l'indice est un TEXTE (une image ne change rien).")]
+        public Color textBackgroundColor = new Color(0.25f, 0.25f, 0.27f, 1f);
+
+        [Tooltip("Couleur du texte quand l'indice est un texte.")]
+        public Color textColor = Color.white;
+
+        [Tooltip("Marge (px) autour du texte : le label remplit le panneau pour un vrai centrage.")]
+        public float textPadding = 40f;
+
         private float hideAt = -1f;
+
+        // Fond du panneau : sa couleur d'origine sert au cas IMAGE (inchange).
+        private Image backgroundImage;
+        private Color imageBackgroundColor;
 
         private void Awake()
         {
             if (panelRoot == null) panelRoot = gameObject;
+
+            backgroundImage = panelRoot.GetComponent<Image>();
+            if (backgroundImage != null) imageBackgroundColor = backgroundImage.color;
+
+            // Le label remplit le panneau (avec marge) pour un centrage correct
+            // au lieu d'une petite boite en haut a gauche.
+            if (textLabel != null)
+            {
+                var rt = textLabel.rectTransform;
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = new Vector2(textPadding, textPadding);
+                rt.offsetMax = new Vector2(-textPadding, -textPadding);
+                textLabel.alignment = TMPro.TextAlignmentOptions.Top;
+            }
+
             panelRoot.SetActive(false);
             RouteEvents.ClueRevealed += HandleClueRevealed;
             RouteEvents.ClueHidden += Hide;
@@ -65,12 +95,25 @@ namespace EscapeGame.Journal.UI
         {
             panelRoot.SetActive(true);
 
+            bool isImage = clue.image != null;
+
             if (textLabel != null) textLabel.text = clue.text;
 
             if (imageDisplay != null)
             {
                 imageDisplay.sprite = clue.image;
                 imageDisplay.enabled = clue.image != null;
+            }
+
+            // TEXTE : fond gris + texte blanc centre. IMAGE : on ne change rien
+            // (fond d'origine conserve).
+            if (backgroundImage != null)
+                backgroundImage.color = isImage ? imageBackgroundColor : textBackgroundColor;
+
+            if (!isImage && textLabel != null)
+            {
+                textLabel.color = textColor;
+                textLabel.alignment = TMPro.TextAlignmentOptions.Top;
             }
 
             if (audioSource != null && clue.audio != null)
