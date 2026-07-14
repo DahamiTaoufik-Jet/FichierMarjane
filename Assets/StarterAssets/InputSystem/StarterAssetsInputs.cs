@@ -68,6 +68,10 @@ namespace StarterAssets
 
 		private void OnApplicationFocus(bool hasFocus)
 		{
+			// Ne pas re-verrouiller le curseur au retour de focus (alt-tab) si une
+			// UI est ouverte (ecran de fin, journal, menu...). Sinon on ecrase
+			// l'etat du curseur voulu par ces ecrans et il disparait.
+			if (EscapeGame.Core.Player.UIState.IsAnyUIOpen) return;
 			SetCursorState(cursorLocked);
 		}
 
