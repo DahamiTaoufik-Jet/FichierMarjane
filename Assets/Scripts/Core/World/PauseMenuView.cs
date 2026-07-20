@@ -16,9 +16,21 @@ namespace EscapeGame.Core.World
         [Header("Sliders")]
         public Slider volumeSlider;
         public Slider sensitivitySlider;
+        public Slider minimapSizeSlider;
+        public Slider minimapZoomSlider;
 
         [Header("Labels")]
         public TMP_Text volumeValueLabel;
+        public TMP_Text minimapSizeValueLabel;
+        public TMP_Text minimapZoomValueLabel;
+
+        [Header("Minimap")]
+        [Tooltip("Camera de la minimap (si null, recherchee au Start).")]
+        public MinimapCamera minimapCamera;
+
+        private Camera minimapCam;
+        private RectTransform minimapRootRt;
+        private float minimapBaseOrtho = 18f;
 
         [Header("Sensitivity Input")]
         public TMP_InputField sensitivityInputField;
@@ -92,6 +104,39 @@ namespace EscapeGame.Core.World
 
             SyncSensitivityInput(playerLook != null ? playerLook.mouseSensitivity : 15f);
 
+            // ---- Minimap ----
+            if (minimapCamera == null)
+                minimapCamera = FindFirstObjectByType<MinimapCamera>(FindObjectsInactive.Include);
+            if (minimapCamera != null)
+            {
+                minimapCam = minimapCamera.GetComponent<Camera>();
+                if (minimapCamera.uiRoot != null)
+                    minimapRootRt = minimapCamera.uiRoot.transform as RectTransform;
+                if (minimapCam != null && minimapCam.orthographicSize > 0.01f)
+                    minimapBaseOrtho = minimapCam.orthographicSize;
+            }
+
+            if (minimapSizeSlider != null)
+            {
+                minimapSizeSlider.minValue = 120f;
+                minimapSizeSlider.maxValue = 420f;
+                minimapSizeSlider.wholeNumbers = false;
+                if (minimapRootRt != null)
+                    minimapSizeSlider.value = Mathf.Clamp(minimapRootRt.sizeDelta.x, 120f, 420f);
+                minimapSizeSlider.onValueChanged.AddListener(OnMinimapSizeChanged);
+                UpdateMinimapSizeLabel(minimapSizeSlider.value);
+            }
+
+            if (minimapZoomSlider != null)
+            {
+                minimapZoomSlider.minValue = 0.5f;  // dezoome (voit plus large)
+                minimapZoomSlider.maxValue = 3f;    // zoome (voit plus pres)
+                minimapZoomSlider.wholeNumbers = false;
+                minimapZoomSlider.value = 1f;
+                minimapZoomSlider.onValueChanged.AddListener(OnMinimapZoomChanged);
+                UpdateMinimapZoomLabel(minimapZoomSlider.value);
+            }
+
             if (resumeButton != null) resumeButton.onClick.AddListener(Close);
             if (controlsButton != null) controlsButton.onClick.AddListener(ShowControls);
             if (controlsBackButton != null) controlsBackButton.onClick.AddListener(HideControls);
@@ -115,6 +160,7 @@ namespace EscapeGame.Core.World
             savedTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             UIState.SetUIOpen();
+            if (minimapCamera != null) minimapCamera.forceVisible = true; // apercu live des reglages minimap
             panelRoot.SetActive(true);
             settingsPanel.SetActive(true);
             if (controlsPanel != null) controlsPanel.SetActive(false);
@@ -133,6 +179,7 @@ namespace EscapeGame.Core.World
             isOpen = false;
             Time.timeScale = savedTimeScale;
             UIState.SetUIClosed();
+            if (minimapCamera != null) minimapCamera.forceVisible = false;
             panelRoot.SetActive(false);
             if (!UIState.IsAnyUIOpen)
             {
@@ -215,6 +262,34 @@ namespace EscapeGame.Core.World
         {
             if (volumeValueLabel != null)
                 volumeValueLabel.text = Mathf.RoundToInt(value * 100) + "%";
+        }
+
+        // ---- Minimap ----
+        private void OnMinimapSizeChanged(float value)
+        {
+            if (minimapRootRt != null)
+                minimapRootRt.sizeDelta = new Vector2(value, value);
+            UpdateMinimapSizeLabel(value);
+        }
+
+        private void OnMinimapZoomChanged(float value)
+        {
+            // value > 1 => zoome (orthoSize plus petit) ; value < 1 => dezoome.
+            if (minimapCam != null)
+                minimapCam.orthographicSize = minimapBaseOrtho / Mathf.Max(0.01f, value);
+            UpdateMinimapZoomLabel(value);
+        }
+
+        private void UpdateMinimapSizeLabel(float value)
+        {
+            if (minimapSizeValueLabel != null)
+                minimapSizeValueLabel.text = Mathf.RoundToInt(value).ToString();
+        }
+
+        private void UpdateMinimapZoomLabel(float value)
+        {
+            if (minimapZoomValueLabel != null)
+                minimapZoomValueLabel.text = "x" + value.ToString("F1");
         }
 
         private void QuitGame()

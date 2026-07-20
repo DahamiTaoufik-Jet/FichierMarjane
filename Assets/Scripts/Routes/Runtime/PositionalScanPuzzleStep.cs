@@ -322,7 +322,10 @@ namespace EscapeGame.Routes.Runtime
             cam.enabled = false;
             cam.fieldOfView = snapshotFOV;
             cam.clearFlags = CameraClearFlags.Skybox;
-            cam.cullingMask = ~0;
+            // Tout sauf le layer "MinimapOnly" : les etiquettes de zone de la
+            // minimap ne doivent PAS apparaitre dans les snapshots d'enigme.
+            int minimapLayer = LayerMask.NameToLayer("MinimapOnly");
+            cam.cullingMask = minimapLayer >= 0 ? (~0 & ~(1 << minimapLayer)) : ~0;
 
             // Position : spot + offset vertical pour simuler les yeux
             Vector3 eyePos = chosenSpot.position + Vector3.up * snapshotEyeOffset;
