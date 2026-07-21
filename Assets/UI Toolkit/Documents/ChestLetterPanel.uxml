@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <ui:VisualElement name="chestletter-screen" class="screen hidden">
+        <ui:VisualElement class="panel panel--chestletter">
+            <ui:Label text="Choisir une lettre" class="title" />
+            <ui:Label name="chestletter-attempts" text="" class="attempts" />
+
+            <!-- Les boutons de lettres sont crees au runtime depuis l'inventaire. -->
+            <ui:VisualElement name="chestletter-letters" class="letter-grid" />
+
+            <ui:Label name="chestletter-feedback" text="" class="feedback" />
+            <ui:Label text="Echap pour fermer" class="hint" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

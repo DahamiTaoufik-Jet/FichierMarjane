@@ -19,6 +19,9 @@ namespace EscapeGame.Core.World
         [Tooltip("Animator du coffre (bool IsOpen).")]
         public Animator chestAnimator;
 
+        [Tooltip("Panneau de lettres en UI Toolkit. S'il est present, il remplace letterPanel (uGUI).")]
+        public Inventory.UI.ChestLetterPanelDocument letterPanelDoc;
+
         [Tooltip("UI de selection de lettre (ChestLetterPanelView). Si null, recherche au Start.")]
         public Inventory.UI.ChestLetterPanelView letterPanel;
 
@@ -40,6 +43,8 @@ namespace EscapeGame.Core.World
             if (cc != null)
                 playerTransform = cc.transform;
 
+            if (letterPanelDoc == null)
+                letterPanelDoc = FindFirstObjectByType<Inventory.UI.ChestLetterPanelDocument>(FindObjectsInactive.Include);
             if (letterPanel == null)
                 letterPanel = FindFirstObjectByType<Inventory.UI.ChestLetterPanelView>(FindObjectsInactive.Include);
 
@@ -84,8 +89,10 @@ namespace EscapeGame.Core.World
 
             // Garde-fou : le coffre reste inerte tant que le joueur ne possede
             // pas au moins une lettre en inventaire.
-            if (letterPanel != null && letterPanel.inventory != null
-                && letterPanel.inventory.GetItemsOfType<EscapeGame.Inventory.Data.LetterItem>().Count == 0)
+            var panelInventory = letterPanelDoc != null ? letterPanelDoc.inventory
+                               : (letterPanel != null ? letterPanel.inventory : null);
+            if (panelInventory != null
+                && panelInventory.GetItemsOfType<EscapeGame.Inventory.Data.LetterItem>().Count == 0)
             {
                 Debug.Log($"[ChestInteractable:{name}] Aucune lettre en inventaire - coffre non interactif.");
                 return;
@@ -112,7 +119,9 @@ namespace EscapeGame.Core.World
 
         private void OpenLetterPanel()
         {
-            if (letterPanel != null)
+            if (letterPanelDoc != null)
+                letterPanelDoc.Open(this, passwordPosition);
+            else if (letterPanel != null)
                 letterPanel.Open(this, passwordPosition);
         }
 

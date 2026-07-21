@@ -372,6 +372,76 @@
     -unity-text-align: middle-center;
 }
 
+/* ---------- Depot de lettre dans un coffre ---------- */
+
+.panel--chestletter {
+    align-items: center;
+    min-width: 520px;
+}
+
+.attempts {
+    font-size: 22px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    margin-bottom: 14px;
+}
+
+/* Grille de lettres : passe a la ligne toute seule quand il y en a beaucoup. */
+.letter-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 560px;
+    margin-bottom: 14px;
+}
+
+.letter-btn {
+    width: 76px;
+    height: 76px;
+    margin: 6px;
+    font-size: 40px;
+    background-color: var(--blue);
+    color: var(--text);
+    border-width: 0;
+    border-radius: 8px;
+    -unity-text-align: middle-center;
+    transition-duration: 0.12s;
+    transition-property: background-color, scale;
+}
+
+.letter-btn:hover {
+    background-color: var(--blue-hover);
+    scale: 1.06 1.06;
+}
+
+.letter-btn:active {
+    background-color: var(--blue-press);
+    scale: 0.96 0.96;
+}
+
+.feedback {
+    font-size: 24px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    min-height: 32px;
+}
+
+.feedback--ok {
+    color: rgb(126, 214, 126);
+}
+
+.feedback--bad {
+    color: rgb(226, 92, 92);
+}
+
+.hint {
+    font-size: 18px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    margin-top: 10px;
+}
+
 .hidden {
     display: none;
 }

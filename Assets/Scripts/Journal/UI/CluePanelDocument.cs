@@ -27,10 +27,6 @@ namespace EscapeGame.Journal.UI
         [Header("Audio")]
         public AudioSource audioSource;
 
-        [Header("Diagnostic (temporaire)")]
-        [Tooltip("Trace dans la console chaque affichage/masquage pour identifier un indice bloque.")]
-        public bool logDiagnostics = true;
-
         private VisualElement panel;
         private VisualElement image;
         private Label text;
@@ -138,12 +134,6 @@ namespace EscapeGame.Journal.UI
                 && shownText == (clue.text != null ? clue.text : "")
                 && shownSprite == clue.image;
 
-            if (logDiagnostics)
-                Debug.Log("[Clue] " + (sameContent ? "REEMIS (minuteur conserve)" : "SHOW")
-                        + " t=" + Time.unscaledTime.ToString("F2")
-                        + (sameContent ? " reste " + (goneAt - Time.unscaledTime).ToString("F1") + "s" : "")
-                        + " texte=\"" + (clue.text != null ? clue.text.Substring(0, System.Math.Min(clue.text.Length, 30)) : "") + "\"");
-
             if (sameContent) return;
 
             // Nouvel indice : repart a pleine opacite, meme s'il arrive pendant
@@ -160,8 +150,6 @@ namespace EscapeGame.Journal.UI
 
         private void Hide()
         {
-            if (logDiagnostics && visible)
-                Debug.Log("[Clue] HIDE t=" + Time.unscaledTime.ToString("F2"));
             visible = false;
             goneAt = -1f;
             shownText = null;
