@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <ui:VisualElement name="journal-screen" class="screen journal-screen hidden">
+        <ui:VisualElement name="journal-panel" class="journal-panel">
+
+            <ui:VisualElement class="journal-header">
+                <ui:Label text="JOURNAL" class="journal-title" />
+                <ui:Label name="journal-subtitle" text="" class="journal-subtitle" />
+            </ui:VisualElement>
+
+            <!-- ============ Carte ============ -->
+            <ui:VisualElement name="journal-map" class="journal-map">
+                <ui:ScrollView name="journal-scroll" class="journal-scroll"
+                               mode="VerticalAndHorizontal"
+                               horizontal-scroller-visibility="Auto"
+                               vertical-scroller-visibility="Auto">
+                    <!-- Les nodes et les lignes sont crees au runtime, en position absolue. -->
+                    <ui:VisualElement name="journal-world" class="journal-world" />
+                </ui:ScrollView>
+
+                <ui:VisualElement class="journal-zoom">
+                    <ui:Button name="journal-zoom-in" text="+" class="btn zoom-btn" />
+                    <ui:Button name="journal-zoom-out" text="-" class="btn zoom-btn" />
+                    <ui:Button name="journal-zoom-reset" text="o" class="btn zoom-btn" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- ============ Detail d'une etape ============ -->
+            <ui:VisualElement name="journal-modal" class="journal-modal hidden">
+                <ui:VisualElement class="modal-tabs">
+                    <ui:Button name="tab-initial" text="Indice initial" class="btn btn--surface tab-btn" />
+                    <ui:Button name="tab-enigme" text="Enigme" class="btn btn--surface tab-btn" />
+                    <ui:Button name="tab-suite" text="Indice suivant" class="btn btn--surface tab-btn" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="modal-content" class="modal-content">
+                    <ui:Label name="modal-clue" text="" class="modal-text hidden" />
+                    <ui:Label name="modal-enigme" text="" class="modal-text hidden" />
+                    <ui:Label name="modal-encrypted" text="" class="modal-text modal-text--encrypted hidden" />
+                    <ui:VisualElement name="modal-image" class="modal-image hidden" />
+                    <ui:Label name="modal-next" text="" class="modal-text hidden" />
+                    <ui:Label name="modal-empty" text="Rien a afficher pour cette etape." class="modal-empty hidden" />
+                </ui:VisualElement>
+
+                <ui:Button name="modal-back" text="Retour a la carte" class="btn" />
+            </ui:VisualElement>
+
+            <ui:Button name="journal-close" text="Retour au jeu" class="btn journal-close" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

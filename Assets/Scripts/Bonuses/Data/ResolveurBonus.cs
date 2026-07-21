@@ -20,12 +20,19 @@ namespace EscapeGame.Bonuses.Data
         {
             if (context == null) return;
 
-            var journalView = Object.FindAnyObjectByType<JournalView>();
-            if (journalView == null)
+            // Journal en UI Toolkit si present, sinon l'ancien (scene tutoriel).
+            var journalDoc = Object.FindAnyObjectByType<JournalDocument>();
+            var journalView = journalDoc == null ? Object.FindAnyObjectByType<JournalView>() : null;
+            if (journalDoc == null && journalView == null)
             {
-                Debug.LogWarning("[ResolveurBonus] JournalView introuvable.");
+                Debug.LogWarning("[ResolveurBonus] Aucun journal trouve.");
                 return;
             }
+
+            System.Action openForSelection = journalDoc != null
+                ? (System.Action)journalDoc.OpenForSelection : journalView.OpenForSelection;
+            System.Action exitSelection = journalDoc != null
+                ? (System.Action)journalDoc.ExitSelectionMode : journalView.ExitSelectionMode;
 
             // Entrer en mode selection AVANT d'ouvrir le journal
             JournalSelectionMode.Enter(
@@ -43,12 +50,12 @@ namespace EscapeGame.Bonuses.Data
                 {
                     if (context.inventory != null)
                         context.inventory.RemoveItem(this);
-                    journalView.ExitSelectionMode();
+                    exitSelection();
                 },
                 colorType: SelectionColorType.Green
             );
 
-            journalView.OpenForSelection();
+            openForSelection();
             Debug.Log("[ResolveurBonus] Journal ouvert en mode selection.");
         }
     }
