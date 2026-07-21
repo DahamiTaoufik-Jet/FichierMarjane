@@ -165,7 +165,7 @@ Le `ProceduralRouteGenerator` au `Start` :
 - **Pas de LINQ** dans les hot paths (foreach manuels). Les `IReadOnlyList<T>` n'ont pas de `.Contains()` natif -> boucle manuelle obligatoire (sinon le compilateur tombe sur `MemoryExtensions.Contains` et plante).
 - **Encodage** : UTF-8 sans BOM. Eviter les accents dans les chaines affichees (Unity Windows peut avoir des soucis).
 - **Eviter les nouveaux fichiers** : la base est posee. Toute nouvelle fonctionnalite doit s'ajouter dans la structure existante.
-- **Font** : Passero One (Static SDF asset). Le mode Dynamic ne serialise pas l'atlas et casse apres un git push/pull sur un autre PC. Toujours utiliser le mode Static.
+- **Font** : `Assets/Art/Font/Passero_One/PasseroOne SDF.asset` — mode **Static**, atlas 1024x1024 pre-rempli (201 glyphes : ASCII + Latin-1 accents FR + symboles typographiques). C'est LE font a utiliser partout. Ne pas confondre avec `PasseroOne SDF Static.asset` qui est **vide** (0 glyphe) et n'affiche rien.
 
 ## Optimisations de performance appliquees
 
@@ -253,5 +253,5 @@ Scripts inutilises (restes de l'approche tutoriel in-scene, le tutoriel est main
 - Les UnityEvents `OnDiscovered`/`OnResolved` sur `StepBehaviour` sont *ecoutes* par `RouteManager`. Si tu desactives `RouteManager`, le chainage ne fonctionne pas.
 - L'ancien `LevelGenerator` et le nouveau `ProceduralRouteGenerator` ne doivent **pas tourner simultanement** dans la meme scene.
 - Ne **jamais** desactiver les action maps (Player, UI) pour bloquer les inputs. Utiliser `UIState` avec early return.
-- Font TMP : toujours utiliser le mode **Static** pour le SDF asset. Le mode Dynamic ne serialise pas l'atlas et casse sur un autre PC apres push/pull.
+- Font TMP : `PasseroOne SDF` est en mode **Static** avec son atlas pre-rempli et commite. Ne jamais le repasser en **Dynamic** : l'atlas se reecrirait a chaque nouveau caractere rencontre (churn git permanent) et les glyphes non encore generes manqueraient sur une autre machine. Si un caractere manque, le rajouter via `TryAddCharacters` en Dynamic PUIS refiger en Static, et commiter l'asset.
 - `UIState` est un compteur : chaque `SetUIOpen()` doit avoir un `SetUIClosed()` correspondant. Un desequilibre bloque les inputs indefiniment.
