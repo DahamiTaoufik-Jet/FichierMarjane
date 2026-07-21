@@ -3,7 +3,7 @@
     <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
 
     <!-- Victoire -->
-    <ui:VisualElement name="victory-screen" class="screen hidden">
+    <ui:VisualElement name="victory-screen" class="screen screen--opaque hidden">
         <ui:VisualElement class="panel panel--end">
             <ui:Label text="FELICITATIONS !" class="title title--win" />
             <ui:Label name="victory-reward" text="" class="end-reward" />
@@ -14,7 +14,7 @@
     </ui:VisualElement>
 
     <!-- Defaite -->
-    <ui:VisualElement name="gameover-screen" class="screen hidden">
+    <ui:VisualElement name="gameover-screen" class="screen screen--opaque hidden">
         <ui:VisualElement class="panel panel--end">
             <ui:Label text="GAME OVER" class="title title--lose" />
             <ui:Label name="gameover-reward" text="" class="end-reward" />

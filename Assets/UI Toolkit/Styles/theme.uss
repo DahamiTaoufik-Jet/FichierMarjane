@@ -47,6 +47,12 @@
     padding-top: 20%;
 }
 
+/* Occulte totalement le jeu derriere : reserve aux ecrans de fin, ou la partie
+   est terminee et ou le decor ne doit plus distraire. */
+.screen--opaque {
+    background-color: rgb(10, 11, 14);
+}
+
 .title {
     font-size: 34px;
     -unity-text-align: middle-center;
