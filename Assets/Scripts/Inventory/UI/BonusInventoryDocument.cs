@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -27,6 +28,16 @@ namespace EscapeGame.Inventory.UI
         [Header("Reference")]
         public Runtime.Inventory inventory;
 
+        [Header("Defilement")]
+        [Tooltip("Duree totale du glissement entre deux objets (secondes).")]
+        public float slideDuration = 0.18f;
+
+        [Tooltip("Distance parcourue par le contenu pendant le glissement (px).")]
+        public float slideDistance = 90f;
+
+        private VisualElement content;
+        private Coroutine slideRoutine;
+
         private VisualElement panel;
         private VisualElement icon;
         private VisualElement arrowLeft;
@@ -46,6 +57,7 @@ namespace EscapeGame.Inventory.UI
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
             panel = root.Q<VisualElement>("inventory-panel");
+            content = root.Q<VisualElement>("inventory-content");
             icon = root.Q<VisualElement>("inventory-icon");
             arrowLeft = root.Q<Label>("inventory-arrow-left");
             arrowRight = root.Q<Label>("inventory-arrow-right");
@@ -138,6 +150,11 @@ namespace EscapeGame.Inventory.UI
             isOpen = true;
             index = 0;
 
+            // Repartir d'un contenu centre et opaque : une animation interrompue
+            // a la fermeture precedente aurait laisse un decalage residuel.
+            if (slideRoutine != null) { StopCoroutine(slideRoutine); slideRoutine = null; }
+            SetContentOffset(0f, 1f);
+
             SetVisible(true);
             UIState.SetUIOpen();
             Cursor.lockState = CursorLockMode.None;
@@ -150,6 +167,9 @@ namespace EscapeGame.Inventory.UI
         {
             if (!isOpen) return;
             isOpen = false;
+
+            if (slideRoutine != null) { StopCoroutine(slideRoutine); slideRoutine = null; }
+            SetContentOffset(0f, 1f);
 
             SetVisible(false);
             UIState.SetUIClosed();
@@ -178,11 +198,66 @@ namespace EscapeGame.Inventory.UI
         {
             if (sorted.Count == 0) return;
 
+            // Un seul objet : rien a faire defiler.
+            if (sorted.Count < 2 || content == null || slideDuration <= 0f)
+            {
+                Step(direction);
+                DisplayCurrent();
+                return;
+            }
+
+            if (slideRoutine != null) StopCoroutine(slideRoutine);
+            slideRoutine = StartCoroutine(SlideTo(direction));
+        }
+
+        private void Step(int direction)
+        {
             index += direction;
             if (index < 0) index = sorted.Count - 1;
             if (index >= sorted.Count) index = 0;
+        }
 
+        /// <summary>
+        /// Fait sortir le contenu dans le sens de la navigation, change d'objet,
+        /// puis le fait entrer depuis le bord oppose. Temps non-scale : le
+        /// defilement reste fluide meme si le jeu tourne au ralenti.
+        /// </summary>
+        private IEnumerator SlideTo(int direction)
+        {
+            float half = Mathf.Max(0.02f, slideDuration * 0.5f);
+
+            // Sortie
+            float t = 0f;
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / half);
+                SetContentOffset(-direction * slideDistance * k, 1f - k);
+                yield return null;
+            }
+
+            Step(direction);
             DisplayCurrent();
+
+            // Entree depuis le bord oppose
+            t = 0f;
+            while (t < half)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / half);
+                SetContentOffset(direction * slideDistance * (1f - k), k);
+                yield return null;
+            }
+
+            SetContentOffset(0f, 1f);
+            slideRoutine = null;
+        }
+
+        private void SetContentOffset(float x, float opacity)
+        {
+            if (content == null) return;
+            content.style.translate = new StyleTranslate(new Translate(x, 0));
+            content.style.opacity = opacity;
         }
 
         private void DisplayCurrent()

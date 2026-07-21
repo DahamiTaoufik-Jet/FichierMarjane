@@ -7,7 +7,7 @@
         <ui:VisualElement class="inventory-row">
             <ui:Label name="inventory-arrow-left" text="&lt;" class="inventory-arrow" />
 
-            <ui:VisualElement class="inventory-content">
+            <ui:VisualElement name="inventory-content" class="inventory-content">
                 <ui:VisualElement name="inventory-icon" class="inventory-icon" />
                 <ui:Label name="inventory-name" text="" class="inventory-name" />
                 <ui:Label name="inventory-desc" text="" class="inventory-desc" />
