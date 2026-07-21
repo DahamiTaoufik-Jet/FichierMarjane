@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <!-- Bandeau d'indice, ancre en haut au centre. N'intercepte aucun clic :
+         le joueur continue de jouer pendant sa lecture. -->
+    <ui:VisualElement name="clue-panel" class="clue-panel hidden">
+        <ui:VisualElement name="clue-image" class="clue-image hidden" />
+        <ui:Label name="clue-text" text="" class="clue-text" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <ui:VisualElement name="warning-screen" class="screen hidden">
+        <ui:VisualElement class="panel panel--warning">
+            <ui:Label text="ATTENTION" class="title title--warning" />
+            <ui:Label name="warning-message" class="warning-message"
+                      text="Si tu ouvres les coffres, tu ne pourras plus resoudre aucune enigme ni indice. Tu devras repondre aux coffres pour finir le jeu et obtenir les recompenses." />
+            <ui:VisualElement class="spacer" />
+            <ui:VisualElement class="row row--buttons">
+                <ui:Button name="btn-warning-continue" text="Continuer" class="btn" />
+                <ui:Button name="btn-warning-cancel" text="Annuler" class="btn btn--surface" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

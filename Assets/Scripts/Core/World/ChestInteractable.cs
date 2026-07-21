@@ -22,6 +22,9 @@ namespace EscapeGame.Core.World
         [Tooltip("UI de selection de lettre (ChestLetterPanelView). Si null, recherche au Start.")]
         public Inventory.UI.ChestLetterPanelView letterPanel;
 
+        [Tooltip("Avertissement en UI Toolkit. S'il est present, il remplace warningView (uGUI).")]
+        public ChestWarningDocument warningDoc;
+
         [Tooltip("Avertissement affiche au premier coffre. Si null, recherche au Start.")]
         public ChestWarningView warningView;
 
@@ -40,6 +43,8 @@ namespace EscapeGame.Core.World
             if (letterPanel == null)
                 letterPanel = FindFirstObjectByType<Inventory.UI.ChestLetterPanelView>(FindObjectsInactive.Include);
 
+            if (warningDoc == null)
+                warningDoc = FindFirstObjectByType<ChestWarningDocument>(FindObjectsInactive.Include);
             if (warningView == null)
                 warningView = FindFirstObjectByType<ChestWarningView>(FindObjectsInactive.Include);
 
@@ -88,13 +93,16 @@ namespace EscapeGame.Core.World
 
             // Premier coffre : avertir avant d'engager la phase coffres
             // (apres quoi les enigmes/indices sont verrouilles).
-            if (!PasswordManager.Instance.ChestPhaseCommitted && warningView != null)
+            if (!PasswordManager.Instance.ChestPhaseCommitted
+                && (warningDoc != null || warningView != null))
             {
-                warningView.Show(() =>
+                System.Action confirmed = () =>
                 {
                     PasswordManager.Instance.CommitChestPhase();
                     OpenLetterPanel();
-                });
+                };
+                if (warningDoc != null) warningDoc.Show(confirmed);
+                else warningView.Show(confirmed);
                 return;
             }
 
