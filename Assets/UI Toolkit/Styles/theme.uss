@@ -48,9 +48,10 @@
 }
 
 /* Occulte totalement le jeu derriere : reserve aux ecrans de fin, ou la partie
-   est terminee et ou le decor ne doit plus distraire. */
+   est terminee et ou le decor ne doit plus distraire. Gris ardoise plutot que
+   quasi-noir, pour ne pas ecraser le panneau. */
 .screen--opaque {
-    background-color: rgb(10, 11, 14);
+    background-color: rgb(46, 50, 60);
 }
 
 .title {
