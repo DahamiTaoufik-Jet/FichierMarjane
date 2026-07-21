@@ -48,6 +48,13 @@
             </ui:VisualElement>
 
             <ui:Button name="journal-close" text="Retour au jeu" class="btn journal-close" />
+
+            <!-- Visionneuse : l'image d'enigme couvre tout le journal. -->
+            <ui:VisualElement name="image-viewer" class="image-viewer hidden">
+                <ui:Label text="Vue de l'enigme" class="image-viewer__hint" />
+                <ui:VisualElement name="image-viewer-image" class="image-viewer__image" />
+                <ui:Button name="image-viewer-back" text="Retour" class="btn journal-close" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

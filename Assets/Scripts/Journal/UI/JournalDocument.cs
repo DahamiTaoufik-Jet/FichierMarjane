@@ -80,6 +80,8 @@ namespace EscapeGame.Journal.UI
         private VisualElement modalImage;
         private Label modalNext;
         private Label modalEmpty;
+        private VisualElement imageViewer;
+        private VisualElement imageViewerImage;
         private Button tabInitial;
         private Button tabEnigme;
         private Button tabSuite;
@@ -114,6 +116,8 @@ namespace EscapeGame.Journal.UI
             modalImage = root.Q<VisualElement>("modal-image");
             modalNext = root.Q<Label>("modal-next");
             modalEmpty = root.Q<Label>("modal-empty");
+            imageViewer = root.Q<VisualElement>("image-viewer");
+            imageViewerImage = root.Q<VisualElement>("image-viewer-image");
             tabInitial = root.Q<Button>("tab-initial");
             tabEnigme = root.Q<Button>("tab-enigme");
             tabSuite = root.Q<Button>("tab-suite");
@@ -185,6 +189,16 @@ namespace EscapeGame.Journal.UI
             var zReset = root.Q<Button>("journal-zoom-reset");
             if (zReset != null) zReset.clicked += delegate { SetZoom(1f); };
 
+            var imgBack = root.Q<Button>("image-viewer-back");
+            if (imgBack != null) imgBack.clicked += CloseImageViewer;
+
+            // L'image de l'onglet Enigme s'ouvre en plein journal au clic.
+            if (modalImage != null)
+            {
+                modalImage.pickingMode = PickingMode.Position;
+                modalImage.RegisterCallback<ClickEvent>(delegate { OpenImageViewer(); });
+            }
+
             if (tabInitial != null) tabInitial.clicked += delegate { SwitchTab(0); };
             if (tabEnigme != null) tabEnigme.clicked += delegate { SwitchTab(1); };
             if (tabSuite != null) tabSuite.clicked += delegate { SwitchTab(2); };
@@ -223,6 +237,10 @@ namespace EscapeGame.Journal.UI
             SetVisible(true);
             CloseModal();
             Rebuild();
+
+            // La mise en page n'est pas encore calculee a cet instant : on
+            // recentre une fois que le ScrollView connait ses dimensions.
+            if (scroll != null) scroll.schedule.Execute(CenterView).ExecuteLater(60);
 
             UIState.SetUIOpen();
             Cursor.lockState = CursorLockMode.None;
@@ -450,6 +468,41 @@ namespace EscapeGame.Journal.UI
             if (data != null) ShowModal(data);
         }
 
+        /// <summary>
+        /// Amene le contenu de la carte au centre du viewport. Sans cela le
+        /// journal s'ouvrait cale en haut a gauche.
+        /// </summary>
+        private void CenterView()
+        {
+            if (scroll == null || world == null) return;
+
+            float vw = scroll.contentViewport.layout.width;
+            float vh = scroll.contentViewport.layout.height;
+            float cw = world.layout.width * zoom;
+            float ch = world.layout.height * zoom;
+
+            scroll.scrollOffset = new Vector2(
+                Mathf.Max(0f, (cw - vw) * 0.5f),
+                Mathf.Max(0f, (ch - vh) * 0.5f));
+        }
+
+        // ====================================================================
+        // Visionneuse d'image
+        // ====================================================================
+
+        private void OpenImageViewer()
+        {
+            if (currentData == null || currentData.PuzzleSnapshot == null) return;
+            if (imageViewerImage != null)
+                imageViewerImage.style.backgroundImage = new StyleBackground(currentData.PuzzleSnapshot);
+            if (imageViewer != null) imageViewer.RemoveFromClassList("hidden");
+        }
+
+        private void CloseImageViewer()
+        {
+            if (imageViewer != null) imageViewer.AddToClassList("hidden");
+        }
+
         // ====================================================================
         // Zoom
         // ====================================================================
@@ -469,6 +522,7 @@ namespace EscapeGame.Journal.UI
         {
             if (world == null) return;
             world.style.scale = new StyleScale(new Scale(new Vector2(zoom, zoom)));
+            if (scroll != null) scroll.schedule.Execute(CenterView).ExecuteLater(20);
         }
 
         // ====================================================================
@@ -491,6 +545,7 @@ namespace EscapeGame.Journal.UI
 
         private void CloseModal()
         {
+            CloseImageViewer();
             currentData = null;
             if (modal != null) modal.AddToClassList("hidden");
             if (map != null) map.RemoveFromClassList("hidden");

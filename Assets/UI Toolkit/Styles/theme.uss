@@ -602,7 +602,7 @@
     bottom: 4%;
     left: 4%;
     right: 4%;
-    background-color: var(--panel-bg);
+    background-color: rgb(64, 64, 69);
     border-radius: 14px;
     padding: 20px 24px;
 }
@@ -645,7 +645,7 @@
 .journal-zoom {
     position: absolute;
     right: 14px;
-    bottom: 14px;
+    top: 14px;
     flex-direction: row;
 }
 
@@ -660,10 +660,21 @@
 
 .journal-close {
     align-self: center;
-    min-width: 260px;
-    margin-top: 14px;
+    min-width: 360px;
+    padding: 18px 28px;
+    font-size: 28px;
+    margin-top: 16px;
     -unity-text-align: middle-center;
     flex-shrink: 0;
+}
+
+/* "Retour a la carte", sous le detail d'une etape. */
+.journal-modal > .btn {
+    min-width: 360px;
+    padding: 18px 28px;
+    font-size: 28px;
+    margin-top: 14px;
+    -unity-text-align: middle-center;
 }
 
 /* ---------- Noeuds d'etape ---------- */
@@ -691,14 +702,16 @@
     color: rgb(255, 255, 255);
 }
 
+/* Cliquable : bleu, comme les autres actions du jeu. */
 .stage-node--current {
-    background-color: rgb(255, 255, 255);
-    color: rgb(31, 31, 31);
+    background-color: var(--blue);
+    color: rgb(255, 255, 255);
 }
 
+/* Verrouillee, donc inerte : blanc neutre. */
 .stage-node--locked {
-    background-color: rgb(222, 222, 222);
-    color: rgb(186, 186, 186);
+    background-color: rgb(248, 248, 248);
+    color: rgb(150, 150, 150);
 }
 
 /* Enigme verrouillee par la phase coffres. */
@@ -751,8 +764,10 @@
 }
 
 .tab-btn {
-    min-width: 220px;
-    margin: 0 6px;
+    min-width: 300px;
+    padding: 16px 24px;
+    margin: 0 8px;
+    font-size: 26px;
     -unity-text-align: middle-center;
 }
 
@@ -785,9 +800,36 @@
 }
 
 .modal-image {
-    width: 460px;
-    height: 300px;
+    flex-grow: 1;
+    width: 100%;
+    min-height: 340px;
     -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Plein ecran : l'image couvre tout le journal, avec un bouton retour. */
+.image-viewer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(24, 26, 32);
+    border-radius: 14px;
+    padding: 18px;
+    align-items: center;
+}
+
+.image-viewer__image {
+    flex-grow: 1;
+    width: 100%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.image-viewer__hint {
+    font-size: 20px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    margin-bottom: 8px;
 }
 
 .modal-empty {
