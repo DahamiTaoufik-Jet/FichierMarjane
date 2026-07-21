@@ -14,6 +14,8 @@ namespace EscapeGame.Core.World
     ///
     /// Declenche les cartes de revelation a la demande, pour ne pas avoir a
     /// terminer une route ou ouvrir un coffre a chaque test d'UI :
+    ///   F1  : ecran de victoire (Felicitations)
+    ///   F2  : ecran de defaite (Game Over)
     ///   F9  : complete une route porteuse de lettre (la lettre est donc gagnee
     ///         normalement, via le circuit de recompense habituel)
     ///   F10 : ajoute un bonus tire au hasard dans le pool
@@ -26,6 +28,8 @@ namespace EscapeGame.Core.World
     public class DebugRevealTrigger : MonoBehaviour
     {
         [Header("Touches")]
+        public Key victoryKey = Key.F1;
+        public Key gameOverKey = Key.F2;
         public Key letterKey = Key.F9;
         public Key bonusKey = Key.F10;
         // F11 est capturee par macOS (affichage du bureau) : on utilise F12.
@@ -39,6 +43,7 @@ namespace EscapeGame.Core.World
         public EscapeGame.Inventory.Runtime.Inventory inventory;
         public EndGameManager endGameManager;
         public ChestRewardRevealDocument rewardCard;
+        public EndScreensDocument endScreens;
         public RouteGeneratorConfig config;
 
         private void Start()
@@ -49,6 +54,8 @@ namespace EscapeGame.Core.World
                 endGameManager = FindFirstObjectByType<EndGameManager>(FindObjectsInactive.Include);
             if (rewardCard == null)
                 rewardCard = FindFirstObjectByType<ChestRewardRevealDocument>(FindObjectsInactive.Include);
+            if (endScreens == null)
+                endScreens = FindFirstObjectByType<EndScreensDocument>(FindObjectsInactive.Include);
             if (config == null)
             {
                 var gen = FindFirstObjectByType<ProceduralRouteGenerator>(FindObjectsInactive.Include);
@@ -62,9 +69,52 @@ namespace EscapeGame.Core.World
             var kb = Keyboard.current;
             if (kb == null) return;
 
-            if (kb[letterKey].wasPressedThisFrame) GiveLetter();
+            if (kb[victoryKey].wasPressedThisFrame) ShowVictory();
+            else if (kb[gameOverKey].wasPressedThisFrame) ShowGameOver();
+            else if (kb[letterKey].wasPressedThisFrame) GiveLetter();
             else if (kb[bonusKey].wasPressedThisFrame) GiveBonus();
             else if (kb[rewardKey].wasPressedThisFrame) GiveChestReward();
+        }
+
+        // ====================================================================
+        // F1 / F2 : ecrans de fin
+        // ====================================================================
+
+        private void ShowVictory()
+        {
+            if (endScreens == null)
+            {
+                Debug.LogWarning("[DebugReveal] F1 : aucune EndScreensDocument en scene.");
+                return;
+            }
+            string reward = "Recompense finale : " + RandomTier();
+            if (endGameManager != null) reward = endGameManager.felicitationsRewardPrefix + RandomTier();
+
+            Debug.Log("[DebugReveal] F1 -> ecran de victoire.");
+            endScreens.ShowVictory(reward);
+        }
+
+        private void ShowGameOver()
+        {
+            if (endScreens == null)
+            {
+                Debug.LogWarning("[DebugReveal] F2 : aucune EndScreensDocument en scene.");
+                return;
+            }
+            string reward = "Tu repars tout de meme avec : " + RandomTier();
+            if (endGameManager != null) reward = endGameManager.gameOverRewardPrefix + RandomTier();
+
+            Debug.Log("[DebugReveal] F2 -> ecran de game over.");
+            endScreens.ShowGameOver(reward);
+        }
+
+        /// <summary>Un palier de recompense au hasard, pour varier le contenu affiche.</summary>
+        private string RandomTier()
+        {
+            if (endGameManager == null || endGameManager.rewardsInOrder == null
+                || endGameManager.rewardsInOrder.Length == 0)
+                return "Bon de 300 dhs";
+            return endGameManager.rewardsInOrder[Random.Range(0, endGameManager.rewardsInOrder.Length)];
         }
 
         // ====================================================================
