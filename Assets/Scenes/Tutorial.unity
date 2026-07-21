@@ -1173,8 +1173,8 @@ MonoBehaviour:
     param: 
     count: 0
     delay: 5
-  - text: Dans le journal, clique sur la tuile BLANCHE (ton etape en cours) pour
-      voir son indice en detail.
+  - text: Dans le journal, clique sur la tuile BLEUE (ton etape en cours) pour voir
+      son indice en detail.
     trigger: 7
     param: 
     count: 0
@@ -1204,8 +1204,8 @@ MonoBehaviour:
     param: 
     count: 0
     delay: 8
-  - text: 'Nouvelle route ! Ouvre le journal (Tab) et clique sur la tuile BLANCHE
-      : elle montre une IMAGE a reproduire. Approche-toi, place-toi au bon endroit
+  - text: 'Nouvelle route ! Ouvre le journal (Tab) et clique sur la tuile BLEUE :
+      elle montre une IMAGE a reproduire. Approche-toi, place-toi au bon endroit
       et vise pour REPRODUIRE cette vue en 1re personne, puis scanne.'
     trigger: 4
     param: Tuto_R2_Spot

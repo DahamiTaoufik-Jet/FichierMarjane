@@ -101,7 +101,7 @@ namespace EscapeGame.Journal.UI
 
         [Header("Tutoriel")]
         [Tooltip("Si vrai, a chaque ouverture le journal recentre la vue sur le premier bloc " +
-                 "(la tuile blanche du tutoriel) au centre du viewport, pour laisser la place de cliquer.")]
+                 "(la tuile bleue du tutoriel) au centre du viewport, pour laisser la place de cliquer.")]
         public bool centerFirstNodeOnOpen = false;
 
         [Header("Centrage")]
