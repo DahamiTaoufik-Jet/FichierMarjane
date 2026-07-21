@@ -27,11 +27,17 @@ namespace EscapeGame.Journal.UI
         [Header("Audio")]
         public AudioSource audioSource;
 
+        [Header("Diagnostic (temporaire)")]
+        [Tooltip("Trace dans la console chaque affichage/masquage pour identifier un indice bloque.")]
+        public bool logDiagnostics = true;
+
         private VisualElement panel;
         private VisualElement image;
         private Label text;
 
-        // Instant (Time.time) ou l'indice doit avoir totalement disparu.
+        // Instant (Time.unscaledTime) ou l'indice doit avoir totalement disparu.
+        // Non-scale volontairement : sinon un timeScale a 0 (menu pause) gelerait
+        // le compte a rebours et l'indice resterait affiche indefiniment.
         private float goneAt = -1f;
         private bool visible;
 
@@ -62,7 +68,7 @@ namespace EscapeGame.Journal.UI
         {
             if (!visible) return;
 
-            float remaining = goneAt - Time.time;
+            float remaining = goneAt - Time.unscaledTime;
 
             if (remaining <= 0f)
             {
@@ -123,13 +129,19 @@ namespace EscapeGame.Journal.UI
             // le fondu du precedent.
             if (panel != null) panel.style.opacity = 1f;
 
+            if (logDiagnostics)
+                Debug.Log("[Clue] SHOW t=" + Time.unscaledTime.ToString("F2")
+                        + " texte=\"" + (clue.text != null ? clue.text.Substring(0, System.Math.Min(clue.text.Length, 30)) : "") + "\"");
+
             float total = Mathf.Clamp(displayDuration, 0.1f, MaxDisplayDuration);
-            goneAt = Time.time + total;
+            goneAt = Time.unscaledTime + total;
             visible = true;
         }
 
         private void Hide()
         {
+            if (logDiagnostics && visible)
+                Debug.Log("[Clue] HIDE t=" + Time.unscaledTime.ToString("F2"));
             visible = false;
             goneAt = -1f;
             if (panel == null) return;
