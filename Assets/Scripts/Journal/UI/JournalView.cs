@@ -44,6 +44,9 @@ namespace EscapeGame.Journal.UI
         [Tooltip("Menu des bonus a fermer avant d'ouvrir le journal (evite le chevauchement des UI).")]
         public InventoryPanelView bonusInventory;
 
+        [Tooltip("Inventaire bonus en UI Toolkit. Ferme aussi avant l'ouverture du journal.")]
+        public EscapeGame.Inventory.UI.BonusInventoryDocument bonusInventoryDoc;
+
         [Header("Navigation")]
         [Tooltip("Bouton pour fermer le journal et revenir au jeu (comme Tab).")]
         public Button buttonRetourAuJournal;
@@ -194,6 +197,7 @@ namespace EscapeGame.Journal.UI
 
             // Fermer le menu bonus s'il etait ouvert (evite d'empiler deux UI).
             if (bonusInventory != null) bonusInventory.ForceClose();
+            if (bonusInventoryDoc != null) bonusInventoryDoc.ForceClose();
             if (stageModal != null && stageModal.IsOpen) stageModal.Close();
 
             journalIsOpen = true;

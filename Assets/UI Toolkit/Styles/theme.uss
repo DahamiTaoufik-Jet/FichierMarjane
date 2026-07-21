@@ -474,6 +474,62 @@
     margin-top: 10px;
 }
 
+/* ---------- Inventaire bonus ---------- */
+
+/* Ancre en bas au centre, comme l'ancien panneau (400x400 a +200 du bas). */
+.inventory-panel {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    translate: -50% 0;
+    width: 560px;
+    background-color: var(--panel-bg);
+    border-radius: 12px;
+    padding: 22px 26px;
+    align-items: center;
+}
+
+.inventory-row {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.inventory-arrow {
+    width: 46px;
+    font-size: 46px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+.inventory-content {
+    flex-grow: 1;
+    align-items: center;
+}
+
+.inventory-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.inventory-name {
+    font-size: 32px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.inventory-desc {
+    font-size: 21px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
 .hidden {
     display: none;
 }

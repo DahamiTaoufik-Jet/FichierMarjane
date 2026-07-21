@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <!-- Ancre en bas au centre, comme l'ancien panneau uGUI. -->
+    <ui:VisualElement name="inventory-panel" class="inventory-panel hidden">
+        <ui:VisualElement class="inventory-row">
+            <ui:Label name="inventory-arrow-left" text="&lt;" class="inventory-arrow" />
+
+            <ui:VisualElement class="inventory-content">
+                <ui:VisualElement name="inventory-icon" class="inventory-icon" />
+                <ui:Label name="inventory-name" text="" class="inventory-name" />
+                <ui:Label name="inventory-desc" text="" class="inventory-desc" />
+            </ui:VisualElement>
+
+            <ui:Label name="inventory-arrow-right" text="&gt;" class="inventory-arrow" />
+        </ui:VisualElement>
+
+        <ui:Label name="inventory-hint" text="A / D pour naviguer - Entree pour utiliser - Echap pour fermer"
+                  class="hint" />
+    </ui:VisualElement>
+</ui:UXML>
