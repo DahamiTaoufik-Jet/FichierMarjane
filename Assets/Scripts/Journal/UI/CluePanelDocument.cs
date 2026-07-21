@@ -14,9 +14,15 @@ namespace EscapeGame.Journal.UI
     [RequireComponent(typeof(UIDocument))]
     public class CluePanelDocument : MonoBehaviour
     {
+        /// <summary>Plafond absolu : un indice ne doit jamais rester plus longtemps.</summary>
+        public const float MaxDisplayDuration = 12f;
+
         [Header("Comportement")]
-        [Tooltip("Duree d'affichage en secondes. <= 0 : pas de masquage automatique.")]
-        public float autoHideAfter = 4f;
+        [Tooltip("Duree TOTALE a l'ecran, fondu de sortie inclus. Plafonnee a 12 s.")]
+        public float displayDuration = 12f;
+
+        [Tooltip("Duree du fondu de sortie, pris sur la fin de displayDuration.")]
+        public float fadeDuration = 0.8f;
 
         [Header("Audio")]
         public AudioSource audioSource;
@@ -25,7 +31,9 @@ namespace EscapeGame.Journal.UI
         private VisualElement image;
         private Label text;
 
-        private float hideAt = -1f;
+        // Instant (Time.time) ou l'indice doit avoir totalement disparu.
+        private float goneAt = -1f;
+        private bool visible;
 
         private void OnEnable()
         {
@@ -52,10 +60,20 @@ namespace EscapeGame.Journal.UI
 
         private void Update()
         {
-            if (autoHideAfter <= 0f || hideAt < 0f) return;
-            if (Time.time < hideAt) return;
-            Hide();
-            hideAt = -1f;
+            if (!visible) return;
+
+            float remaining = goneAt - Time.time;
+
+            if (remaining <= 0f)
+            {
+                Hide();
+                return;
+            }
+
+            // Fondu sur la toute fin : l'opacite suit le temps restant.
+            float fade = Mathf.Max(0.01f, fadeDuration);
+            if (panel != null)
+                panel.style.opacity = remaining < fade ? remaining / fade : 1f;
         }
 
         private void HandleClueRevealed(ClueContent clue, StepBehaviour by)
@@ -101,12 +119,22 @@ namespace EscapeGame.Journal.UI
                 audioSource.Play();
             }
 
-            hideAt = autoHideAfter > 0f ? Time.time + autoHideAfter : -1f;
+            // Un nouvel indice repart a pleine opacite, meme s'il arrive pendant
+            // le fondu du precedent.
+            if (panel != null) panel.style.opacity = 1f;
+
+            float total = Mathf.Clamp(displayDuration, 0.1f, MaxDisplayDuration);
+            goneAt = Time.time + total;
+            visible = true;
         }
 
         private void Hide()
         {
-            if (panel != null) panel.AddToClassList("hidden");
+            visible = false;
+            goneAt = -1f;
+            if (panel == null) return;
+            panel.AddToClassList("hidden");
+            panel.style.opacity = 1f;
         }
     }
 }
