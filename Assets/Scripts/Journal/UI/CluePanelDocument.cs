@@ -41,6 +41,13 @@ namespace EscapeGame.Journal.UI
         private float goneAt = -1f;
         private bool visible;
 
+        // Contenu actuellement affiche. Sert a distinguer un NOUVEL indice d'une
+        // simple re-emission du meme : PuzzleStep.OnScan() relance la revelation
+        // a chaque scan tant que l'enigme n'est pas resolue, ce qui rearmait le
+        // compte a rebours indefiniment et laissait l'indice a l'ecran.
+        private string shownText;
+        private Sprite shownSprite;
+
         private void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
@@ -125,13 +132,26 @@ namespace EscapeGame.Journal.UI
                 audioSource.Play();
             }
 
-            // Un nouvel indice repart a pleine opacite, meme s'il arrive pendant
+            // Meme contenu deja a l'ecran : on NE rearme PAS le minuteur, sinon
+            // un indice re-emis en boucle resterait affiche indefiniment.
+            bool sameContent = visible
+                && shownText == (clue.text != null ? clue.text : "")
+                && shownSprite == clue.image;
+
+            if (logDiagnostics)
+                Debug.Log("[Clue] " + (sameContent ? "REEMIS (minuteur conserve)" : "SHOW")
+                        + " t=" + Time.unscaledTime.ToString("F2")
+                        + (sameContent ? " reste " + (goneAt - Time.unscaledTime).ToString("F1") + "s" : "")
+                        + " texte=\"" + (clue.text != null ? clue.text.Substring(0, System.Math.Min(clue.text.Length, 30)) : "") + "\"");
+
+            if (sameContent) return;
+
+            // Nouvel indice : repart a pleine opacite, meme s'il arrive pendant
             // le fondu du precedent.
             if (panel != null) panel.style.opacity = 1f;
 
-            if (logDiagnostics)
-                Debug.Log("[Clue] SHOW t=" + Time.unscaledTime.ToString("F2")
-                        + " texte=\"" + (clue.text != null ? clue.text.Substring(0, System.Math.Min(clue.text.Length, 30)) : "") + "\"");
+            shownText = clue.text != null ? clue.text : "";
+            shownSprite = clue.image;
 
             float total = Mathf.Clamp(displayDuration, 0.1f, MaxDisplayDuration);
             goneAt = Time.unscaledTime + total;
@@ -144,6 +164,8 @@ namespace EscapeGame.Journal.UI
                 Debug.Log("[Clue] HIDE t=" + Time.unscaledTime.ToString("F2"));
             visible = false;
             goneAt = -1f;
+            shownText = null;
+            shownSprite = null;
             if (panel == null) return;
             panel.AddToClassList("hidden");
             panel.style.opacity = 1f;
