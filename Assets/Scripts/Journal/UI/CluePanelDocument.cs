@@ -88,6 +88,13 @@ namespace EscapeGame.Journal.UI
         private void HandleClueRevealed(ClueContent clue, StepBehaviour by)
         {
             if (clue == null || clue.IsEmpty) return;
+
+            // Indice d'ouverture de route : RouteManager le leve avec by == null
+            // au moment de l'enregistrement, donc pour TOUTES les routes en meme
+            // temps au chargement de la scene. Il n'en resterait qu'un seul a
+            // l'ecran, au hasard : on les ignore.
+            if (by == null) return;
+
             Show(clue);
         }
 
