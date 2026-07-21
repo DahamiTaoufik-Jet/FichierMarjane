@@ -73,3 +73,7 @@ crashlytics-build.properties
 # Claude Code worktree / sandbox
 .claude/
 /[Aa]ssets/.claude/
+
+# Debug snapshots (generes au runtime, inutiles en VCS)
+Assets/_Debug/
+Assets/_Debug.meta
