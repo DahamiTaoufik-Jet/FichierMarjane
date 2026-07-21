@@ -207,6 +207,21 @@ namespace EscapeGame.Inventory.UI
             var label = el as Label;
             if (label != null) label.text = text;
             el.RemoveFromClassList("hidden");
+            el.RemoveFromClassList("invisible");
+        }
+
+        /// <summary>
+        /// Occupe la place de l'element sans l'afficher : la carte prend tout de
+        /// suite sa taille finale, et un <see cref="Show"/> ulterieur ne la fera
+        /// donc pas grandir en pleine animation.
+        /// </summary>
+        protected void Reserve(VisualElement el, string placeholder)
+        {
+            if (el == null) return;
+            var label = el as Label;
+            if (label != null) label.text = placeholder;
+            el.RemoveFromClassList("hidden");
+            el.AddToClassList("invisible");
         }
 
         protected void ShowIcon(Sprite sprite)
@@ -219,7 +234,9 @@ namespace EscapeGame.Inventory.UI
 
         protected static void Hide(VisualElement el)
         {
-            if (el != null) el.AddToClassList("hidden");
+            if (el == null) return;
+            el.AddToClassList("hidden");
+            el.RemoveFromClassList("invisible");
         }
 
         private void SetScreenVisible(bool visible)

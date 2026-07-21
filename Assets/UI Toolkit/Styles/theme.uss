@@ -207,16 +207,23 @@
 }
 
 .reveal-card {
-    background-color: rgba(18, 20, 26, 0.94);
+    background-color: rgb(18, 20, 26);
     border-radius: 14px;
     border-width: 2px;
     border-color: rgb(255, 214, 102);
     padding: 26px 34px;
-    min-width: 340px;
+    min-width: 420px;
     max-width: 620px;
     align-items: center;
     /* transform-origin au centre pour que le pop parte du milieu */
     transform-origin: center;
+}
+
+/* Element present dans la mise en page mais pas encore visible : sa place est
+   RESERVEE, donc la carte naît a sa taille finale et ne grandit pas en cours
+   d'animation quand le texte apparait. */
+.invisible {
+    visibility: hidden;
 }
 
 .reveal-header {

@@ -48,6 +48,11 @@ namespace EscapeGame.Inventory.UI
         protected override void Fill(LetterItem letter)
         {
             Show(big, char.ToUpper(letter.letter).ToString());
+
+            // Reserve la place du texte de position AVANT l'animation : sinon la
+            // carte grandirait d'un coup au moment de sa revelation. Le gabarit
+            // fait deux lignes, comme le texte final.
+            Reserve(sub, string.Format(positionFormat, 0) + "\n" + memorizeLabel);
         }
 
         /// <summary>

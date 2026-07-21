@@ -17,7 +17,8 @@ namespace EscapeGame.Core.World
     ///   F9  : complete une route porteuse de lettre (la lettre est donc gagnee
     ///         normalement, via le circuit de recompense habituel)
     ///   F10 : ajoute un bonus tire au hasard dans le pool
-    ///   F11 : affiche une carte recompense de coffre a palier aleatoire
+    ///   F12 : affiche une carte recompense de coffre a palier aleatoire
+    ///         (F11 est reservee par macOS)
     ///
     /// Les touches sont ignorees si <see cref="enableInBuild"/> est faux et que
     /// l'on n'est pas dans l'editeur, pour eviter tout accident en production.
@@ -27,7 +28,8 @@ namespace EscapeGame.Core.World
         [Header("Touches")]
         public Key letterKey = Key.F9;
         public Key bonusKey = Key.F10;
-        public Key rewardKey = Key.F11;
+        // F11 est capturee par macOS (affichage du bureau) : on utilise F12.
+        public Key rewardKey = Key.F12;
 
         [Header("Securite")]
         [Tooltip("Laisser FAUX : les raccourcis ne repondent alors que dans l'editeur.")]
@@ -161,14 +163,14 @@ namespace EscapeGame.Core.World
         }
 
         // ====================================================================
-        // F11 : recompense de coffre aleatoire
+        // F12 : recompense de coffre aleatoire
         // ====================================================================
 
         private void GiveChestReward()
         {
             if (rewardCard == null)
             {
-                Debug.LogWarning("[DebugReveal] F11 : aucune ChestRewardRevealDocument en scene.");
+                Debug.LogWarning("[DebugReveal] F12 : aucune ChestRewardRevealDocument en scene.");
                 return;
             }
 
@@ -183,7 +185,7 @@ namespace EscapeGame.Core.World
                     label = tiers[Random.Range(0, tiers.Length)];
             }
 
-            Debug.Log("[DebugReveal] F11 -> recompense '" + label + "'.");
+            Debug.Log("[DebugReveal] F12 -> recompense '" + label + "'.");
             rewardCard.Show(title, label);
         }
     }
