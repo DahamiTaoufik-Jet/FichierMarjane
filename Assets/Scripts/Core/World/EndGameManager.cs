@@ -35,6 +35,9 @@ namespace EscapeGame.Core.World
         public string rewardTitle = "RECOMPENSE !";
 
         [Header("References")]
+        [Tooltip("Carte recompense en UI Toolkit. Si presente, elle remplace rewardReveal (uGUI).")]
+        public ChestRewardRevealDocument rewardRevealDoc;
+
         public ChestRewardRevealView rewardReveal;
         [Tooltip("Inventaire du joueur (pour detecter la rupture de lettres). Si null, recherche au demarrage.")]
         public EscapeGame.Inventory.Runtime.Inventory inventory;
@@ -73,6 +76,8 @@ namespace EscapeGame.Core.World
                 inventory = FindFirstObjectByType<EscapeGame.Inventory.Runtime.Inventory>(FindObjectsInactive.Include);
             if (endScreens == null)
                 endScreens = FindFirstObjectByType<EndScreensDocument>(FindObjectsInactive.Include);
+            if (rewardRevealDoc == null)
+                rewardRevealDoc = FindFirstObjectByType<Inventory.UI.ChestRewardRevealDocument>(FindObjectsInactive.Include);
         }
 
         private void OnEnable()
@@ -81,7 +86,8 @@ namespace EscapeGame.Core.World
             PasswordManager.AllSolved += OnAllSolved;
             PasswordManager.GameLost += OnGameLost;
             InventoryEvents.ItemRemoved += OnItemRemoved;
-            if (rewardReveal != null) rewardReveal.OnRevealsFinished += OnRevealsFinished;
+            if (rewardRevealDoc != null) rewardRevealDoc.OnRevealsFinished += OnRevealsFinished;
+            else if (rewardReveal != null) rewardReveal.OnRevealsFinished += OnRevealsFinished;
         }
 
         private void OnDisable()
@@ -90,7 +96,8 @@ namespace EscapeGame.Core.World
             PasswordManager.AllSolved -= OnAllSolved;
             PasswordManager.GameLost -= OnGameLost;
             InventoryEvents.ItemRemoved -= OnItemRemoved;
-            if (rewardReveal != null) rewardReveal.OnRevealsFinished -= OnRevealsFinished;
+            if (rewardRevealDoc != null) rewardRevealDoc.OnRevealsFinished -= OnRevealsFinished;
+            else if (rewardReveal != null) rewardReveal.OnRevealsFinished -= OnRevealsFinished;
         }
 
         // ====================================================================
@@ -107,7 +114,9 @@ namespace EscapeGame.Core.World
             if (PasswordManager.Instance != null && PasswordManager.Instance.IsAllSolved)
                 return;
 
-            if (rewardReveal != null)
+            if (rewardRevealDoc != null)
+                rewardRevealDoc.Show(rewardTitle, GetRewardText(openedCount));
+            else if (rewardReveal != null)
                 rewardReveal.Show(rewardTitle, GetRewardText(openedCount));
         }
 

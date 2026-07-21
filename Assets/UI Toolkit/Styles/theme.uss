@@ -193,6 +193,79 @@
     -unity-text-align: middle-center;
 }
 
+/* ---------- Cartes de revelation (lettre, bonus, recompense) ---------- */
+
+/* Overlay transparent : la carte flotte, le jeu reste visible derriere. */
+.reveal-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.reveal-card {
+    background-color: rgba(18, 20, 26, 0.94);
+    border-radius: 14px;
+    border-width: 2px;
+    border-color: rgb(255, 214, 102);
+    padding: 26px 34px;
+    min-width: 340px;
+    max-width: 620px;
+    align-items: center;
+    /* transform-origin au centre pour que le pop parte du milieu */
+    transform-origin: center;
+}
+
+.reveal-header {
+    font-size: 24px;
+    color: rgb(255, 214, 102);
+    -unity-text-align: middle-center;
+    margin-bottom: 10px;
+}
+
+.reveal-icon {
+    width: 128px;
+    height: 128px;
+    margin-bottom: 12px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* La grande lettre du mot de passe. */
+.reveal-big {
+    font-size: 108px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+    margin-bottom: 6px;
+}
+
+.reveal-title {
+    font-size: 28px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.reveal-desc {
+    font-size: 19px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-width: 520px;
+}
+
+/* "Position N / A MEMORISER !" */
+.reveal-sub {
+    font-size: 24px;
+    color: rgb(255, 214, 102);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-top: 12px;
+}
+
 .hidden {
     display: none;
 }

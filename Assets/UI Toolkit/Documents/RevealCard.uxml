@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <!-- Overlay non bloquant : la carte flotte au centre, le jeu reste visible. -->
+    <ui:VisualElement name="reveal-screen" class="reveal-screen hidden">
+        <ui:VisualElement name="reveal-card" class="reveal-card">
+            <ui:Label name="reveal-header" text="" class="reveal-header hidden" />
+            <ui:VisualElement name="reveal-icon" class="reveal-icon hidden" />
+            <ui:Label name="reveal-big" text="" class="reveal-big hidden" />
+            <ui:Label name="reveal-title" text="" class="reveal-title hidden" />
+            <ui:Label name="reveal-desc" text="" class="reveal-desc hidden" />
+            <ui:Label name="reveal-sub" text="" class="reveal-sub hidden" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
