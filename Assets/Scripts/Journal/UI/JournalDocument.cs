@@ -469,21 +469,22 @@ namespace EscapeGame.Journal.UI
         }
 
         /// <summary>
-        /// Amene le contenu de la carte au centre du viewport. Sans cela le
-        /// journal s'ouvrait cale en haut a gauche.
+        /// Centre la carte HORIZONTALEMENT dans le viewport. La verticale reste
+        /// en haut : les routes se lisent de la premiere a la derniere, on ne
+        /// veut donc pas ouvrir le journal au milieu de la liste.
         /// </summary>
         private void CenterView()
         {
             if (scroll == null || world == null) return;
 
             float vw = scroll.contentViewport.layout.width;
-            float vh = scroll.contentViewport.layout.height;
             float cw = world.layout.width * zoom;
-            float ch = world.layout.height * zoom;
 
+            // La position verticale courante est conservee : zoomer apres avoir
+            // fait defiler ne doit pas renvoyer le joueur en haut de la liste.
             scroll.scrollOffset = new Vector2(
                 Mathf.Max(0f, (cw - vw) * 0.5f),
-                Mathf.Max(0f, (ch - vh) * 0.5f));
+                scroll.scrollOffset.y);
         }
 
         // ====================================================================
