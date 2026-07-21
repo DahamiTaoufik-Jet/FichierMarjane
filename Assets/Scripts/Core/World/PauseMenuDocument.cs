@@ -46,8 +46,16 @@ namespace EscapeGame.Core.World
         private bool isOpen;
         private float savedTimeScale;
         private float sensitivityBaseline = 15f;
-        private float sensMin = 1f;
-        private float sensMax = 20f;
+
+        [Header("Plage de sensibilite")]
+        public float sensMin = 0.1f;
+        public float sensMax = 20f;
+
+        // Le reverrouillage du curseur est differe en LateUpdate : sinon, ferme
+        // via Echap (traite pendant Update), il peut etre ecrase par un script
+        // s'executant plus tard dans la meme frame. Un clic sur le bouton est
+        // dispatche apres les Update et n'avait donc pas le probleme.
+        private bool pendingCursorLock;
 
         private Camera minimapCam;
         private RectTransform minimapRootRt;
@@ -122,15 +130,12 @@ namespace EscapeGame.Core.World
 
             if (sensitivitySlider != null)
             {
-                // La plage est DERIVEE de la sensibilite reglee dans la scene, pas
-                // codee en dur : SampleScene tourne autour de 0.15 alors que la
-                // valeur par defaut de PlayerLook est 15. Une plage fixe 1-20
-                // ecrasait la valeur de la scene des l'ouverture du menu.
-                sensMin = sensitivityBaseline * 0.1f;
-                sensMax = sensitivityBaseline * 3f;
                 sensitivitySlider.lowValue = sensMin;
                 sensitivitySlider.highValue = sensMax;
 
+                // SetValueWithoutNotify : ne jamais reecrire la sensibilite de la
+                // scene au demarrage (l'ancienne version uGUI le faisait et
+                // ecrasait la valeur reglee).
                 float s = playerLook != null ? playerLook.mouseSensitivity : sensitivityBaseline;
                 sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(s, sensMin, sensMax));
                 sensitivitySlider.RegisterValueChangedCallback(OnSensitivityChanged);
@@ -220,11 +225,18 @@ namespace EscapeGame.Core.World
 
             SetVisible(false);
 
-            if (!UIState.IsAnyUIOpen)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            // Applique en fin de frame (LateUpdate), pas ici : voir pendingCursorLock.
+            pendingCursorLock = true;
+        }
+
+        private void LateUpdate()
+        {
+            if (!pendingCursorLock) return;
+            pendingCursorLock = false;
+
+            if (UIState.IsAnyUIOpen) return;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         private void SetVisible(bool visible)
