@@ -51,10 +51,14 @@ namespace EscapeGame.Core.World
         public float sensMin = 0.1f;
         public float sensMax = 20f;
 
-        // Le reverrouillage du curseur est differe en LateUpdate : sinon, ferme
-        // via Echap (traite pendant Update), il peut etre ecrase par un script
-        // s'executant plus tard dans la meme frame. Un clic sur le bouton est
-        // dispatche apres les Update et n'avait donc pas le probleme.
+        // Reverrouillage du curseur differe en LateUpdate, apres tous les Update :
+        // garantit qu'aucun autre script de la frame ne le rouvre derriere nous.
+        //
+        // A NE PAS TESTER DANS L'EDITEUR : en Play mode, l'editeur libere lui-meme
+        // le curseur des qu'on appuie sur Echap ("In the Editor the cursor is
+        // automatically reset when escape is pressed" - doc Cursor.lockState).
+        // Le curseur semblera donc toujours deverrouille apres Echap, quoi que
+        // fasse ce script. Verifiable uniquement dans un build.
         private bool pendingCursorLock;
 
         private Camera minimapCam;
