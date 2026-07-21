@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <ui:VisualElement name="puzzle-screen" class="puzzle-screen hidden">
+        <ui:VisualElement class="panel panel--puzzle">
+            <ui:Label name="puzzle-question" text="" class="puzzle-question" />
+            <ui:TextField name="puzzle-answer" class="puzzle-answer hidden" />
+            <ui:Label name="puzzle-feedback" text="" class="puzzle-feedback" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
