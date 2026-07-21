@@ -13,6 +13,8 @@ namespace EscapeGame.Inventory.UI
         public string headerLabel = "NOUVEAU BONUS !";
         public string fallbackName = "Nouveau bonus !";
 
+        protected override string CardVariantClass { get { return "reveal-card--bonus"; } }
+
         protected override void Subscribe()
         {
             InventoryEvents.ItemAdded += HandleItemAdded;

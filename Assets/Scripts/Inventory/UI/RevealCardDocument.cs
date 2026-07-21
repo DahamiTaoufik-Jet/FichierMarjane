@@ -52,6 +52,17 @@ namespace EscapeGame.Inventory.UI
         private bool isPlaying;
         private int uiStateHeld;
 
+        // Le flottement tourne en continu tant que la carte est affichee, quelle
+        // que soit la phase (pop-in, attente, revelation, envol). Il etait avant
+        // applique phase par phase, et la carte se figeait donc pendant les
+        // etapes qui ne le faisaient pas.
+        private bool cardVisible;
+        private float cardTime;
+        private float flyOffset;
+
+        /// <summary>Classe USS ajoutee a la carte pour la decliner par ecran (couleurs).</summary>
+        protected virtual string CardVariantClass { get { return null; } }
+
         protected virtual void OnEnable()
         {
             var root = GetComponent<UIDocument>().rootVisualElement;
@@ -68,6 +79,10 @@ namespace EscapeGame.Inventory.UI
             // de jouer pendant qu'une carte s'affiche.
             root.pickingMode = PickingMode.Ignore;
             if (screen != null) screen.pickingMode = PickingMode.Ignore;
+
+            var variant = CardVariantClass;
+            if (card != null && !string.IsNullOrEmpty(variant))
+                card.AddToClassList(variant);
 
             SetScreenVisible(false);
             Subscribe();
@@ -138,7 +153,12 @@ namespace EscapeGame.Inventory.UI
             SetScreenVisible(true);
             SetCardOpacity(1f);
             SetCardScale(0f);
-            SetCardOffset(0f);
+
+            // Demarre le flottement continu pour toute la duree de la carte.
+            cardTime = 0f;
+            flyOffset = 0f;
+            cardVisible = true;
+            ApplyCardOffset();
 
             if (audioSource != null && getSound != null)
                 audioSource.PlayOneShot(getSound);
@@ -152,7 +172,6 @@ namespace EscapeGame.Inventory.UI
                 t += Time.deltaTime;
                 float k = popInDuration > 0f ? Mathf.Clamp01(t / popInDuration) : 1f;
                 SetCardScale(OvershootEase(k));
-                SetCardOffset(FloatOffset(t));
                 yield return null;
             }
             SetCardScale(1f);
@@ -166,23 +185,24 @@ namespace EscapeGame.Inventory.UI
             {
                 if (allowSkip && SkipPressed()) break;
                 hold += Time.deltaTime;
-                SetCardOffset(FloatOffset(popInDuration + hold));
                 yield return null;
             }
 
             // --- Envol + fondu ---
             float fly = 0f;
-            float startOffset = FloatOffset(popInDuration + hold);
             while (fly < flyUpDuration)
             {
                 fly += Time.deltaTime;
                 float k = flyUpDuration > 0f ? Mathf.Clamp01(fly / flyUpDuration) : 1f;
-                float eased = EaseOutCubic(k);
-                SetCardOffset(startOffset - flyUpDistance * eased);
+                // S'ajoute au flottement au lieu de le remplacer : la carte
+                // continue d'onduler pendant qu'elle s'envole.
+                flyOffset = flyUpDistance * EaseOutCubic(k);
                 SetCardOpacity(1f - k);
                 yield return null;
             }
 
+            cardVisible = false;
+            flyOffset = 0f;
             SetScreenVisible(false);
             SetCardOffset(0f);
             SetCardScale(1f);
@@ -249,6 +269,22 @@ namespace EscapeGame.Inventory.UI
         private void SetCardScale(float s)
         {
             if (card != null) card.style.scale = new StyleScale(new Scale(new Vector2(s, s)));
+        }
+
+        /// <summary>
+        /// Fait vivre le flottement en continu, independamment de la phase
+        /// d'animation en cours (attente, revelation de la position, envol).
+        /// </summary>
+        protected virtual void Update()
+        {
+            if (!cardVisible) return;
+            cardTime += Time.deltaTime;
+            ApplyCardOffset();
+        }
+
+        private void ApplyCardOffset()
+        {
+            SetCardOffset(FloatOffset(cardTime) - flyOffset);
         }
 
         private void SetCardOffset(float y)

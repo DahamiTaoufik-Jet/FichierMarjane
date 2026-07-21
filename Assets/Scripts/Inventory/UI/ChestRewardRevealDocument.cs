@@ -19,6 +19,8 @@ namespace EscapeGame.Inventory.UI
         /// <summary>Leve quand plus aucune carte n'est en cours.</summary>
         public System.Action OnRevealsFinished;
 
+        protected override string CardVariantClass { get { return "reveal-card--reward"; } }
+
         protected override void Subscribe() { }
         protected override void Unsubscribe() { }
 

@@ -226,6 +226,38 @@
     visibility: hidden;
 }
 
+/* --- Declinaison "recompense de coffre" : dore, texte et bordure noirs --- */
+.reveal-card--reward {
+    background-color: rgb(232, 178, 46);
+    border-color: rgb(0, 0, 0);
+}
+
+.reveal-card--reward .reveal-header,
+.reveal-card--reward .reveal-big,
+.reveal-card--reward .reveal-title,
+.reveal-card--reward .reveal-desc,
+.reveal-card--reward .reveal-sub {
+    color: rgb(0, 0, 0);
+}
+
+/* --- Declinaison "bonus" : fond blanc. Le texte passe en sombre, sinon il
+       serait illisible sur du blanc. --- */
+.reveal-card--bonus {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(38, 40, 48);
+}
+
+.reveal-card--bonus .reveal-header,
+.reveal-card--bonus .reveal-big,
+.reveal-card--bonus .reveal-title,
+.reveal-card--bonus .reveal-sub {
+    color: rgb(20, 22, 28);
+}
+
+.reveal-card--bonus .reveal-desc {
+    color: rgb(78, 82, 92);
+}
+
 .reveal-header {
     font-size: 24px;
     color: rgb(255, 214, 102);
