@@ -46,6 +46,8 @@ namespace EscapeGame.Core.World
         private bool isOpen;
         private float savedTimeScale;
         private float sensitivityBaseline = 15f;
+        private float sensMin = 1f;
+        private float sensMax = 20f;
 
         private Camera minimapCam;
         private RectTransform minimapRootRt;
@@ -120,8 +122,17 @@ namespace EscapeGame.Core.World
 
             if (sensitivitySlider != null)
             {
+                // La plage est DERIVEE de la sensibilite reglee dans la scene, pas
+                // codee en dur : SampleScene tourne autour de 0.15 alors que la
+                // valeur par defaut de PlayerLook est 15. Une plage fixe 1-20
+                // ecrasait la valeur de la scene des l'ouverture du menu.
+                sensMin = sensitivityBaseline * 0.1f;
+                sensMax = sensitivityBaseline * 3f;
+                sensitivitySlider.lowValue = sensMin;
+                sensitivitySlider.highValue = sensMax;
+
                 float s = playerLook != null ? playerLook.mouseSensitivity : sensitivityBaseline;
-                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(s, 1f, 20f));
+                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(s, sensMin, sensMax));
                 sensitivitySlider.RegisterValueChangedCallback(OnSensitivityChanged);
             }
 
@@ -191,7 +202,7 @@ namespace EscapeGame.Core.World
             // Resynchroniser : la sensibilite a pu changer ailleurs entre-temps.
             float s = playerLook != null ? playerLook.mouseSensitivity : sensitivityBaseline;
             if (sensitivitySlider != null)
-                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(s, 1f, 20f));
+                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(s, sensMin, sensMax));
             SyncSensitivityField(s);
 
             Cursor.lockState = CursorLockMode.None;
@@ -292,10 +303,10 @@ namespace EscapeGame.Core.World
                 return;
             }
 
-            val = Mathf.Max(0.1f, val);
+            val = Mathf.Max(sensMin * 0.1f, val);
             ApplySensitivity(val);
             if (sensitivitySlider != null)
-                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(val, 1f, 20f));
+                sensitivitySlider.SetValueWithoutNotify(Mathf.Clamp(val, sensMin, sensMax));
             SyncSensitivityField(val);
         }
 

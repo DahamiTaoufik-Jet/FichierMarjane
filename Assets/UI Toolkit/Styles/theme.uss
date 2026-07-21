@@ -164,6 +164,35 @@
     margin-right: 14px;
 }
 
+/* ---------- Ecrans de fin ---------- */
+
+.panel--end {
+    min-width: 520px;
+    padding: 34px 40px;
+    align-items: center;
+}
+
+.title--win {
+    color: rgb(255, 214, 102);
+}
+
+.title--lose {
+    color: rgb(226, 92, 92);
+}
+
+.end-reward {
+    font-size: 22px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.panel--end .btn {
+    min-width: 240px;
+    -unity-text-align: middle-center;
+}
+
 .hidden {
     display: none;
 }

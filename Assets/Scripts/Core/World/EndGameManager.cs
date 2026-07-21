@@ -39,6 +39,11 @@ namespace EscapeGame.Core.World
         [Tooltip("Inventaire du joueur (pour detecter la rupture de lettres). Si null, recherche au demarrage.")]
         public EscapeGame.Inventory.Runtime.Inventory inventory;
 
+        [Header("UI Toolkit")]
+        [Tooltip("Ecrans de fin en UI Toolkit. Si assigne (ou trouve en scene), il " +
+                 "remplace les canvas uGUI ci-dessous, qui servent alors de repli.")]
+        public EndScreensDocument endScreens;
+
         [Header("Ecran Felicitations (mot de passe complet)")]
         public GameObject felicitationsRoot;
         public TMP_Text felicitationsRewardText;
@@ -66,6 +71,8 @@ namespace EscapeGame.Core.World
             if (gameOverRoot != null) gameOverRoot.SetActive(false);
             if (inventory == null)
                 inventory = FindFirstObjectByType<EscapeGame.Inventory.Runtime.Inventory>(FindObjectsInactive.Include);
+            if (endScreens == null)
+                endScreens = FindFirstObjectByType<EndScreensDocument>(FindObjectsInactive.Include);
         }
 
         private void OnEnable()
@@ -132,10 +139,19 @@ namespace EscapeGame.Core.World
         {
             if (ended) return;
             ended = true;
-            if (felicitationsRewardText != null)
-                felicitationsRewardText.text = felicitationsRewardPrefix + GetRewardText(openedCount);
+
+            string reward = felicitationsRewardPrefix + GetRewardText(openedCount);
             if (victoryAudioSource != null && victorySound != null)
                 victoryAudioSource.PlayOneShot(victorySound);
+
+            if (endScreens != null)
+            {
+                endScreens.ShowVictory(reward);
+                return;
+            }
+
+            if (felicitationsRewardText != null)
+                felicitationsRewardText.text = reward;
             ShowEndScreen(felicitationsRoot);
         }
 
@@ -148,12 +164,18 @@ namespace EscapeGame.Core.World
         {
             if (ended) return;
             ended = true;
-            if (gameOverRewardText != null)
+
+            string reward = openedCount > 0
+                ? gameOverRewardPrefix + GetRewardText(openedCount)
+                : rawGameOverText;
+
+            if (endScreens != null)
             {
-                gameOverRewardText.text = openedCount > 0
-                    ? gameOverRewardPrefix + GetRewardText(openedCount)
-                    : rawGameOverText;
+                endScreens.ShowGameOver(reward);
+                return;
             }
+
+            if (gameOverRewardText != null) gameOverRewardText.text = reward;
             ShowEndScreen(gameOverRoot);
         }
 
