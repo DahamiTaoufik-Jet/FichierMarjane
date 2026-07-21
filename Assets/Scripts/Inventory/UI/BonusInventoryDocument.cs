@@ -272,19 +272,42 @@ namespace EscapeGame.Inventory.UI
             }
 
             var item = sorted[index];
+            var letter = item as LetterItem;
 
-            if (icon != null)
+            if (letter != null)
             {
-                if (item.icon != null)
+                // Une lettre se montre seule et en tres grand : ni icone, ni nom,
+                // ni description. C'est le caractere qui compte, et c'est lui que
+                // le joueur doit memoriser.
+                Hide(icon);
+                Hide(itemDesc);
+                if (itemName != null)
                 {
-                    icon.style.backgroundImage = new StyleBackground(item.icon);
-                    icon.RemoveFromClassList("hidden");
+                    itemName.text = char.ToUpper(letter.letter).ToString();
+                    itemName.AddToClassList("inventory-name--letter");
                 }
-                else icon.AddToClassList("hidden");
             }
+            else
+            {
+                if (itemName != null) itemName.RemoveFromClassList("inventory-name--letter");
 
-            if (itemName != null) itemName.text = item.rewardName;
-            if (itemDesc != null) itemDesc.text = item.description != null ? item.description : "";
+                if (icon != null)
+                {
+                    if (item.icon != null)
+                    {
+                        icon.style.backgroundImage = new StyleBackground(item.icon);
+                        icon.RemoveFromClassList("hidden");
+                    }
+                    else icon.AddToClassList("hidden");
+                }
+
+                if (itemName != null) itemName.text = item.rewardName;
+                if (itemDesc != null)
+                {
+                    itemDesc.text = item.description != null ? item.description : "";
+                    itemDesc.RemoveFromClassList("hidden");
+                }
+            }
 
             // Les fleches n'ont de sens qu'a partir de deux objets.
             bool many = sorted.Count > 1;

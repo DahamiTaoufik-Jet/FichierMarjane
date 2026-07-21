@@ -530,6 +530,13 @@
     white-space: normal;
 }
 
+/* Une lettre du mot de passe s'affiche seule et en tres grand. */
+.inventory-name--letter {
+    font-size: 150px;
+    color: rgb(255, 214, 102);
+    margin-bottom: 0;
+}
+
 /* ---------- Enigme textuelle ---------- */
 
 /* Pas de voile : le joueur doit continuer de voir la scene qu'il interroge. */
