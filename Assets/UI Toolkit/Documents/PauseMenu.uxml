@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <!-- Panneau reglages -->
+    <ui:VisualElement name="settings-screen" class="screen screen--top">
+        <ui:VisualElement name="settings-panel" class="panel">
+            <ui:Label text="PAUSE" class="title" />
+
+            <ui:VisualElement class="row">
+                <ui:Label text="Volume" class="row__label" />
+                <ui:Slider name="volume-slider" low-value="0" high-value="1" class="slider" />
+                <ui:Label name="volume-value" text="100%" class="row__value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="row">
+                <ui:Label text="Sensibilite" class="row__label" />
+                <ui:Slider name="sensitivity-slider" low-value="1" high-value="20" class="slider" />
+                <ui:TextField name="sensitivity-field" class="num-field" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="row">
+                <ui:Label text="Taille minimap" class="row__label" />
+                <ui:Slider name="minimap-size-slider" low-value="120" high-value="420" class="slider" />
+                <ui:Label name="minimap-size-value" text="240" class="row__value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="row">
+                <ui:Label text="Zoom minimap" class="row__label" />
+                <ui:Slider name="minimap-zoom-slider" low-value="0.5" high-value="3" class="slider" />
+                <ui:Label name="minimap-zoom-value" text="x1.0" class="row__value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="spacer" />
+
+            <ui:Button name="btn-resume" text="Reprendre" class="btn" />
+            <ui:Button name="btn-controls" text="Controles" class="btn" />
+            <ui:Button name="btn-quit" text="Quitter" class="btn" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+    <!-- Panneau controles : le fond englobe automatiquement le bouton (flexbox) -->
+    <ui:VisualElement name="controls-screen" class="screen screen--top hidden">
+        <ui:VisualElement name="controls-panel" class="panel">
+            <ui:Label text="CONTROLES" class="title" />
+
+            <ui:VisualElement class="keyline">
+                <ui:Label text="ZQSD / WASD" class="keyline__key" />
+                <ui:Label text="Se deplacer" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="SHIFT" class="keyline__key" />
+                <ui:Label text="Sprinter" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="ESPACE" class="keyline__key" />
+                <ui:Label text="Sauter" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="SOURIS" class="keyline__key" />
+                <ui:Label text="Regarder" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="C" class="keyline__key" />
+                <ui:Label text="Basculer vue FPS / TPS" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="TAB" class="keyline__key" />
+                <ui:Label text="Ouvrir le journal" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="Q" class="keyline__key" />
+                <ui:Label text="Inventaire bonus" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="ENTREE" class="keyline__key" />
+                <ui:Label text="Valider sa reponse" />
+            </ui:VisualElement>
+            <ui:VisualElement class="keyline">
+                <ui:Label text="ECHAP" class="keyline__key" />
+                <ui:Label text="Menu pause" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="spacer" />
+            <ui:Button name="btn-controls-back" text="Retour" class="btn" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

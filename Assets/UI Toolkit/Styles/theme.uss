@@ -1,0 +1,169 @@
+/* ============================================================
+   Theme partage de tout l'UI du jeu.
+   Source de verite unique : couleurs, font, controles.
+   Modifier une regle ici met a jour TOUS les ecrans.
+   ============================================================ */
+
+:root {
+    --blue:       rgb(38, 89, 166);
+    --blue-hover: rgb(52, 112, 200);
+    --blue-press: rgb(26, 64, 122);
+    --surface:    rgb(64, 64, 69);
+    --panel-bg:   rgba(18, 20, 26, 0.94);
+    --scrim:      rgba(0, 0, 0, 0.55);
+    --text:       rgb(255, 255, 255);
+    --text-dim:   rgb(176, 182, 194);
+
+    -unity-font-definition: url("project:///Assets/UI%20Toolkit/Fonts/PasseroOne%20UITK.asset");
+    color: var(--text);
+    font-size: 20px;
+}
+
+/* ---------- Structure ---------- */
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--scrim);
+}
+
+/* Le panneau se dimensionne sur son contenu : plus de ContentSizeFitter. */
+.panel {
+    background-color: var(--panel-bg);
+    border-radius: 10px;
+    padding: 24px 28px;
+    min-width: 460px;
+    align-items: stretch;
+}
+
+/* Ancre le panneau vers le haut (20% du bord), comme l'ancien reglage. */
+.screen--top {
+    justify-content: flex-start;
+    padding-top: 20%;
+}
+
+.title {
+    font-size: 34px;
+    -unity-text-align: middle-center;
+    margin-bottom: 18px;
+}
+
+.row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.row__label {
+    width: 150px;
+    flex-shrink: 0;
+}
+
+.row__value {
+    width: 62px;
+    flex-shrink: 0;
+    -unity-text-align: middle-right;
+    color: var(--text-dim);
+}
+
+.spacer {
+    height: 14px;
+}
+
+/* ---------- Boutons ---------- */
+
+.btn {
+    background-color: var(--blue);
+    color: var(--text);
+    border-width: 0;
+    border-radius: 6px;
+    padding: 10px 18px;
+    margin: 4px 0;
+    font-size: 20px;
+    transition-duration: 0.12s;
+    transition-property: background-color, scale;
+}
+
+.btn:hover {
+    background-color: var(--blue-hover);
+}
+
+.btn:active {
+    background-color: var(--blue-press);
+    scale: 0.98 0.98;
+}
+
+/* Variante sombre : onglets du journal, actions secondaires. */
+.btn--surface {
+    background-color: var(--surface);
+}
+
+.btn--surface:hover {
+    background-color: rgb(84, 84, 92);
+}
+
+/* ---------- Controles ---------- */
+
+.slider {
+    flex-grow: 1;
+    margin: 0 10px;
+}
+
+.slider .unity-base-slider__tracker {
+    background-color: rgb(46, 48, 56);
+    border-width: 0;
+    border-radius: 3px;
+    height: 5px;
+}
+
+.slider .unity-base-slider__dragger {
+    background-color: var(--blue);
+    border-width: 0;
+    border-radius: 8px;
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
+}
+
+.num-field {
+    width: 74px;
+    flex-shrink: 0;
+}
+
+/* Le texte saisi doit rester blanc et lisible (bug recurrent en uGUI). */
+.num-field > .unity-base-text-field__input {
+    background-color: rgb(30, 32, 40);
+    border-color: rgb(70, 74, 86);
+    border-width: 1px;
+    border-radius: 4px;
+    color: var(--text);
+    padding: 6px 8px;
+    -unity-text-align: middle-center;
+}
+
+/* ---------- Rappel des touches ---------- */
+
+.keyline {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.keyline__key {
+    width: 130px;
+    flex-shrink: 0;
+    background-color: var(--surface);
+    border-radius: 4px;
+    padding: 4px 8px;
+    -unity-text-align: middle-center;
+    margin-right: 14px;
+}
+
+.hidden {
+    display: none;
+}
