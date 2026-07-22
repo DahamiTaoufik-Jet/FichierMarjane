@@ -870,7 +870,8 @@
     top: 26px;
     left: 50%;
     translate: -50% 0;
-    max-width: 1200px;
+    width: 1200px;
+    max-width: 80%;
     background-color: rgba(18, 20, 26, 0.92);
     border-radius: 10px;
     border-width: 2px;
@@ -878,13 +879,16 @@
     padding: 18px 28px;
 }
 
-/* Journal ouvert : la consigne se range en bas a gauche pour degager la carte. */
+/* Journal ouvert : la consigne se range en bas a gauche pour degager la carte.
+   width fixe plutot que max-width : en position absolue, un element se
+   dimensionne sur son contenu et le texte finissait rogne. */
 .prompt-panel--corner {
     top: auto;
     bottom: 32px;
     left: 32px;
     translate: 0 0;
-    max-width: 520px;
+    width: 520px;
+    max-width: 40%;
 }
 
 .prompt-text {
