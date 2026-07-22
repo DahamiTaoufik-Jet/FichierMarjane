@@ -1377,7 +1377,6 @@ MonoBehaviour:
     count: 0
     delay: 12
   - text: A toi de jouer ! Cette derniere route (radio + spot) te donne la 2e lettre.
-      Debrouille-toi seul.
     trigger: 6
     param: 
     count: 2
