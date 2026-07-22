@@ -63,6 +63,13 @@ namespace EscapeGame.Journal.UI
         public float zoomMin = 0.5f;
         public float zoomMax = 2f;
 
+        [Header("Animation ouverture/fermeture")]
+        [Tooltip("Duree du glissement (secondes).")]
+        public float slideDuration = 0.35f;
+
+        [Tooltip("Distance verticale du glissement (px). <= 0 : hauteur du panneau.")]
+        public float slideDistance = 0f;
+
         [Header("Couleurs des liaisons")]
         public Color activeLineColor = new Color(0.85f, 0.85f, 0.85f);
         public Color inactiveLineColor = new Color(0.42f, 0.42f, 0.46f);
@@ -115,6 +122,9 @@ namespace EscapeGame.Journal.UI
         // Deplacement courant du monde dans le viewport, en pixels non zoomes.
         private Vector2 pan;
 
+        private VisualElement panelRoot;
+        private Coroutine slideRoutine;
+
         /// <summary>Vrai tant que le journal est affiche.</summary>
         public bool IsOpen { get { return isOpen; } }
 
@@ -133,6 +143,7 @@ namespace EscapeGame.Journal.UI
             var root = GetComponent<UIDocument>().rootVisualElement;
 
             screen = root.Q<VisualElement>("journal-screen");
+            panelRoot = root.Q<VisualElement>("journal-panel");
             map = root.Q<VisualElement>("journal-map");
             viewport = root.Q<VisualElement>("journal-viewport");
             world = root.Q<VisualElement>("journal-world");
@@ -270,6 +281,9 @@ namespace EscapeGame.Journal.UI
             CloseModal();
             Rebuild();
 
+            if (slideRoutine != null) StopCoroutine(slideRoutine);
+            slideRoutine = StartCoroutine(SlideIn());
+
             // La mise en page n'est pas encore calculee a cet instant : on
             // recentre une fois que le ScrollView connait ses dimensions.
             if (viewport != null) viewport.schedule.Execute(CenterView).ExecuteLater(60);
@@ -288,9 +302,81 @@ namespace EscapeGame.Journal.UI
             if (JournalSelectionMode.IsActive) JournalSelectionMode.Exit();
 
             isOpen = false;
-            SetVisible(false);
             UIState.SetUIClosed();
             pendingCursorLock = true;
+
+            // Le panneau n'est masque qu'a la FIN du glissement, sinon il
+            // disparaitrait avant d'avoir bouge.
+            if (slideRoutine != null) StopCoroutine(slideRoutine);
+            slideRoutine = StartCoroutine(SlideOut());
+        }
+
+        // ====================================================================
+        // Glissement d'ouverture / fermeture
+        // ====================================================================
+
+        /// <summary>Distance du glissement : la hauteur du panneau par defaut.</summary>
+        private float SlideAmount()
+        {
+            if (slideDistance > 0f) return slideDistance;
+            float h = panelRoot != null ? panelRoot.layout.height : 0f;
+            return h > 1f ? h : 900f;
+        }
+
+        private System.Collections.IEnumerator SlideIn()
+        {
+            float dist = SlideAmount();
+            float t = 0f;
+            SetPanelSlide(dist, 0f);
+
+            while (t < slideDuration)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / Mathf.Max(0.01f, slideDuration));
+                float e = EaseOutCubic(k);
+                SetPanelSlide(dist * (1f - e), e);
+                yield return null;
+            }
+            SetPanelSlide(0f, 1f);
+            slideRoutine = null;
+        }
+
+        private System.Collections.IEnumerator SlideOut()
+        {
+            float dist = SlideAmount();
+            float t = 0f;
+
+            while (t < slideDuration)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / Mathf.Max(0.01f, slideDuration));
+                float e = EaseInCubic(k);
+                SetPanelSlide(dist * e, 1f - e);
+                yield return null;
+            }
+
+            SetVisible(false);
+            SetPanelSlide(0f, 1f);
+            slideRoutine = null;
+        }
+
+        /// <summary>y positif = vers le bas : le panneau monte depuis le bas.</summary>
+        private void SetPanelSlide(float y, float opacity)
+        {
+            if (panelRoot == null) return;
+            panelRoot.style.translate = new StyleTranslate(new Translate(0, y));
+            panelRoot.style.opacity = opacity;
+        }
+
+        private static float EaseOutCubic(float k)
+        {
+            float inv = 1f - k;
+            return 1f - inv * inv * inv;
+        }
+
+        private static float EaseInCubic(float k)
+        {
+            return k * k * k;
         }
 
         /// <summary>Ouvre le journal pour la selection d'une cible de bonus.</summary>
