@@ -95,6 +95,15 @@ namespace EscapeGame.Journal.UI
 
         private readonly List<Button> nodeButtons = new List<Button>();
 
+        // ---- Pan a la souris ----
+        // Le pan ne demarre qu'au-dela de ce seuil, sinon un simple clic sur une
+        // tuile serait interprete comme un debut de glissement et le clic perdu.
+        private const float PanThreshold = 4f;
+        private bool panning;
+        private bool panPending;
+        private Vector2 panStartPointer;
+        private Vector2 panStartOffset;
+
         // ====================================================================
         // Cycle de vie
         // ====================================================================
@@ -123,6 +132,7 @@ namespace EscapeGame.Journal.UI
             tabSuite = root.Q<Button>("tab-suite");
 
             BindButtons(root);
+            SetupPanAndZoom();
             ResolveAction();
 
             if (journalManager == null) journalManager = JournalManager.Instance;
@@ -468,6 +478,72 @@ namespace EscapeGame.Journal.UI
             if (data != null) ShowModal(data);
         }
 
+        // ====================================================================
+        // Pan a la souris + zoom a la molette
+        // ====================================================================
+
+        /// <summary>
+        /// Rend la carte navigable au glisser sur les DEUX axes, et met le zoom
+        /// sur la molette — les deux gestes de l'ancien journal.
+        /// </summary>
+        private void SetupPanAndZoom()
+        {
+            if (scroll == null) return;
+            var vp = scroll.contentViewport;
+
+            vp.RegisterCallback<PointerDownEvent>(OnPanDown);
+            vp.RegisterCallback<PointerMoveEvent>(OnPanMove);
+            vp.RegisterCallback<PointerUpEvent>(OnPanUp);
+
+            // La molette zoome au lieu de faire defiler.
+            vp.RegisterCallback<WheelEvent>(OnWheel);
+        }
+
+        private void OnPanDown(PointerDownEvent evt)
+        {
+            panPending = true;
+            panning = false;
+            panStartPointer = evt.position;
+            panStartOffset = scroll.scrollOffset;
+        }
+
+        private void OnPanMove(PointerMoveEvent evt)
+        {
+            if (!panPending) return;
+
+            Vector2 delta = (Vector2)evt.position - panStartPointer;
+
+            if (!panning)
+            {
+                // Sous le seuil : on laisse le clic suivre son cours normal.
+                if (delta.magnitude < PanThreshold) return;
+                panning = true;
+                scroll.contentViewport.CapturePointer(evt.pointerId);
+            }
+
+            // Tirer vers la droite doit faire venir le contenu de gauche.
+            scroll.scrollOffset = panStartOffset - delta;
+            evt.StopPropagation();
+        }
+
+        private void OnPanUp(PointerUpEvent evt)
+        {
+            if (panning)
+            {
+                scroll.contentViewport.ReleasePointer(evt.pointerId);
+                // Empeche le clic de fin de glissement d'ouvrir une tuile.
+                evt.StopPropagation();
+            }
+            panPending = false;
+            panning = false;
+        }
+
+        private void OnWheel(WheelEvent evt)
+        {
+            Zoom(evt.delta.y < 0f ? zoomStep : -zoomStep);
+            evt.StopPropagation();
+        }
+
         /// <summary>
         /// Centre la carte HORIZONTALEMENT dans le viewport. La verticale reste
         /// en haut : les routes se lisent de la premiere a la derniere, on ne
@@ -523,7 +599,9 @@ namespace EscapeGame.Journal.UI
         {
             if (world == null) return;
             world.style.scale = new StyleScale(new Scale(new Vector2(zoom, zoom)));
-            if (scroll != null) scroll.schedule.Execute(CenterView).ExecuteLater(20);
+
+            // Pas de recentrage ici : le joueur peut avoir panne la carte ou il
+            // voulait, zoomer ne doit pas le ramener au centre.
         }
 
         // ====================================================================
