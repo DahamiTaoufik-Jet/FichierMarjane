@@ -210,7 +210,7 @@ namespace EscapeGame.Journal.UI
             if (zOut != null) zOut.clicked += delegate { Zoom(-zoomStep); };
 
             var zReset = root.Q<Button>("journal-zoom-reset");
-            if (zReset != null) zReset.clicked += delegate { SetZoom(1f); };
+            if (zReset != null) zReset.clicked += ResetView;
 
             var imgBack = root.Q<Button>("image-viewer-back");
             if (imgBack != null) imgBack.clicked += CloseImageViewer;
@@ -602,6 +602,18 @@ namespace EscapeGame.Journal.UI
         private void Zoom(float delta)
         {
             SetZoom(zoom + delta);
+        }
+
+        /// <summary>
+        /// Remet la vue exactement comme a l'ouverture du journal : echelle 1 ET
+        /// recadrage initial. Ne reinitialiser que le zoom laissait le joueur
+        /// perdu quelque part sur la carte, ce qui rendait le bouton inutile
+        /// dans le cas ou on s'en sert justement : s'etre egare.
+        /// </summary>
+        private void ResetView()
+        {
+            zoom = 1f;
+            CenterView();
         }
 
         private void SetZoom(float value)
