@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="project:///Assets/UI%20Toolkit/Styles/theme.uss" />
+
+    <!-- Consigne du tutoriel. En haut par defaut, deplacee en bas a gauche
+         quand le journal est ouvert pour laisser voir la carte. -->
+    <ui:VisualElement name="prompt-panel" class="prompt-panel hidden">
+        <ui:Label name="prompt-text" text="" class="prompt-text" />
+    </ui:VisualElement>
+</ui:UXML>

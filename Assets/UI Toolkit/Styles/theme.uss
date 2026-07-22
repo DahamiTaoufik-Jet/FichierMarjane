@@ -861,6 +861,44 @@
     -unity-text-align: middle-center;
 }
 
+/* ---------- Consignes du tutoriel ---------- */
+
+/* Bandeau haut par defaut. Ne capte jamais le pointeur : le joueur doit
+   pouvoir cliquer a travers pendant qu'il lit. */
+.prompt-panel {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    translate: -50% 0;
+    max-width: 1200px;
+    background-color: rgba(18, 20, 26, 0.92);
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: rgb(255, 214, 102);
+    padding: 18px 28px;
+}
+
+/* Journal ouvert : la consigne se range en bas a gauche pour degager la carte. */
+.prompt-panel--corner {
+    top: auto;
+    bottom: 32px;
+    left: 32px;
+    translate: 0 0;
+    max-width: 520px;
+}
+
+.prompt-text {
+    font-size: 26px;
+    color: var(--text);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.prompt-panel--corner .prompt-text {
+    font-size: 22px;
+    -unity-text-align: middle-left;
+}
+
 .hidden {
     display: none;
 }

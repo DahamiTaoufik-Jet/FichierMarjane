@@ -119,6 +119,76 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &7508593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7508596}
+  - component: {fileID: 7508595}
+  - component: {fileID: 7508594}
+  m_Layer: 0
+  m_Name: ChestWarningUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &7508594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7508593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56316be39cfb2499eba6e8f8a34bf4d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.ChestWarningDocument
+  message: Si tu ouvres les coffres, tu ne pourras plus resoudre aucune enigme ni
+    indice. Tu devras repondre aux coffres pour finir le jeu et obtenir les recompenses.
+--- !u!114 &7508595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7508593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 9676f0062d06c4c32803aa50d00715a0, type: 3}
+  m_SortingOrder: 210
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &7508596
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7508593}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &24153326
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,7 +789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &82993304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1131,6 +1201,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &172026365
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 172026368}
+  - component: {fileID: 172026367}
+  - component: {fileID: 172026366}
+  m_Layer: 0
+  m_Name: BonusInventoryUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &172026366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172026365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9526cb62d52549c7b8a0238d72c56fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.BonusInventoryDocument
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  closeKey: 60
+  inventory: {fileID: 8409286329420425217}
+  slideDuration: 0.18
+  slideDistance: 90
+--- !u!114 &172026367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172026365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: f0cdc432e6be1410ebec3480f842df3b, type: 3}
+  m_SortingOrder: 95
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &172026368
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172026365}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &187382784
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,11 +1303,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd97e44f7645384c8171f44708f544d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.TutorialDirector
+  promptDocument: {fileID: 450124353}
   promptPanel: {fileID: 1297811420}
   promptText: {fileID: 620312635}
   inventory: {fileID: 8409286329420425217}
   journalPanel: {fileID: 1786887291}
-  stageModal: {fileID: 720770868}
+  stageModal: {fileID: 0}
+  journalDoc: {fileID: 1636464272}
   beats:
   - text: Bienvenue ! Deplace-toi avec ZQSD / WASD. Maintiens SHIFT pour sprinter.
     trigger: 0
@@ -1619,7 +1764,6 @@ GameObject:
   - component: {fileID: 267258852}
   - component: {fileID: 267258855}
   - component: {fileID: 267258854}
-  - component: {fileID: 267258853}
   m_Layer: 0
   m_Name: LetterPanel
   m_TagString: Untagged
@@ -1650,25 +1794,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &267258853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 267258851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c24dbfcd68c431dbe47cfe645d382b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.ChestLetterPanelView
-  panelRoot: {fileID: 267258851}
-  letterButtonContainer: {fileID: 709000708}
-  letterButtonPrefab: {fileID: 884734219}
-  attemptsText: {fileID: 1129144279}
-  showAttempts: 0
-  feedbackText: {fileID: 1025726442}
-  inventory: {fileID: 8409286329420425217}
 --- !u!114 &267258854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1725,7 +1850,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &275055980
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2096,7 +2221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &327068137
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2364,6 +2489,75 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 229944fa6282045488af2364a4267da8, type: 3}
+--- !u!1 &367789204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 367789207}
+  - component: {fileID: 367789206}
+  - component: {fileID: 367789205}
+  m_Layer: 0
+  m_Name: EndScreensUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &367789205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367789204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1279fcfc6b69e45eea6f57967af9f68a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.EndScreensDocument
+  restarter: {fileID: 0}
+--- !u!114 &367789206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367789204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: bf9b611d547714942814a8dfbe2d48a1, type: 3}
+  m_SortingOrder: 200
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &367789207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367789204}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &369029850
 GameObject:
   m_ObjectHideFlags: 0
@@ -2558,7 +2752,6 @@ GameObject:
   m_Component:
   - component: {fileID: 379627602}
   - component: {fileID: 379627601}
-  - component: {fileID: 379627603}
   m_Layer: 0
   m_Name: JournalManager
   m_TagString: Untagged
@@ -2593,50 +2786,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &379627603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 379627600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ea77653ac0e66642b8473f33f6b45e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.JournalView
-  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  panelRoot: {fileID: 1786887291}
-  journalManager: {fileID: 379627601}
-  worldContainer: {fileID: 156945355}
-  stageNodePrefab: {fileID: 7049704610884386572, guid: 46d7158198385404cbb236a198456a6b, type: 3}
-  connectorLinePrefab: {fileID: 1911740494766774359, guid: 4cd00ebe2aa764bd4ad1ae8c1fff7ffd, type: 3}
-  stageModal: {fileID: 720770868}
-  bonusInventory: {fileID: 8392449177518892066}
-  buttonRetourAuJournal: {fileID: 1854646738}
-  zoomInButton: {fileID: 923124148}
-  zoomOutButton: {fileID: 369029852}
-  zoomResetButton: {fileID: 405557238}
-  zoomStep: 0.2
-  zoomMin: 0.5
-  zoomMax: 2
-  hStep: 130
-  zigAmp: 28
-  routeGap: 140
-  startX: 80
-  startY: -100
-  activeLineColor: {r: 0.12, g: 0.12, b: 0.12, a: 1}
-  inactiveLineColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
-  deckOffsetX: 6
-  deckOffsetY: -4
-  contentPadding: 160
-  centerFirstNodeOnOpen: 1
-  centerContentOnOpen: 0
-  slidePanels:
-  - {fileID: 448214774}
-  - {fileID: 720770867}
-  slideDuration: 0.35
-  slideDistance: 0
 --- !u!1 &405557236
 GameObject:
   m_ObjectHideFlags: 0
@@ -8112,6 +8261,61 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 448214773}
   m_CullTransparentMesh: 1
+--- !u!1 &450124352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 450124354}
+  - component: {fileID: 450124353}
+  m_Layer: 0
+  m_Name: TutorialPromptUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &450124353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450124352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: ebd84167a76b54b2c928f052a35c47eb, type: 3}
+  m_SortingOrder: 80
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &450124354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450124352}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!21 &456794818
 Material:
   serializedVersion: 8
@@ -8565,6 +8769,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512039596}
   m_CullTransparentMesh: 1
+--- !u!1 &521994239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 521994242}
+  - component: {fileID: 521994241}
+  - component: {fileID: 521994240}
+  m_Layer: 0
+  m_Name: TextPuzzleUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &521994240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521994239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d587ee99a58f46abb4a0727b39df20d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.TextPuzzleDocument
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  cancelKey: 60
+--- !u!114 &521994241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521994239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: b8e90df04344145d1b08db0ab5e93a5a, type: 3}
+  m_SortingOrder: 100
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &521994242
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521994239}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &542751166
 GameObject:
   m_ObjectHideFlags: 0
@@ -9412,6 +9686,89 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &646091677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 646091680}
+  - component: {fileID: 646091679}
+  - component: {fileID: 646091678}
+  m_Layer: 0
+  m_Name: LetterRevealUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &646091678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646091677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33c45a7aba79042d4a3e14f3ff9d2f05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.LetterRevealDocument
+  audioSource: {fileID: 1443520989}
+  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  popInDuration: 0.25
+  holdDuration: 2.5
+  flyUpDuration: 0.6
+  flyUpDistance: 400
+  floatAmplitude: 15
+  floatSpeed: 2
+  allowSkip: 1
+  positionFormat: Position {0}
+  memorizeLabel: A MEMORISER !
+  unknownPositionText: Nouvelle lettre !
+  revealPositionDelay: 1
+  waitForInputOnFirst: 1
+  confirmKey: 2
+--- !u!114 &646091679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646091677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: de56f0abaa2fd4dc5a86fc33358414d6, type: 3}
+  m_SortingOrder: 150
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &646091680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646091677}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &646567781
 GameObject:
   m_ObjectHideFlags: 0
@@ -9424,29 +9781,13 @@ GameObject:
   - component: {fileID: 646567785}
   - component: {fileID: 646567784}
   - component: {fileID: 646567783}
-  - component: {fileID: 646567782}
   m_Layer: 0
   m_Name: ChestWarningCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &646567782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 646567781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66d54c0c7a9561641a8cd293c068a895, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.ChestWarningView
-  panelRoot: {fileID: 28529589}
-  continueButton: {fileID: 802542421}
-  cancelButton: {fileID: 1385186940}
+  m_IsActive: 0
 --- !u!114 &646567783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10229,7 +10570,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 720770867}
-  - component: {fileID: 720770868}
   m_Layer: 5
   m_Name: Stage Modal
   m_TagString: Untagged
@@ -10269,35 +10609,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &720770868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720770866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08829982b93eb264ca592b56e1c29f0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.StageModalView
-  tabInitial: {fileID: 260718540}
-  tabEnigme: {fileID: 644078024508706848}
-  tabSuite: {fileID: 6601592974212144353}
-  tabActiveColor: {r: 1, g: 1, b: 1, a: 1}
-  tabInactiveColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
-  tabDisabledColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
-  clueText: {fileID: 497040930519477215}
-  enigmeText: {fileID: 4762329711629939151}
-  enigmeTextEncrypter: {fileID: 4586864020043475533}
-  enigmeImage: {fileID: 7748019778292466276}
-  nextClueText: {fileID: 834754819092717877}
-  buttonRetour: {fileID: 7682559231556385728}
-  scrollView: {fileID: 448214773}
-  zoomIn: {fileID: 923124146}
-  zoomOut: {fileID: 369029850}
-  zoomReset: {fileID: 405557236}
-  contentBackground: {fileID: 2045800090}
 --- !u!1 &725241882
 GameObject:
   m_ObjectHideFlags: 0
@@ -11524,41 +11835,13 @@ GameObject:
   - component: {fileID: 821583672}
   - component: {fileID: 821583671}
   - component: {fileID: 821583669}
-  - component: {fileID: 821583668}
   m_Layer: 0
   m_Name: ChestRewardCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &821583668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821583667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f35821c0cc0fdaa43a5e1996394f26e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.ChestRewardRevealView
-  canvasRoot: {fileID: 376193079}
-  canvasGroup: {fileID: 376193081}
-  floatingTransform: {fileID: 343814787}
-  titleText: {fileID: 796555646}
-  subtitleText: {fileID: 679275389}
-  burstParticles: {fileID: 926761185}
-  audioSource: {fileID: 821583669}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
-  popInDuration: 0.4
-  holdDuration: 3
-  flyUpDuration: 0.6
-  flyUpDistance: 80
-  floatAmplitude: 8
-  floatSpeed: 1.2
-  allowSkip: 1
+  m_IsActive: 0
 --- !u!82 &821583669
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11900,8 +12183,10 @@ MonoBehaviour:
   - Objet d'une valeur de 3000 dhs
   - Objet d'une valeur de 5000 dhs
   rewardTitle: RECOMPENSE !
-  rewardReveal: {fileID: 821583668}
+  rewardRevealDoc: {fileID: 1969977191}
+  rewardReveal: {fileID: 0}
   inventory: {fileID: 0}
+  endScreens: {fileID: 367789205}
   felicitationsRoot: {fileID: 691390088}
   felicitationsRewardText: {fileID: 2088525132}
   felicitationsRewardPrefix: 'Recompense finale : '
@@ -12023,6 +12308,85 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &846692024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 846692027}
+  - component: {fileID: 846692026}
+  - component: {fileID: 846692025}
+  m_Layer: 0
+  m_Name: BonusRevealUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &846692025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846692024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c5b22f6ee0544a70944cf0ed9c324b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.BonusRevealDocument
+  audioSource: {fileID: 2143665723}
+  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  popInDuration: 0.4
+  holdDuration: 3
+  flyUpDuration: 0.6
+  flyUpDistance: 80
+  floatAmplitude: 8
+  floatSpeed: 1.2
+  allowSkip: 1
+  headerLabel: NOUVEAU BONUS !
+  fallbackName: Nouveau bonus !
+--- !u!114 &846692026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846692024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: de56f0abaa2fd4dc5a86fc33358414d6, type: 3}
+  m_SortingOrder: 151
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &846692027
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846692024}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &851565405
 GameObject:
   m_ObjectHideFlags: 0
@@ -12113,6 +12477,76 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853072848}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &855549103
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 855549106}
+  - component: {fileID: 855549105}
+  - component: {fileID: 855549104}
+  m_Layer: 0
+  m_Name: ChestLetterUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &855549104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855549103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f3dbdbdc904c437b8c5f7016f1d0466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.ChestLetterPanelDocument
+  showAttempts: 0
+  inventory: {fileID: 8409286329420425217}
+--- !u!114 &855549105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855549103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 56b6fb0b233ef434a9909cede7c76c02, type: 3}
+  m_SortingOrder: 205
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &855549106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855549103}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -18234,6 +18668,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957162678}
   m_CullTransparentMesh: 1
+--- !u!1 &991072520
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991072523}
+  - component: {fileID: 991072522}
+  - component: {fileID: 991072521}
+  m_Layer: 0
+  m_Name: PauseMenuUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &991072521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991072520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b3bd00e86db4607bdbdcb50e45fbd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.PauseMenuDocument
+  playerLook: {fileID: 0}
+  thirdPersonController: {fileID: 0}
+  minimapCamera: {fileID: 0}
+  openKey: 60
+  sensMin: 0.1
+  sensMax: 20
+--- !u!114 &991072522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991072520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: acc5becf3e8324b9d9c88b181038e6cc, type: 3}
+  m_SortingOrder: 100
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &991072523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991072520}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!21 &1002002192
 Material:
   serializedVersion: 8
@@ -19397,7 +19905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1124472742
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22495,6 +23003,61 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1403947577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1403947579}
+  - component: {fileID: 1403947578}
+  m_Layer: 0
+  m_Name: DebugRevealTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1403947578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403947577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b0bdc574a8742f5950e037054686d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.World.DebugRevealTrigger
+  victoryKey: 94
+  gameOverKey: 95
+  letterKey: 102
+  bonusKey: 103
+  rewardKey: 105
+  enableInBuild: 0
+  inventory: {fileID: 0}
+  endGameManager: {fileID: 0}
+  rewardCard: {fileID: 0}
+  endScreens: {fileID: 0}
+  config: {fileID: 0}
+--- !u!4 &1403947579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403947577}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1427360588
 GameObject:
   m_ObjectHideFlags: 0
@@ -22855,7 +23418,6 @@ GameObject:
   - component: {fileID: 1443520993}
   - component: {fileID: 1443520992}
   - component: {fileID: 1443520991}
-  - component: {fileID: 1443520990}
   - component: {fileID: 1443520989}
   m_Layer: 0
   m_Name: LetterRevealCanvas
@@ -22863,7 +23425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1443520989
 AudioSource:
   m_ObjectHideFlags: 0
@@ -22961,39 +23523,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1443520990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1443520988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cbb9e675d8d94c4a879635ded2e57f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.LetterRevealView
-  canvasRoot: {fileID: 1971688530}
-  canvasGroup: {fileID: 1971688532}
-  floatingTransform: {fileID: 749427136}
-  letterText: {fileID: 1266869500}
-  positionText: {fileID: 628734295}
-  burstParticles: {fileID: 1699040530}
-  audioSource: {fileID: 1443520989}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
-  positionFormat: Position {0}
-  memorizeLabel: A MEMORISER !
-  unknownPositionText: Nouvelle lettre !
-  popInDuration: 0.25
-  revealPositionDelay: 1
-  memorizeDuration: 2.5
-  flyUpDuration: 0.6
-  flyUpDistance: 400
-  floatAmplitude: 15
-  floatSpeed: 2
-  allowSkip: 1
-  waitForInputOnFirst: 1
-  confirmKey: 2
 --- !u!114 &1443520991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23613,6 +24142,90 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 82.55559, y: 10, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1636464271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1636464274}
+  - component: {fileID: 1636464273}
+  - component: {fileID: 1636464272}
+  m_Layer: 0
+  m_Name: JournalUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1636464272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636464271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3b7c7e6bbb8942f3be9afe14c825ae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.JournalDocument
+  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  journalManager: {fileID: 379627601}
+  bonusInventory: {fileID: 172026366}
+  hStep: 130
+  zigAmp: 28
+  routeGap: 140
+  startX: 60
+  startY: 60
+  contentPadding: 120
+  deckOffsetX: 6
+  deckOffsetY: 4
+  zoomStep: 0.2
+  zoomMin: 0.5
+  zoomMax: 2
+  activeLineColor: {r: 0.85, g: 0.85, b: 0.85, a: 1}
+  inactiveLineColor: {r: 0.42, g: 0.42, b: 0.46, a: 1}
+--- !u!114 &1636464273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636464271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 20eada6087f71438ebdd0696429e2e78, type: 3}
+  m_SortingOrder: 150
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &1636464274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636464271}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1642019680
 GameObject:
   m_ObjectHideFlags: 0
@@ -23944,11 +24557,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 572891319482395381, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 688779683270349430, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_Name
       value: PauseMenuCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 688779683270349430, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 853093455552374882, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24172,11 +24789,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2224321248707946217, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2224321248707946217, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2498612097440979219, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24200,27 +24817,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2668293510196718474, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2668293510196718474, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2668293510196718474, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3085880231855669163, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3085880231855669163, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3085880231855669163, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3236742056552596658, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24248,15 +24865,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3625002347583783906, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3625002347583783906, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3625002347583783906, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4478554773762459229, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24304,11 +24921,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5527963523765222509, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5527963523765222509, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5571805125761876531, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24372,7 +24989,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7005838794050003818, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7040344648426433908, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24396,11 +25013,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7533055971809616245, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7533055971809616245, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7670240867058171514, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24462,7 +25079,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9145662338700036887, guid: 51949dc7ba2504eeebaf74dc2ac571c7, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -30984,8 +31602,10 @@ MonoBehaviour:
   passwordPosition: 1
   maxInteractionDistance: 3
   chestAnimator: {fileID: 1931428321}
-  letterPanel: {fileID: 267258853}
-  warningView: {fileID: 646567782}
+  letterPanelDoc: {fileID: 855549104}
+  letterPanel: {fileID: 0}
+  warningDoc: {fileID: 7508594}
+  warningView: {fileID: 0}
 --- !u!95 &1931428321
 Animator:
   serializedVersion: 7
@@ -31138,8 +31758,10 @@ MonoBehaviour:
   passwordPosition: 0
   maxInteractionDistance: 3
   chestAnimator: {fileID: 1941821044}
-  letterPanel: {fileID: 267258853}
-  warningView: {fileID: 646567782}
+  letterPanelDoc: {fileID: 855549104}
+  letterPanel: {fileID: 0}
+  warningDoc: {fileID: 7508594}
+  warningView: {fileID: 0}
 --- !u!1 &1943828413
 GameObject:
   m_ObjectHideFlags: 0
@@ -31273,6 +31895,83 @@ Material:
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!1 &1969977190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1969977193}
+  - component: {fileID: 1969977192}
+  - component: {fileID: 1969977191}
+  m_Layer: 0
+  m_Name: ChestRewardUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1969977191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969977190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f3f357ea2cb540e88f1cb6ef4c99f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.ChestRewardRevealDocument
+  audioSource: {fileID: 821583669}
+  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  popInDuration: 0.4
+  holdDuration: 3
+  flyUpDuration: 0.6
+  flyUpDistance: 80
+  floatAmplitude: 8
+  floatSpeed: 1.2
+  allowSkip: 1
+--- !u!114 &1969977192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969977190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: de56f0abaa2fd4dc5a86fc33358414d6, type: 3}
+  m_SortingOrder: 152
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &1969977193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969977190}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1971688530
 GameObject:
   m_ObjectHideFlags: 0
@@ -31727,6 +32426,77 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023936120}
   m_CullTransparentMesh: 1
+--- !u!1 &2028562055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2028562058}
+  - component: {fileID: 2028562057}
+  - component: {fileID: 2028562056}
+  m_Layer: 0
+  m_Name: CluePanelUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2028562056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028562055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0072f8f483cc4bfa817afe7a7bfc34f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.CluePanelDocument
+  displayDuration: 12
+  fadeDuration: 0.8
+  audioSource: {fileID: 0}
+--- !u!114 &2028562057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028562055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 62624ff9d2b204889ad0d693884f37ab, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 469ac5ee2761149fa9da24744a13cbe9, type: 3}
+  m_SortingOrder: 90
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &2028562058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028562055}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2043145942
 GameObject:
   m_ObjectHideFlags: 0
@@ -32908,7 +33678,6 @@ GameObject:
   - component: {fileID: 2143665727}
   - component: {fileID: 2143665726}
   - component: {fileID: 2143665725}
-  - component: {fileID: 2143665724}
   - component: {fileID: 2143665723}
   m_Layer: 0
   m_Name: BonusRevealCanvas
@@ -32916,7 +33685,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &2143665723
 AudioSource:
   m_ObjectHideFlags: 0
@@ -33014,36 +33783,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2143665724
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2143665722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f40cf45315b6fb64394e5e1598b05ea9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.BonusRevealView
-  canvasRoot: {fileID: 1992246551}
-  canvasGroup: {fileID: 1992246553}
-  floatingTransform: {fileID: 851565406}
-  iconImage: {fileID: 1042400090}
-  nameText: {fileID: 872812675}
-  descriptionText: {fileID: 622203008}
-  burstParticles: {fileID: 409732446}
-  audioSource: {fileID: 2143665723}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
-  fallbackName: Nouveau bonus !
-  hideIconWhenEmpty: 1
-  popInDuration: 0.4
-  holdDuration: 3
-  flyUpDuration: 0.6
-  flyUpDistance: 80
-  floatAmplitude: 8
-  floatSpeed: 1.2
-  allowSkip: 1
 --- !u!114 &2143665725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35149,9 +35888,6 @@ GameObject:
   - component: {fileID: 4917394205520559469}
   - component: {fileID: 2109819248939331139}
   - component: {fileID: 2548025634484608070}
-  - component: {fileID: 8392449177518892066}
-  - component: {fileID: 8392449177518892065}
-  - component: {fileID: 8392449177518892064}
   - component: {fileID: 8392449177518892067}
   m_Layer: 0
   m_Name: FPSCanvas
@@ -35183,67 +35919,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &8392449177518892064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8383854011286437299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ba8e4a53a06f1c4dbad6a14cdc002d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.CluePanelView
-  panelRoot: {fileID: 521330863811576079}
-  textLabel: {fileID: 823495357773177704}
-  imageDisplay: {fileID: 5672746087883628059}
-  audioSource: {fileID: 0}
-  autoHideAfter: 4
-  textBackgroundColor: {r: 0.25, g: 0.25, b: 0.27, a: 1}
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  textPadding: 40
---- !u!114 &8392449177518892065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8383854011286437299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 079db5aed77c6d04e89c0fc5092e5313, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Journal.UI.TextPuzzlePanelView
-  panelRoot: {fileID: 1176242601}
-  questionLabel: {fileID: 436993172}
-  answerInput: {fileID: 1382904175}
-  feedbackLabel: {fileID: 1893077093}
-  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  cancelKey: 60
-  textBackgroundColor: {r: 0.25, g: 0.25, b: 0.27, a: 1}
-  textColor: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &8392449177518892066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8383854011286437299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2b6508b01d43844199b7ed1b5e60681, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.InventoryPanelView
-  panelRoot: {fileID: 1642019680}
-  itemIcon: {fileID: 1552770274}
-  itemName: {fileID: 1305584796}
-  itemDescription: {fileID: 1286645640}
-  arrowLeft: {fileID: 775060410}
-  arrowRight: {fileID: 1223369924}
-  actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  closeKey: 60
-  inventory: {fileID: 8409286329420425217}
 --- !u!114 &8392449177518892067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35378,3 +36053,16 @@ SceneRoots:
   - {fileID: 187382786}
   - {fileID: 1683505375}
   - {fileID: 1953408928}
+  - {fileID: 991072523}
+  - {fileID: 367789207}
+  - {fileID: 646091680}
+  - {fileID: 846692027}
+  - {fileID: 1969977193}
+  - {fileID: 2028562058}
+  - {fileID: 7508596}
+  - {fileID: 855549106}
+  - {fileID: 172026368}
+  - {fileID: 521994242}
+  - {fileID: 1636464274}
+  - {fileID: 450124354}
+  - {fileID: 1403947579}

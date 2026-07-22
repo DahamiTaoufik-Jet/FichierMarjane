@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UIElements;
 using EscapeGame.Core.Player;
 using EscapeGame.Inventory.Data;
 using EscapeGame.Routes.Events;
@@ -36,7 +37,11 @@ namespace EscapeGame.Core.World
             public float delay = 5f;
         }
 
-        [Header("UI")]
+        [Header("UI Toolkit")]
+        [Tooltip("Document des consignes. S'il est assigne, il remplace le panneau uGUI ci-dessous.")]
+        public UIDocument promptDocument;
+
+        [Header("UI (uGUI, repli)")]
         public GameObject promptPanel;
         public TMP_Text promptText;
 
@@ -47,6 +52,9 @@ namespace EscapeGame.Core.World
 
         [Tooltip("Modal detail du journal : les consignes se cachent des qu'on ouvre le detail d'une tuile, jusqu'a la fermeture du journal.")]
         public EscapeGame.Journal.UI.StageModalView stageModal;
+
+        [Tooltip("Journal en UI Toolkit. S'il est assigne, il remplace journalPanel et stageModal.")]
+        public EscapeGame.Journal.UI.JournalDocument journalDoc;
 
         [Header("Sequence")]
         public List<Beat> beats = new List<Beat>();
@@ -59,6 +67,10 @@ namespace EscapeGame.Core.World
         [Tooltip("Ancres horizontales du panneau quand le journal est ouvert (ancre a gauche). " +
                  "Hors journal, le panneau reprend ses ancres horizontales d'origine.")]
         public Vector2 centeredAnchorX = new Vector2(0.02f, 0.42f);
+
+        // Elements du document de consignes, resolus une fois au demarrage.
+        private VisualElement uiPanel;
+        private Label uiText;
 
         private int index = -1;
         private float beatStartTime;
@@ -89,9 +101,61 @@ namespace EscapeGame.Core.World
 
         private void Start()
         {
+            ResolvePromptDocument();
             CapturePromptLayout();
-            if (promptPanel != null) promptPanel.SetActive(false);
+            SetPromptVisible(false);
             Advance();
+        }
+
+        private void ResolvePromptDocument()
+        {
+            if (promptDocument == null) return;
+            var root = promptDocument.rootVisualElement;
+            if (root == null) return;
+            uiPanel = root.Q<VisualElement>("prompt-panel");
+            uiText = root.Q<Label>("prompt-text");
+
+            // La consigne ne doit jamais intercepter un clic.
+            root.pickingMode = PickingMode.Ignore;
+            if (uiPanel != null) uiPanel.pickingMode = PickingMode.Ignore;
+        }
+
+        /// <summary>Affiche ou masque la consigne, quel que soit le systeme d'UI.</summary>
+        private void SetPromptVisible(bool visible)
+        {
+            if (uiPanel != null)
+            {
+                if (visible) uiPanel.RemoveFromClassList("hidden");
+                else uiPanel.AddToClassList("hidden");
+                return;
+            }
+            if (promptPanel != null) promptPanel.SetActive(visible);
+        }
+
+        private bool IsPromptVisible()
+        {
+            if (uiPanel != null) return !uiPanel.ClassListContains("hidden");
+            return promptPanel != null && promptPanel.activeSelf;
+        }
+
+        private void SetPromptText(string text)
+        {
+            if (uiText != null) { uiText.text = text; return; }
+            if (promptText != null) promptText.text = text;
+        }
+
+        /// <summary>Vrai si le journal (nouveau ou ancien) est ouvert.</summary>
+        private bool JournalIsOpen()
+        {
+            if (journalDoc != null) return journalDoc.IsOpen;
+            return journalPanel != null && journalPanel.activeInHierarchy;
+        }
+
+        /// <summary>Vrai si le detail d'une tuile est ouvert.</summary>
+        private bool DetailIsOpen()
+        {
+            if (journalDoc != null) return journalDoc.IsDetailOpen;
+            return stageModal != null && stageModal.IsOpen;
         }
 
         private void CapturePromptLayout()
@@ -119,22 +183,20 @@ namespace EscapeGame.Core.World
         /// </summary>
         private void UpdatePromptVisibility()
         {
-            if (promptPanel == null) return;
+            if (uiPanel == null && promptPanel == null) return;
 
-            bool journalOpen = journalPanel != null && journalPanel.activeInHierarchy;
-            bool modalOpen = stageModal != null && stageModal.IsOpen;
+            bool journalOpen = JournalIsOpen();
 
-            if (modalOpen) promptSuppressed = true;      // on a clique une tuile
-            if (!journalOpen) promptSuppressed = false;  // reaffiche a la sortie du journal
+            if (DetailIsOpen()) promptSuppressed = true;  // on a clique une tuile
+            if (!journalOpen) promptSuppressed = false;   // reaffiche a la sortie du journal
 
-            // Le texte de tutoriel est centre a l'ecran SI ET SEULEMENT SI le
-            // journal est ouvert ; sinon il reprend sa position d'origine (haut).
+            // La consigne se range dans un coin tant que le journal est ouvert,
+            // pour ne pas masquer la carte.
             ApplyPromptLayout(journalOpen);
 
             bool hasBeat = index >= 0 && index < beats.Count && !string.IsNullOrEmpty(beats[index].text);
             bool shouldShow = hasBeat && !promptSuppressed;
-            if (promptPanel.activeSelf != shouldShow)
-                promptPanel.SetActive(shouldShow);
+            if (IsPromptVisible() != shouldShow) SetPromptVisible(shouldShow);
         }
 
         /// <summary>
@@ -144,6 +206,14 @@ namespace EscapeGame.Core.World
         /// </summary>
         private void ApplyPromptLayout(bool centered)
         {
+            // UI Toolkit : une simple classe suffit, pas d'ancres a manipuler.
+            if (uiPanel != null)
+            {
+                if (centered) uiPanel.AddToClassList("prompt-panel--corner");
+                else uiPanel.RemoveFromClassList("prompt-panel--corner");
+                return;
+            }
+
             CapturePromptLayout();
             if (!promptLayoutCaptured) return;
 
@@ -214,13 +284,13 @@ namespace EscapeGame.Core.World
 
             if (index >= beats.Count)
             {
-                if (promptPanel != null) promptPanel.SetActive(false);
+                SetPromptVisible(false);
                 return;
             }
 
             var b = beats[index];
-            if (promptText != null) promptText.text = b.text;
-            if (promptPanel != null) promptPanel.SetActive(!string.IsNullOrEmpty(b.text));
+            SetPromptText(b.text);
+            SetPromptVisible(!string.IsNullOrEmpty(b.text));
         }
 
         private bool AnyMove()

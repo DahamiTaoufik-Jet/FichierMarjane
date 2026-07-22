@@ -115,6 +115,15 @@ namespace EscapeGame.Journal.UI
         // Deplacement courant du monde dans le viewport, en pixels non zoomes.
         private Vector2 pan;
 
+        /// <summary>Vrai tant que le journal est affiche.</summary>
+        public bool IsOpen { get { return isOpen; } }
+
+        /// <summary>Vrai quand le detail d'une etape est ouvert par-dessus la carte.</summary>
+        public bool IsDetailOpen
+        {
+            get { return modal != null && !modal.ClassListContains("hidden"); }
+        }
+
         // ====================================================================
         // Cycle de vie
         // ====================================================================
