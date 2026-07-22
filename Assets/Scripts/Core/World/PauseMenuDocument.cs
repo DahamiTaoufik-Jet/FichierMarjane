@@ -192,8 +192,13 @@ namespace EscapeGame.Core.World
             if (UIState.IsInputFieldActive && !isOpen) return;
             if (!Keyboard.current[openKey].wasPressedThisFrame) return;
 
-            if (isOpen) Close();
-            else if (!UIState.IsAnyUIOpen) Open();
+            if (isOpen) { UIState.ConsumeCloseKey(); Close(); return; }
+
+            // Une autre UI vient de se fermer avec cette meme pression : on ne
+            // doit pas enchainer sur l'ouverture du menu.
+            if (UIState.WasCloseKeyConsumedThisFrame) return;
+
+            if (!UIState.IsAnyUIOpen) Open();
         }
 
         private void Open()

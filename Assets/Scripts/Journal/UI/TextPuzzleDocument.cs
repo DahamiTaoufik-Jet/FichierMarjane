@@ -171,6 +171,7 @@ namespace EscapeGame.Journal.UI
             var kb = Keyboard.current;
             if (kb != null && kb[cancelKey].wasPressedThisFrame)
             {
+                UIState.ConsumeCloseKey();
                 activeStep.CancelInteraction();
                 return;
             }

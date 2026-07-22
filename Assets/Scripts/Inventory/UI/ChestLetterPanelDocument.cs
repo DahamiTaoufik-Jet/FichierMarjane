@@ -65,7 +65,11 @@ namespace EscapeGame.Inventory.UI
         {
             if (!isOpen) return;
             var kb = Keyboard.current;
-            if (kb != null && kb.escapeKey.wasPressedThisFrame) Close();
+            if (kb != null && kb.escapeKey.wasPressedThisFrame)
+            {
+                UIState.ConsumeCloseKey();
+                Close();
+            }
         }
 
         private void LateUpdate()

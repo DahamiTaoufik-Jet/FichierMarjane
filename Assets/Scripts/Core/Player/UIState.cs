@@ -32,11 +32,35 @@ namespace EscapeGame.Core.Player
             if (openCount < 0) openCount = 0;
         }
 
+        // ====================================================================
+        // Touche de fermeture (Echap) partagee
+        // ====================================================================
+
+        private static int closeConsumedFrame = -1;
+
+        /// <summary>
+        /// A appeler quand une UI se ferme via la touche Echap. Sans cela, une
+        /// autre UI voyant la meme pression dans la MEME frame reagirait aussi :
+        /// fermer l'inventaire ouvrait le menu pause, selon l'ordre d'execution
+        /// des scripts.
+        /// </summary>
+        public static void ConsumeCloseKey()
+        {
+            closeConsumedFrame = UnityEngine.Time.frameCount;
+        }
+
+        /// <summary>Vrai si une UI a deja consomme Echap durant cette frame.</summary>
+        public static bool WasCloseKeyConsumedThisFrame
+        {
+            get { return closeConsumedFrame == UnityEngine.Time.frameCount; }
+        }
+
         /// <summary>Reset complet (changement de scene).</summary>
         public static void Clear()
         {
             openCount = 0;
             IsInputFieldActive = false;
+            closeConsumedFrame = -1;
         }
     }
 }

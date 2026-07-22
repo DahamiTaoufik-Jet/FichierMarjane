@@ -119,7 +119,14 @@ namespace EscapeGame.Inventory.UI
             }
 
             var kb = Keyboard.current;
-            if (kb != null && kb[closeKey].wasPressedThisFrame) { Close(); return; }
+            if (kb != null && kb[closeKey].wasPressedThisFrame)
+            {
+                // Signale que Echap est pris, pour que le menu pause ne s'ouvre
+                // pas dans la foulee sur la meme pression.
+                UIState.ConsumeCloseKey();
+                Close();
+                return;
+            }
 
             if (selectAction != null && selectAction.WasPressedThisFrame()) { UseCurrent(); return; }
 
