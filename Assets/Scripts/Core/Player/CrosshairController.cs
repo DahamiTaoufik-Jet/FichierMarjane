@@ -6,16 +6,18 @@ using EscapeGame.Routes.Runtime;
 namespace EscapeGame.Core.Player
 {
     /// <summary>
-    /// Change la COULEUR d'un unique crosshair selon ce que vise le joueur via le
-    /// <see cref="PlayerScanner"/>. La couleur "active" remplace la couleur par
-    /// defaut dans deux cas :
-    ///  1. On vise de pres un indice ou une enigme (cible du ray principal),
-    ///     SAUF le radio (<see cref="AudioVisualPuzzleStep"/>) qui ne change rien.
-    ///  2. On regarde une zone depuis une position valide (cible du ray
-    ///     positionnel, qui n'existe que sur un spot de scan valide).
+    /// Pilote le crosshair du HUD FPS selon la cible visee (via
+    /// <see cref="PlayerScanner"/>) :
+    ///  - MASQUE quand une UI est ouverte (on resout une enigme, une carte de
+    ///    recompense s'affiche : UIState.IsAnyUIOpen) ;
+    ///  - VERT   quand on vise une etape interagible ;
+    ///  - GRIS   quand on vise une etape qui existe mais n'est PAS interagible
+    ///    (verrouillee / trop d'etapes sautees / phase coffres) ;
+    ///  - NOIR   quand on vise une etape deja resolue ;
+    ///  - couleur par defaut sinon (rien vise, ou une RADIO qu'on n'annonce pas).
     ///
-    /// A poser sur le HUD FPS (fpsCanvas). En mode TPS le canvas est inactif,
-    /// donc ce composant ne tourne pas.
+    /// A poser sur le HUD FPS (fpsCanvas). En mode TPS le canvas est inactif, donc
+    /// ce composant ne tourne pas.
     /// </summary>
     public class CrosshairController : MonoBehaviour
     {
@@ -26,14 +28,25 @@ namespace EscapeGame.Core.Player
         [Tooltip("Image du crosshair dont on change la couleur.")]
         public Image crosshairImage;
 
-        [Header("Couleurs")]
-        [Tooltip("Couleur appliquee quand on vise une cible valide (indice/enigme sauf radio, ou zone de scan valide).")]
-        public Color activeColor = Color.green;
+        [Tooltip("Racine visuelle du crosshair a masquer (optionnel, pour un crosshair multi-parties). " +
+                 "Si null, on masque directement crosshairImage.")]
+        public GameObject crosshairRoot;
 
-        // -1 = non initialise, force le premier rafraichissement.
-        private int lastHighlight = -1;
-        // Couleur d'origine du crosshair, capturee au demarrage.
+        [Header("Couleurs")]
+        [Tooltip("Vert : etape interagible.")]
+        public Color interactableColor = Color.green;
+
+        [Tooltip("Gris : etape non interagible (verrouillee / sautee / phase coffres).")]
+        public Color blockedColor = new Color(0.55f, 0.55f, 0.55f, 1f);
+
+        [Tooltip("Noir : etape deja resolue.")]
+        public Color resolvedColor = Color.black;
+
+        // Couleur d'origine du crosshair, capturee au demarrage (etat "rien / radio").
         private Color defaultColor = Color.white;
+
+        // Etats : -99 non initialise, 0 masque, 1 defaut, 2 vert, 3 gris, 4 noir.
+        private int lastState = -99;
 
         private void Awake()
         {
@@ -45,8 +58,7 @@ namespace EscapeGame.Core.Player
 
         private void OnEnable()
         {
-            // Force l'etat correct des l'activation du HUD (ex. passage en FPS).
-            lastHighlight = -1;
+            lastState = -99;
             Refresh();
         }
 
@@ -57,28 +69,55 @@ namespace EscapeGame.Core.Player
 
         private void Refresh()
         {
-            bool highlight = ShouldHighlight();
-            int state = highlight ? 1 : 0;
-            if (state == lastHighlight) return;
-            lastHighlight = state;
+            int state = ComputeState();
+            if (state == lastState) return;
+            lastState = state;
 
-            if (crosshairImage != null)
-                crosshairImage.color = highlight ? activeColor : defaultColor;
+            bool visible = state != 0;
+            SetVisible(visible);
+            if (!visible || crosshairImage == null) return;
+
+            switch (state)
+            {
+                case 2: crosshairImage.color = interactableColor; break; // vert
+                case 3: crosshairImage.color = blockedColor;      break; // gris
+                case 4: crosshairImage.color = resolvedColor;     break; // noir
+                default: crosshairImage.color = defaultColor;     break; // 1 : defaut
+            }
         }
 
-        private bool ShouldHighlight()
+        private int ComputeState()
         {
-            if (scanner == null) return false;
+            // UI ouverte (enigme en cours / recompense) -> masque.
+            if (UIState.IsAnyUIOpen) return 0;
 
-            // Cas 2 : zone visee depuis une position valide.
-            if (scanner.CurrentPositionalTarget != null) return true;
+            if (scanner == null) return 1;
 
-            // Cas 1 : indice / enigme vise de pres, sauf le radio.
+            // Ray positionnel : n'existe que depuis un spot valide -> interagible (vert).
+            if (scanner.CurrentPositionalTarget != null) return 2;
+
             IScannable target = scanner.CurrentTarget;
-            if (target != null && !(target is AudioVisualPuzzleStep))
-                return true;
 
-            return false;
+            // Radio : on n'affiche rien de special.
+            if (target is AudioVisualPuzzleStep) return 1;
+
+            var step = target as StepBehaviour;
+            if (step == null) return 1;                 // rien vise (ou pas une etape)
+
+            if (step.IsResolved) return 4;              // noir
+            if (step.IsInteractable) return 2;          // vert
+            return 3;                                    // gris (existe mais bloquee)
+        }
+
+        private void SetVisible(bool v)
+        {
+            if (crosshairRoot != null)
+            {
+                if (crosshairRoot.activeSelf != v) crosshairRoot.SetActive(v);
+                return;
+            }
+            if (crosshairImage != null && crosshairImage.enabled != v)
+                crosshairImage.enabled = v;
         }
     }
 }

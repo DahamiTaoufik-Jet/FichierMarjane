@@ -49,6 +49,10 @@ namespace EscapeGame.Routes.Services
         private float bellTimer;
         private AudioSource bellSource;
 
+        // Vrai pendant la resolution en cascade (ResolveAllBefore) : on ne revele
+        // pas les indices des etapes resolues "au passage".
+        private bool isCascading;
+
         // ====================================================================
         // Cycle de vie
         // ====================================================================
@@ -229,15 +233,20 @@ namespace EscapeGame.Routes.Services
                 DeliverReward(runtime.EndReward);
             }
 
-            // Decouvrir la step suivante et reveler son indice initial
-            var next = runtime.GetNext(step);
-            if (next != null)
+            // Decouvrir la step suivante et reveler son indice initial, UNIQUEMENT
+            // pour l'etape reellement resolue par le joueur (pas pendant la cascade)
+            // et JAMAIS en fin de route (fin de route -> recompense, pas d'indice).
+            if (!isCascading && !runtime.IsLastStep(step))
             {
-                next.Discover();
-                if (next.stepData != null && next.stepData.initialClue != null
-                    && !next.stepData.initialClue.IsEmpty)
+                var next = runtime.GetNext(step);
+                if (next != null)
                 {
-                    RouteEvents.RaiseClueRevealed(next.stepData.initialClue, step);
+                    next.Discover();
+                    if (next.stepData != null && next.stepData.initialClue != null
+                        && !next.stepData.initialClue.IsEmpty)
+                    {
+                        RouteEvents.RaiseClueRevealed(next.stepData.initialClue, step);
+                    }
                 }
             }
 
@@ -269,12 +278,15 @@ namespace EscapeGame.Routes.Services
             int idx = runtime.IndexOf(resolvedStep);
             if (idx <= 0) return;
 
+            bool wasCascading = isCascading;
+            isCascading = true;
             for (int i = 0; i < idx; i++)
             {
                 var prev = runtime.Steps[i];
                 if (prev != null && !prev.IsResolved)
                     prev.ForceResolve();
             }
+            isCascading = wasCascading;
         }
 
         // ====================================================================

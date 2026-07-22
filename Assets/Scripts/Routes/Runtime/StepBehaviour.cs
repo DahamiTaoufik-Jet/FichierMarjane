@@ -47,6 +47,13 @@ namespace EscapeGame.Routes.Runtime
             return RouteManager.Instance != null && !RouteManager.Instance.CanInteract(this);
         }
 
+        /// <summary>
+        /// Vrai si le joueur peut interagir MAINTENANT avec cette etape : ni deja
+        /// resolue, ni bloquee (phase coffres engagee, ou trop d'etapes sautees).
+        /// Utilise par le crosshair pour griser une cible non-interagible.
+        /// </summary>
+        public bool IsInteractable => !IsResolved && !IsInteractionBlocked();
+
         // ========= Visibilite du mesh =========
 
         /// <summary>
