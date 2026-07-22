@@ -266,8 +266,9 @@ namespace EscapeGame.Core.World
                 case TriggerType.Move: return AnyMove();
                 case TriggerType.Jump:
                     return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
-                case TriggerType.JournalOpen:
-                    return journalPanel != null && journalPanel.activeInHierarchy;
+                // Passe par le helper : journalPanel designe l'ancien canvas uGUI,
+                // desormais desactive en permanence, donc jamais "actif".
+                case TriggerType.JournalOpen: return JournalIsOpen();
                 case TriggerType.FpsMode: return fpsActivated;
                 case TriggerType.StepResolved: return resolvedSteps.Contains(b.param);
                 case TriggerType.RouteCompleted: return completedRoutes.Contains(b.param);
