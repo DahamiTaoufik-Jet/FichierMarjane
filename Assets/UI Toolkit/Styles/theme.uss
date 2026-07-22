@@ -630,15 +630,23 @@
     flex-grow: 1;
 }
 
-.journal-scroll {
+/* Viewport de la carte : tout ce qui deborde est coupe. C'est le monde a
+   l'interieur qu'on deplace, pas une barre de defilement qu'on pilote. */
+.journal-viewport {
     flex-grow: 1;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.25);
     border-radius: 10px;
 }
 
-/* Conteneur du monde : les nodes et lignes y sont positionnes en absolu. */
+/* Conteneur du monde : positionne en absolu et transforme (translate + scale)
+   directement par le code, comme le ContentViewContainer d'un GraphView.
+   Cela permet de panner librement meme quand le contenu tient dans le viewport,
+   ce qu'une ScrollView interdit puisqu'elle borne son offset a zero. */
 .journal-world {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     transform-origin: top left;
 }
 

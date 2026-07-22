@@ -12,13 +12,12 @@
 
             <!-- ============ Carte ============ -->
             <ui:VisualElement name="journal-map" class="journal-map">
-                <ui:ScrollView name="journal-scroll" class="journal-scroll"
-                               mode="VerticalAndHorizontal"
-                               horizontal-scroller-visibility="Auto"
-                               vertical-scroller-visibility="Auto">
+                <!-- Viewport a debordement masque : le monde a l'interieur est
+                     deplace et mis a l'echelle a la main (modele GraphView). -->
+                <ui:VisualElement name="journal-viewport" class="journal-viewport">
                     <!-- Les nodes et les lignes sont crees au runtime, en position absolue. -->
                     <ui:VisualElement name="journal-world" class="journal-world" />
-                </ui:ScrollView>
+                </ui:VisualElement>
 
                 <ui:VisualElement class="journal-zoom">
                     <ui:Button name="journal-zoom-in" text="+" class="btn zoom-btn" />

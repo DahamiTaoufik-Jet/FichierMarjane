@@ -69,7 +69,7 @@ namespace EscapeGame.Journal.UI
         // ---- Elements ----
         private VisualElement screen;
         private VisualElement world;
-        private ScrollView scroll;
+        private VisualElement viewport;
         private VisualElement map;
         private VisualElement modal;
         private Label subtitle;
@@ -102,7 +102,10 @@ namespace EscapeGame.Journal.UI
         private bool panning;
         private bool panPending;
         private Vector2 panStartPointer;
-        private Vector2 panStartOffset;
+        private Vector2 panStartPan;
+
+        // Deplacement courant du monde dans le viewport, en pixels non zoomes.
+        private Vector2 pan;
 
         // ====================================================================
         // Cycle de vie
@@ -114,7 +117,7 @@ namespace EscapeGame.Journal.UI
 
             screen = root.Q<VisualElement>("journal-screen");
             map = root.Q<VisualElement>("journal-map");
-            scroll = root.Q<ScrollView>("journal-scroll");
+            viewport = root.Q<VisualElement>("journal-viewport");
             world = root.Q<VisualElement>("journal-world");
             modal = root.Q<VisualElement>("journal-modal");
             subtitle = root.Q<Label>("journal-subtitle");
@@ -250,7 +253,7 @@ namespace EscapeGame.Journal.UI
 
             // La mise en page n'est pas encore calculee a cet instant : on
             // recentre une fois que le ScrollView connait ses dimensions.
-            if (scroll != null) scroll.schedule.Execute(CenterView).ExecuteLater(60);
+            if (viewport != null) viewport.schedule.Execute(CenterView).ExecuteLater(60);
 
             UIState.SetUIOpen();
             Cursor.lockState = CursorLockMode.None;
@@ -488,15 +491,12 @@ namespace EscapeGame.Journal.UI
         /// </summary>
         private void SetupPanAndZoom()
         {
-            if (scroll == null) return;
-            var vp = scroll.contentViewport;
+            if (viewport == null) return;
 
-            vp.RegisterCallback<PointerDownEvent>(OnPanDown);
-            vp.RegisterCallback<PointerMoveEvent>(OnPanMove);
-            vp.RegisterCallback<PointerUpEvent>(OnPanUp);
-
-            // La molette zoome au lieu de faire defiler.
-            vp.RegisterCallback<WheelEvent>(OnWheel);
+            viewport.RegisterCallback<PointerDownEvent>(OnPanDown);
+            viewport.RegisterCallback<PointerMoveEvent>(OnPanMove);
+            viewport.RegisterCallback<PointerUpEvent>(OnPanUp);
+            viewport.RegisterCallback<WheelEvent>(OnWheel);
         }
 
         private void OnPanDown(PointerDownEvent evt)
@@ -504,7 +504,7 @@ namespace EscapeGame.Journal.UI
             panPending = true;
             panning = false;
             panStartPointer = evt.position;
-            panStartOffset = scroll.scrollOffset;
+            panStartPan = pan;
         }
 
         private void OnPanMove(PointerMoveEvent evt)
@@ -518,11 +518,14 @@ namespace EscapeGame.Journal.UI
                 // Sous le seuil : on laisse le clic suivre son cours normal.
                 if (delta.magnitude < PanThreshold) return;
                 panning = true;
-                scroll.contentViewport.CapturePointer(evt.pointerId);
+                viewport.CapturePointer(evt.pointerId);
             }
 
-            // Tirer vers la droite doit faire venir le contenu de gauche.
-            scroll.scrollOffset = panStartOffset - delta;
+            // Le monde suit directement le curseur, sur les deux axes et sans
+            // aucune borne : c'est tout l'interet de ne pas passer par une
+            // ScrollView, qui refuserait de bouger si le contenu tient a l'ecran.
+            pan = panStartPan + delta;
+            ApplyTransform();
             evt.StopPropagation();
         }
 
@@ -530,7 +533,7 @@ namespace EscapeGame.Journal.UI
         {
             if (panning)
             {
-                scroll.contentViewport.ReleasePointer(evt.pointerId);
+                viewport.ReleasePointer(evt.pointerId);
                 // Empeche le clic de fin de glissement d'ouvrir une tuile.
                 evt.StopPropagation();
             }
@@ -551,16 +554,16 @@ namespace EscapeGame.Journal.UI
         /// </summary>
         private void CenterView()
         {
-            if (scroll == null || world == null) return;
+            if (viewport == null || world == null) return;
 
-            float vw = scroll.contentViewport.layout.width;
+            float vw = viewport.layout.width;
             float cw = world.layout.width * zoom;
 
-            // La position verticale courante est conservee : zoomer apres avoir
-            // fait defiler ne doit pas renvoyer le joueur en haut de la liste.
-            scroll.scrollOffset = new Vector2(
-                Mathf.Max(0f, (cw - vw) * 0.5f),
-                scroll.scrollOffset.y);
+            // Centre l'horizontale meme quand le contenu est PLUS ETROIT que le
+            // viewport : impossible avec une ScrollView, dont l'offset est borne
+            // a zero des que rien ne deborde.
+            pan = new Vector2((vw - cw) * 0.5f, 0f);
+            ApplyTransform();
         }
 
         // ====================================================================
@@ -597,11 +600,18 @@ namespace EscapeGame.Journal.UI
 
         private void ApplyZoom()
         {
-            if (world == null) return;
-            world.style.scale = new StyleScale(new Scale(new Vector2(zoom, zoom)));
+            ApplyTransform();
+        }
 
-            // Pas de recentrage ici : le joueur peut avoir panne la carte ou il
-            // voulait, zoomer ne doit pas le ramener au centre.
+        /// <summary>
+        /// Applique deplacement et echelle au monde. L'origine etant en haut a
+        /// gauche, translate puis scale se composent proprement.
+        /// </summary>
+        private void ApplyTransform()
+        {
+            if (world == null) return;
+            world.style.translate = new StyleTranslate(new Translate(pan.x, pan.y));
+            world.style.scale = new StyleScale(new Scale(new Vector2(zoom, zoom)));
         }
 
         // ====================================================================
