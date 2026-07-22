@@ -30,7 +30,10 @@
             <ui:VisualElement name="journal-modal" class="journal-modal hidden">
                 <ui:VisualElement class="modal-tabs">
                     <ui:Button name="tab-initial" text="Indice initial" class="btn btn--surface tab-btn" />
-                    <ui:Button name="tab-enigme" text="Enigme" class="btn btn--surface tab-btn" />
+                    <ui:Button name="tab-enigme" text="Enigme" class="btn btn--surface tab-btn">
+                        <!-- Signale une enigme VISUELLE pas encore consultee. -->
+                        <ui:VisualElement name="tab-enigme-badge" class="tab-badge hidden" />
+                    </ui:Button>
                     <ui:Button name="tab-suite" text="Indice suivant" class="btn btn--surface tab-btn" />
                 </ui:VisualElement>
 

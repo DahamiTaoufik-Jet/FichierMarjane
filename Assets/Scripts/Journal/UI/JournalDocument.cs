@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -85,6 +86,13 @@ namespace EscapeGame.Journal.UI
         private Button tabInitial;
         private Button tabEnigme;
         private Button tabSuite;
+        private VisualElement enigmaBadge;
+
+        // Etapes dont l'enigme visuelle a deja ete consultee : la pastille ne
+        // revient pas, c'est un indicateur "non vu", pas une decoration.
+        private readonly HashSet<string> seenEnigmas = new HashSet<string>();
+        private string currentStepId;
+        private Coroutine badgeRoutine;
 
         // ---- Etat ----
         private InputAction openAction;
@@ -133,6 +141,8 @@ namespace EscapeGame.Journal.UI
             tabInitial = root.Q<Button>("tab-initial");
             tabEnigme = root.Q<Button>("tab-enigme");
             tabSuite = root.Q<Button>("tab-suite");
+            enigmaBadge = root.Q<VisualElement>("tab-enigme-badge");
+            if (enigmaBadge != null) enigmaBadge.pickingMode = PickingMode.Ignore;
 
             BindButtons(root);
             SetupPanAndZoom();
@@ -477,6 +487,8 @@ namespace EscapeGame.Journal.UI
                 return;
             }
 
+            currentStepId = step.stepData != null ? step.stepData.stepId : null;
+
             var data = StageModalData.Build(step);
             if (data != null) ShowModal(data);
         }
@@ -630,12 +642,21 @@ namespace EscapeGame.Journal.UI
             else if (HasEnigme()) SwitchTab(1);
             else if (HasSuite()) SwitchTab(2);
             else SwitchTab(0);
+
+            // La pastille ne concerne QUE les enigmes visuelles pas encore vues :
+            // sur une enigme textuelle elle ne voudrait rien dire.
+            bool unseenVisual = data.PuzzleSnapshot != null
+                                && (currentStepId == null || !seenEnigmas.Contains(currentStepId));
+            if (unseenVisual) ShowBadge();
+            else HideBadge();
         }
 
         private void CloseModal()
         {
             CloseImageViewer();
+            HideBadge();
             currentData = null;
+            currentStepId = null;
             if (modal != null) modal.AddToClassList("hidden");
             if (map != null) map.RemoveFromClassList("hidden");
         }
@@ -673,6 +694,12 @@ namespace EscapeGame.Journal.UI
             if (tabEnigme != null) tabEnigme.SetEnabled(HasEnigme());
             if (tabSuite != null) tabSuite.SetEnabled(HasSuite());
 
+            if (index == 1)
+            {
+                if (currentStepId != null) seenEnigmas.Add(currentStepId);
+                HideBadge();
+            }
+
             if (currentData == null) { Show(modalEmpty, null); return; }
 
             bool any = false;
@@ -704,6 +731,59 @@ namespace EscapeGame.Journal.UI
             }
 
             if (!any) Show(modalEmpty, null);
+        }
+
+        // ====================================================================
+        // Pastille de l'onglet Enigme
+        // ====================================================================
+
+        private void ShowBadge()
+        {
+            if (enigmaBadge == null) return;
+            enigmaBadge.RemoveFromClassList("hidden");
+            if (badgeRoutine != null) StopCoroutine(badgeRoutine);
+            badgeRoutine = StartCoroutine(BadgeBounce());
+        }
+
+        private void HideBadge()
+        {
+            if (badgeRoutine != null) { StopCoroutine(badgeRoutine); badgeRoutine = null; }
+            if (enigmaBadge == null) return;
+            enigmaBadge.AddToClassList("hidden");
+            SetBadgeScale(1f);
+        }
+
+        /// <summary>
+        /// Petit rebond a l'apparition : la pastille depasse legerement sa taille
+        /// puis se pose. Temps non-scale, pour rester identique quel que soit le
+        /// timeScale.
+        /// </summary>
+        private IEnumerator BadgeBounce()
+        {
+            const float duration = 0.38f;
+            float t = 0f;
+            while (t < duration)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = Mathf.Clamp01(t / duration);
+                SetBadgeScale(Overshoot(k));
+                yield return null;
+            }
+            SetBadgeScale(1f);
+            badgeRoutine = null;
+        }
+
+        private void SetBadgeScale(float s)
+        {
+            if (enigmaBadge == null) return;
+            enigmaBadge.style.scale = new StyleScale(new Scale(new Vector2(s, s)));
+        }
+
+        private static float Overshoot(float k)
+        {
+            const float c = 1.9f;
+            k -= 1f;
+            return k * k * ((c + 1f) * k + c) + 1f;
         }
 
         private static void SetTabActive(Button tab, bool active)

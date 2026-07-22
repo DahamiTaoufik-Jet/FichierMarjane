@@ -783,6 +783,21 @@
     background-color: var(--blue);
 }
 
+/* Pastille "pas encore vu" sur l'onglet Enigme, quand l'etape porte une image.
+   Elle ne capte pas le pointeur pour ne pas voler le clic a l'onglet. */
+.tab-badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: rgb(255, 200, 60);
+    border-width: 2px;
+    border-color: rgb(60, 45, 10);
+    transform-origin: center;
+}
+
 .modal-content {
     flex-grow: 1;
     width: 90%;
