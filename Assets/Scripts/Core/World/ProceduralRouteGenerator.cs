@@ -77,7 +77,8 @@ namespace EscapeGame.Core.World
             // 2. Planification
             int? seed = config.seed > 0 ? (int?)config.seed : null;
             var planner = new RouteGenerationPlanner(
-                config.minRouteLength, config.maxRouteLength, config.maxStepUsage, seed);
+                config.minRouteLength, config.maxRouteLength, config.maxStepUsage,
+                config.maxRoutes, seed);
 
             var plans = planner.BuildPlans(config.stepPool, placeholders, config.regionFilter);
             if (plans.Count == 0)

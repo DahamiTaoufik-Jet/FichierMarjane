@@ -53,6 +53,10 @@ namespace EscapeGame.Routes.Data
         [Tooltip("Nombre maximum d'utilisation d'une meme StepData dans toute la generation.")]
         [Min(1)] public int maxStepUsage = 2;
 
+        [Tooltip("Nombre maximum de routes generees. 0 = illimite : on genere tant que " +
+                 "le pool de steps et les placeholders le permettent.")]
+        [Min(0)] public int maxRoutes = 0;
+
         [Tooltip("Si renseigne, ne generera des routes que dans cette region. Sinon, " +
                  "toutes les regions sont utilisees indifferemment.")]
         public string regionFilter;

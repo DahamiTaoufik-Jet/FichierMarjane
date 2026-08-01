@@ -18,13 +18,15 @@ namespace EscapeGame.Routes.Generation
         private readonly int maxStepUsage;
         private readonly int minRouteLength;
         private readonly int maxRouteLength;
+        private readonly int maxRoutes;
 
         public RouteGenerationPlanner(int minRouteLength, int maxRouteLength,
-                                      int maxStepUsage, int? seed = null)
+                                      int maxStepUsage, int maxRoutes = 0, int? seed = null)
         {
             this.minRouteLength = Mathf.Max(2, minRouteLength);
             this.maxRouteLength = Mathf.Max(this.minRouteLength, maxRouteLength);
             this.maxStepUsage = Mathf.Max(1, maxStepUsage);
+            this.maxRoutes = Mathf.Max(0, maxRoutes);
             rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
         }
 
@@ -58,6 +60,7 @@ namespace EscapeGame.Routes.Generation
             int routeIndex = 0;
             while (placeholders.Count > 0)
             {
+                if (maxRoutes > 0 && plans.Count >= maxRoutes) break; // plafond atteint
                 var plan = TryBuildOne(stepPool, placeholders, usage, routeIndex);
                 if (plan == null || plan.Length < 2) break; // plus rien de constructible
                 plans.Add(plan);

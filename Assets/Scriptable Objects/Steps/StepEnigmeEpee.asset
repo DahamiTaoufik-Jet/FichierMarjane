@@ -15,14 +15,14 @@ MonoBehaviour:
   stepId: StepEnigmeEpee
   type: 1
   initialClue:
-    text: Cherche pres des epees en plastique
+    text: Cherche du cote des epees posees sur les etageres
     image: {fileID: 0}
     audio: {fileID: 0}
   placement:
     mode: 1
     regionId: JouetSword
     spotId: 
-  puzzleQuestion: Arme de chevalier en plastique
+  puzzleQuestion: Arme longue a lame turquoise, taillee dans une gemme precieuse
   puzzleAnswer: epee
   puzzleEncrypted: 0
   puzzleEncryptedQuestion: 
