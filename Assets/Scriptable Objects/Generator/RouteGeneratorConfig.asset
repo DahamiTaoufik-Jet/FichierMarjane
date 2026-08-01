@@ -170,5 +170,6 @@ MonoBehaviour:
   minRouteLength: 6
   maxRouteLength: 8
   maxStepUsage: 1
+  maxRoutes: 8
   regionFilter: 
   seed: 1234
