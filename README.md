@@ -4,11 +4,11 @@ Un escape game réalisé avec Unity 6, dans lequel le joueur explore un supermar
 
 ## Démonstration
 
-[![Voir la démonstration du jeu](docs/media/demonstration.jpg)](https://github.com/DahamiTaoufik-Jet/FichierMarjane/blob/main/docs/media/demonstration.mp4)
+[![Télécharger la démonstration du jeu](docs/media/demonstration.jpg)](https://github.com/DahamiTaoufik-Jet/FichierMarjane/raw/refs/heads/main/docs/media/demonstration.mp4)
 
-**[▶ Lire la vidéo de démonstration](https://github.com/DahamiTaoufik-Jet/FichierMarjane/blob/main/docs/media/demonstration.mp4)** — 7 min 18 s, avec audio.
+**[▶ Télécharger la vidéo de démonstration (MP4, 35 Mo)](https://github.com/DahamiTaoufik-Jet/FichierMarjane/raw/refs/heads/main/docs/media/demonstration.mp4)** — 7 min 18 s, avec audio.
 
-La vidéo complète est disponible en version allégée 720p. Cliquez sur l'aperçu pour ouvrir la vidéo sur GitHub.
+La vidéo complète est disponible en version allégée 720p. Cliquez sur l'aperçu pour récupérer le MP4 et le lire dans votre lecteur vidéo. GitHub ne propose pas d'aperçu intégré pour ce fichier.
 
 ## Le jeu
 
