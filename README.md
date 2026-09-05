@@ -4,6 +4,10 @@ Un escape game réalisé avec Unity 6, dans lequel le joueur explore un supermar
 
 ## Démonstration
 
+[![Voir la démonstration sur YouTube](docs/media/demonstration.jpg)](https://www.youtube.com/watch?v=HOQp9kPP3bc)
+
+**[▶ Voir la démonstration sur YouTube](https://www.youtube.com/watch?v=HOQp9kPP3bc)**
+
 ## Le jeu
 
 - Exploration à la troisième personne, avec bascule en vue FPS via la touche **C**.
