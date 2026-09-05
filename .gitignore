@@ -77,3 +77,9 @@ crashlytics-build.properties
 # Debug snapshots (generes au runtime, inutiles en VCS)
 Assets/_Debug/
 Assets/_Debug.meta
+
+# Configuration locale de Codex
+/.codex/
+
+# Capture originale ; la demonstration optimisee est dans docs/media/
+/Demonstration Escape Game.mp4

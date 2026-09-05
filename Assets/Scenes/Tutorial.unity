@@ -9696,6 +9696,7 @@ GameObject:
   - component: {fileID: 646091680}
   - component: {fileID: 646091679}
   - component: {fileID: 646091678}
+  - component: {fileID: 646091681}
   m_Layer: 0
   m_Name: LetterRevealUI
   m_TagString: Untagged
@@ -9715,8 +9716,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33c45a7aba79042d4a3e14f3ff9d2f05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.LetterRevealDocument
-  audioSource: {fileID: 1443520989}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  audioSource: {fileID: 646091681}
+  getSound: {fileID: 8300000, guid: de435a00402665242bf32ab63e341c4d, type: 3}
   popInDuration: 0.25
   holdDuration: 2.5
   flyUpDuration: 0.6
@@ -9768,6 +9769,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &646091681
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646091677}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &646567781
 GameObject:
   m_ObjectHideFlags: 0
@@ -12318,6 +12416,7 @@ GameObject:
   - component: {fileID: 846692027}
   - component: {fileID: 846692026}
   - component: {fileID: 846692025}
+  - component: {fileID: 846692028}
   m_Layer: 0
   m_Name: BonusRevealUI
   m_TagString: Untagged
@@ -12337,8 +12436,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5b22f6ee0544a70944cf0ed9c324b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.BonusRevealDocument
-  audioSource: {fileID: 2143665723}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  audioSource: {fileID: 846692028}
+  getSound: {fileID: 8300000, guid: de435a00402665242bf32ab63e341c4d, type: 3}
   popInDuration: 0.4
   holdDuration: 3
   flyUpDuration: 0.6
@@ -12386,6 +12485,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &846692028
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846692024}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &851565405
 GameObject:
   m_ObjectHideFlags: 0
@@ -18446,7 +18642,7 @@ MonoBehaviour:
   playerContext: {fileID: 1515011848}
   persistAcrossScenes: 0
   maxSkipSteps: 3
-  resolvedBellClip: {fileID: 0}
+  resolvedBellClip: {fileID: 8300000, guid: 58cf3f4b8bd7744a1bc67b7515ed4922, type: 3}
   bellInterval: 0.2
   drawRouteGizmos: 1
   drawStepLabels: 1
@@ -23436,7 +23632,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: de435a00402665242bf32ab63e341c4d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -24185,6 +24381,8 @@ MonoBehaviour:
   zoomStep: 0.2
   zoomMin: 0.5
   zoomMax: 2
+  slideDuration: 0.35
+  slideDistance: 0
   activeLineColor: {r: 0.85, g: 0.85, b: 0.85, a: 1}
   inactiveLineColor: {r: 0.42, g: 0.42, b: 0.46, a: 1}
 --- !u!114 &1636464273
@@ -31905,6 +32103,7 @@ GameObject:
   - component: {fileID: 1969977193}
   - component: {fileID: 1969977192}
   - component: {fileID: 1969977191}
+  - component: {fileID: 1969977194}
   m_Layer: 0
   m_Name: ChestRewardUI
   m_TagString: Untagged
@@ -31924,8 +32123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3f357ea2cb540e88f1cb6ef4c99f8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Inventory.UI.ChestRewardRevealDocument
-  audioSource: {fileID: 821583669}
-  getSound: {fileID: 8300000, guid: 3e0e2fdfc17f743458222091cec2c05c, type: 3}
+  audioSource: {fileID: 1969977194}
+  getSound: {fileID: 8300000, guid: de435a00402665242bf32ab63e341c4d, type: 3}
   popInDuration: 0.4
   holdDuration: 3
   flyUpDuration: 0.6
@@ -31971,6 +32170,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1969977194
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969977190}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1971688530
 GameObject:
   m_ObjectHideFlags: 0
@@ -33696,7 +33992,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: de435a00402665242bf32ab63e341c4d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -35932,7 +36228,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EscapeGame.Core.Player.CrosshairController
   scanner: {fileID: 1515011846}
   crosshairImage: {fileID: 1427360590}
-  activeColor: {r: 0, g: 1, b: 0, a: 1}
+  crosshairRoot: {fileID: 0}
+  interactableColor: {r: 0, g: 1, b: 0, a: 1}
+  blockedColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+  resolvedColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!114 &8409286329420425217
 MonoBehaviour:
   m_ObjectHideFlags: 0
