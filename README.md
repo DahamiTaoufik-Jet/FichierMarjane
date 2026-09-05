@@ -4,10 +4,6 @@ Un escape game réalisé avec Unity 6, dans lequel le joueur explore un supermar
 
 ## Démonstration
 
-[![Télécharger la démonstration du jeu](docs/media/demonstration.jpg)](https://github.com/DahamiTaoufik-Jet/FichierMarjane/raw/refs/heads/main/docs/media/demonstration.mp4)
-
-La vidéo complète est disponible en version allégée 720p. Cliquez sur l'aperçu pour récupérer le MP4 et le lire dans votre lecteur vidéo. GitHub ne propose pas d'aperçu intégré pour ce fichier.
-
 ## Le jeu
 
 - Exploration à la troisième personne, avec bascule en vue FPS via la touche **C**.
